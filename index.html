@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="D&A Trip">
+<meta name="theme-color" content="#0d1520">
+<meta name="description" content="Segui il viaggio di Daniele e Angela tra Alpi e Appennini!">
+<meta property="og:title" content="🏔️ Daniele & Angela — Alpi & Appennini">
+<meta property="og:description" content="Segui il nostro road trip in tempo reale! 8 giorni, 2.080 km, da Napoli alle Dolomiti.">
+<title>🏔️ Daniele & Angela — Alpi & Appennini</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- 🔥 FIREBASE: Sostituisci con le TUE credenziali (vedi guida in fondo) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:#0d1520}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2a3a4a;border-radius:3px}
+
+/* Hero */
+.hero{background:linear-gradient(170deg,#0d1520,#142233 50%,#1a3a4a);padding:max(env(safe-area-inset-top),20px) 20px 28px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px),radial-gradient(circle at 80% 20%,#fff 1px,transparent 1px);background-size:80px 80px,120px 120px}
+.hero-inner{position:relative}
+.hero .label{font-size:10px;text-transform:uppercase;letter-spacing:4px;color:#5a8fa8;margin-bottom:6px}
+.hero h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:2px}
+.hero .names{font-size:14px;color:#48C9B0;font-weight:600;margin-bottom:4px}
+.hero .sub{font-size:12px;color:#5a8fa8;margin-bottom:20px}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:14px}
+.hero-num{font-size:26px;font-weight:700;color:#fff;line-height:1}
+.hero-num span{font-size:14px;color:#5a8fa8}
+.hero-meta{font-size:11px;color:#5a8fa8}
+.badge{margin-top:4px;font-size:10px;font-weight:700;background:#48C9B0;color:#0d1520;padding:2px 10px;border-radius:20px;display:inline-block}
+.pbar{margin-top:16px;height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.pbar-fill{height:100%;background:linear-gradient(90deg,#48C9B0,#2E86AB);border-radius:4px;transition:width .5s ease}
+.day-dots{display:flex;justify-content:space-between;margin-top:6px}
+.day-dot{width:6px;height:6px;border-radius:3px;transition:background .3s}
+.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:#48C9B0;background:rgba(72,201,176,.08);padding:4px 12px;border-radius:20px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Tabs */
+.tabs{display:flex;background:#111c29;border-bottom:1px solid #1a2a3a;position:sticky;top:0;z-index:1000}
+.tab{flex:1;padding:11px 0;border:none;background:transparent;color:#556;font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit}
+.tab.active{color:#fff;font-weight:700;border-bottom-color:#2E86AB}
+.tab.hidden{display:none}
+.content{padding:12px 12px 80px}
+
+/* Map */
+#map-container{width:100%;height:55vh;min-height:300px;background:#0a1018;position:relative}
+#map{width:100%;height:100%}
+.map-info{padding:12px}
+.map-status{background:#111c29;border:1px solid #1a2535;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.map-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.map-status-text{flex:1}
+.map-status-title{font-size:13px;font-weight:600;color:#dde}
+.map-status-sub{font-size:10px;color:#556;margin-top:1px}
+.map-next{background:#0984E310;border:1px solid #0984E325;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.map-next-icon{font-size:22px}
+.map-next-label{font-size:10px;color:#0984E3;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.map-next-name{font-size:14px;font-weight:700;color:#dde}
+.map-next-dist{font-size:11px;color:#556}
+
+/* Admin controls */
+.admin-bar{background:#1a2535;border:1px solid #2a3a4a;border-radius:12px;padding:12px;margin:8px 12px}
+.admin-btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.admin-btn:active{opacity:.7}
+.admin-btn-primary{background:linear-gradient(135deg,#48C9B0,#1ABC9C);color:#0d1520}
+.admin-btn-secondary{background:#0d1520;border:1px solid #2a3a4a;color:#8ab4cc}
+.admin-gps-status{text-align:center;font-size:10px;color:#556;margin-top:4px}
+.admin-tracking{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;background:rgba(72,201,176,.05);border-radius:8px;margin-top:6px}
+.admin-tracking-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 1.5s infinite}
+.admin-tracking-text{font-size:11px;color:#48C9B0;font-weight:600}
+
+/* PIN modal */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-box{background:#111c29;border:1px solid #2a3a4a;border-radius:20px;padding:32px 24px;text-align:center;width:100%;max-width:320px}
+.pin-box h2{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:6px}
+.pin-box p{font-size:12px;color:#556;margin-bottom:20px}
+.pin-input{width:100%;padding:14px;border-radius:12px;border:2px solid #2a3a4a;background:#0d1520;color:#fff;font-size:24px;text-align:center;letter-spacing:12px;font-family:inherit;outline:none}
+.pin-input:focus{border-color:#2E86AB}
+.pin-error{color:#e74c3c;font-size:11px;margin-top:8px;min-height:16px}
+.pin-skip{margin-top:16px;background:none;border:none;color:#556;font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit}
+
+/* Routes */
+.route-card{display:flex;align-items:center;gap:14px;padding:16px 18px;margin-bottom:10px;border-radius:14px;text-decoration:none}
+.route-icon{font-size:28px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.route-label{font-size:15px;font-weight:700;color:#e8e8e8}
+.route-sub{font-size:12px;color:#6a8a9a;margin-top:2px}
+.route-arrow{font-size:18px;flex-shrink:0}
+.pins-section{margin-top:24px}
+.pins-day-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.pins-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.pin{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;text-decoration:none;font-size:12px;font-weight:500;transition:all .2s}
+
+/* Day cards */
+.day{margin-bottom:8px;border-radius:14px;overflow:hidden;transition:all .3s}
+.day-head{padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.day-emoji{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:background .3s}
+.day-info{flex:1;min-width:0}
+.day-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.day-region{font-size:9px;color:#445;background:rgba(255,255,255,.03);padding:1px 6px;border-radius:6px;margin-left:6px}
+.day-title{font-size:14px;font-weight:600;color:#dde;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-km{font-size:10px;color:#4a6070;margin-top:1px}
+.day-prog{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.day-prog-txt{font-size:8px;color:#445}
+.day-arrow{font-size:14px;color:#334;transition:transform .3s;flex-shrink:0}.day-arrow.open{transform:rotate(180deg)}
+.day-body{padding:0 12px 14px}
+.stop{margin:6px 0;border-radius:10px;overflow:hidden;transition:all .3s}
+.stop-row{display:flex;align-items:center;gap:10px;padding:11px 12px}
+.check{width:26px;height:26px;border-radius:7px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;transition:all .2s;border:2px solid #2a3a4a;background:transparent}
+.check.on{border-color:var(--c);background:var(--c)}
+.check.readonly{cursor:default;opacity:.7}
+.stop-text{flex:1;cursor:pointer;min-width:0}
+.stop-name{font-size:13px;font-weight:600;transition:all .3s}
+.stop-name.done{text-decoration:line-through}
+.stop-preview{font-size:10px;color:#3a5060;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.maps-btn{font-size:9px;font-weight:700;text-decoration:none;padding:5px 10px;border-radius:14px;white-space:nowrap;flex-shrink:0}
+.stop-detail{padding:0 12px 12px 48px;animation:fadeIn .3s ease}
+.stop-desc{font-size:12px;color:#7a8a9a;line-height:1.7}
+.stop-tip{margin-top:8px;font-size:11px;color:#48C9B0;background:rgba(72,201,176,.03);padding:7px 10px;border-radius:8px;border-left:3px solid rgba(72,201,176,.2)}
+.warn-tip{margin-top:8px;font-size:11px;color:#E67E22;background:rgba(230,126,34,.04);padding:7px 10px;border-radius:8px;border-left:3px solid rgba(230,126,34,.25)}
+.info-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.info-box{flex:1 1 170px;border-radius:8px;padding:8px 12px}
+.info-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.info-val{font-size:11px;line-height:1.5;margin-top:2px}
+.special-route{display:block;margin-top:10px;padding:11px 14px;border-radius:10px;text-decoration:none;text-align:center;font-size:12px;font-weight:700}
+
+/* Expenses (admin only) */
+.exp-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.exp-total{grid-column:1/-1;background:linear-gradient(135deg,#1a2a3a,#142233);border:1px solid #2a3a4a;border-radius:14px;padding:18px;text-align:center}
+.exp-total-num{font-size:32px;font-weight:700;color:#fff}
+.exp-total-label{font-size:11px;color:#5a8fa8;margin-top:2px}
+.exp-total-pp{font-size:14px;color:#48C9B0;margin-top:6px;font-weight:600}
+.exp-cat-card{background:#111c29;border:1px solid #1a2535;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px}
+.exp-cat-icon{font-size:22px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.exp-cat-name{font-size:11px;color:#667}
+.exp-cat-val{font-size:16px;font-weight:700;color:#dde}
+.exp-add-bar{background:#111c29;border:1px solid #1e2d3d;border-radius:14px;padding:14px;margin-bottom:14px}
+.exp-add-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.exp-input{background:#0d1520;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;color:#dde;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.exp-input:focus{border-color:#2E86AB}
+.exp-input::placeholder{color:#334}
+.exp-input-desc{flex:1;min-width:120px}
+.exp-input-amount{width:90px;text-align:right}
+.exp-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.exp-cat-btn{padding:6px 12px;border-radius:20px;border:1px solid #1e2d3d;background:transparent;color:#667;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.exp-cat-btn.active{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.exp-day-select{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.exp-day-btn{padding:4px 10px;border-radius:16px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.exp-day-btn.active{border-color:#2E86AB;color:#2E86AB;background:rgba(46,134,171,.1)}
+.exp-submit{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#2E86AB,#1a6b8a);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.exp-submit:active{opacity:.8}
+.exp-list{margin-top:8px}
+.exp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111c29;border:1px solid #1a2535;border-radius:10px;margin-bottom:6px}
+.exp-item-icon{font-size:16px;flex-shrink:0}
+.exp-item-info{flex:1;min-width:0}
+.exp-item-name{font-size:13px;font-weight:600;color:#ccd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-item-meta{font-size:10px;color:#445;margin-top:1px}
+.exp-item-amount{font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.exp-item-del{width:28px;height:28px;border-radius:7px;border:none;background:rgba(192,57,43,.1);color:#e74c3c;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.exp-filter{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.exp-filter::-webkit-scrollbar{display:none}
+.exp-filter-btn{padding:6px 14px;border-radius:20px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
+.exp-filter-btn.active{border-color:#2E86AB;color:#fff;background:rgba(46,134,171,.15)}
+.exp-empty{text-align:center;padding:40px 20px;color:#334;font-size:13px}
+.exp-clear button{background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:16px}
+
+.reset-btn{position:fixed;bottom:max(16px,env(safe-area-inset-bottom,16px));right:16px;width:44px;height:44px;border-radius:22px;background:#1a2535;border:1px solid #2a3a4a;color:#556;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:20}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ring{flex-shrink:0}.ring-bg{fill:none;stroke:rgba(255,255,255,.1)}.ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+
+/* Leaflet overrides */
+.leaflet-container{background:#0a1018!important}
+.custom-marker{background:none;border:none}
+.marker-pin{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.marker-you{width:18px;height:18px;border-radius:50%;background:#48C9B0;border:3px solid #fff;box-shadow:0 0 12px rgba(72,201,176,.6),0 2px 8px rgba(0,0,0,.4);animation:pulseMarker 2s infinite}
+@keyframes pulseMarker{0%,100%{box-shadow:0 0 12px rgba(72,201,176,.6),0 2px 8px rgba(0,0,0,.4)}50%{box-shadow:0 0 24px rgba(72,201,176,.8),0 2px 8px rgba(0,0,0,.4)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// =============================================
+// 🔧 CONFIGURAZIONE — MODIFICA QUESTE RIGHE
+// =============================================
+const ADMIN_PIN = "2026";  // Cambia con il PIN che preferisci
+
+// 🔥 FIREBASE CONFIG — Sostituisci con i tuoi dati
+// Segui la guida in fondo al file per ottenere questi valori
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAzBhxPJyyQNum773cBgBfZmV_FVECoOzY",
+  authDomain: "viaggio2026-6053f.firebaseapp.com",
+  databaseURL: "https://viaggio2026-6053f-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "viaggio2026-6053f",
+  storageBucket: "viaggio2026-6053f.firebasestorage.app",
+  messagingSenderId: "446199022338",
+  appId: "1:446199022338:web:c45d5062a9f5cf7b7e381b",
+  measurementId: "G-4Y01L13W7Z"
+};
+// =============================================
+
+let firebaseReady = false;
+let dbRef = null;
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  dbRef = firebase.database().ref('trip');
+  firebaseReady = true;
+} catch(e) { console.warn("Firebase non configurato:", e); }
+
+// ============ DATA ============
+const ALL_STOPS = [];
+const DAYS=[
+{day:1,title:"Napoli → Scanno / Roccaraso",region:"Abruzzo",km:"~200 km",drive:"~2,5h",color:"#2E86AB",emoji:"🏔️",route:null,routeLabel:"",stops:[
+{name:"Scanno",lat:41.9047,lng:13.8810,map:"https://maps.google.com/?q=Scanno,+AQ,+Italy",desc:"Uno dei borghi più belli d'Italia. Vicoli in pietra, archi medievali.",tip:"Visita al tramonto per la luce dorata"},
+{name:"Lago di Scanno",lat:41.9270,lng:13.8540,map:"https://maps.google.com/?q=Lago+di+Scanno,+Italy",desc:"Lago a forma di cuore. Camminata di 20 min per una vista indimenticabile.",tip:"Sentiero dal parcheggio SP479"},
+{name:"Pescocostanzo",lat:41.8885,lng:14.0658,map:"https://maps.google.com/?q=Pescocostanzo,+AQ,+Italy",desc:"Borgo elegante a 1.400m. Palazzetti rinascimentali e merletto a tombolo.",tip:"Prova gli arrosticini!"},
+{name:"Roccaraso",lat:41.8491,lng:14.0780,map:"https://maps.google.com/?q=Roccaraso,+AQ,+Italy",desc:"In estate passeggiate tra boschi di faggio e aria fresca.",tip:"Ottima base per la zona"}],food:"Arrosticini, sagne e fagioli, Centerba",sleep:"Pescocostanzo o Scanno"},
+{day:2,title:"Gran Sasso → Castelluccio",region:"Abruzzo / Umbria",km:"~220 km",drive:"~3,5h",color:"#E67E22",emoji:"🌾",route:null,routeLabel:"",stops:[
+{name:"Campo Imperatore",lat:42.4382,lng:13.5628,map:"https://maps.google.com/?q=Campo+Imperatore,+AQ,+Italy",desc:"Il 'Piccolo Tibet'. Altopiano a 1.800m con panorami lunari.",tip:"Mattino presto per le foto migliori"},
+{name:"Castelluccio di Norcia",lat:42.8282,lng:13.2074,map:"https://maps.google.com/?q=Castelluccio+di+Norcia,+PG,+Italy",desc:"Borgo a 1.452m sopra il Pian Grande. Vastità e silenzio impressionanti.",tip:"Panorami spettacolari in ogni stagione"},
+{name:"Norcia",lat:42.7925,lng:13.0928,map:"https://maps.google.com/?q=Norcia,+PG,+Italy",desc:"Patria della norcineria. Tartufo nero e salumi ovunque.",tip:"Tartufo nero: qualità top, prezzi onesti"}],food:"Tartufo nero, lenticchie IGP, strangozzi",sleep:"Castelluccio o Norcia"},
+{day:3,title:"Appennino → Bologna",region:"Emilia-Romagna",km:"~280 km",drive:"~3,5h",color:"#C0392B",emoji:"🍝",route:null,routeLabel:"",stops:[
+{name:"Passo della Futa",lat:44.1069,lng:11.3047,map:"https://maps.google.com/?q=Passo+della+Futa,+Italy",desc:"Valico a 903m. Strada bellissima per le curve.",tip:"Caffè con vista al bar del passo"},
+{name:"Brisighella",lat:44.2219,lng:11.7744,map:"https://maps.google.com/?q=Brisighella,+RA,+Italy",desc:"Tre colli con torre, rocca e santuario. Via degli Asini unica!",tip:"Olio DOP tra i migliori d'Italia"},
+{name:"Bologna",lat:44.4949,lng:11.3426,map:"https://maps.google.com/?q=Bologna,+Italy",desc:"La 'Rossa', 'Grassa', 'Dotta'. 40 km di portici UNESCO!",tip:"Il Quadrilatero è il mercato storico"},
+{name:"Torre degli Asinelli",lat:44.4942,lng:11.3469,map:"https://maps.google.com/?q=Torre+degli+Asinelli,+Bologna,+Italy",desc:"498 gradini, 97 metri. Panorama su tutti i tetti rossi.",tip:"Sali presto per evitare la coda"}],food:"Tortellini, tagliatelle al ragù, mortadella",sleep:"Bologna centro"},
+{day:4,title:"Bologna → Dolomiti",region:"Trentino-Alto Adige",km:"~280 km",drive:"~3,5h",color:"#1ABC9C",emoji:"🌲",route:null,routeLabel:"",stops:[
+{name:"Canazei",lat:46.4767,lng:11.7703,map:"https://maps.google.com/?q=Canazei,+TN,+Italy",desc:"Base per i passi. Funivia Col dei Rossi: 360° su Marmolada.",tip:"Guest Card: funivie e bus gratis!"},
+{name:"Val di Fassa",lat:46.4283,lng:11.7678,map:"https://maps.google.com/?q=Val+di+Fassa,+TN,+Italy",desc:"Valle ladina. Al tramonto l'enrosadira: Dolomiti rosa!",tip:"Enrosadira verso le 20:30 in estate"}],food:"Canederli, speck, strudel, polenta e cervo",sleep:"Canazei o Campitello"},
+{day:5,title:"Giro dei 4 Passi",region:"Cuore delle Dolomiti",km:"~120 km",drive:"~3-4h",color:"#8E44AD",emoji:"⛰️",
+route:"https://www.google.com/maps/dir/Canazei+TN/Passo+Pordoi/Passo+Sella/Passo+Gardena/Corvara+in+Badia+BZ/Passo+Campolongo/Canazei+TN",routeLabel:"Giro dei 4 Passi",stops:[
+{name:"Passo Pordoi (2.239m)",lat:46.4872,lng:11.8128,map:"https://maps.google.com/?q=Passo+Pordoi,+Italy",desc:"Valico più alto. Funivia Sass Pordoi: 'terrazza delle Dolomiti'.",tip:"Funivia ~15€ A/R — imperdibile!"},
+{name:"Passo Sella (2.240m)",lat:46.5092,lng:11.7581,map:"https://maps.google.com/?q=Passo+Sella,+Italy",desc:"Sassolungo con pareti verticali. Paesaggio lunare.",tip:"Rifugio al passo: terrazza mozzafiato"},
+{name:"Passo Gardena (2.121m)",lat:46.5536,lng:11.8097,map:"https://maps.google.com/?q=Passo+Gardena,+Italy",desc:"Ingresso Val Gardena. Panorama sulle Odle.",tip:"Scendi a Corvara per pranzo"},
+{name:"Corvara in Badia",lat:46.5500,lng:11.8740,map:"https://maps.google.com/?q=Corvara+in+Badia,+BZ,+Italy",desc:"Borgo ladino. Cajincí con vista sul Sassongher.",tip:"Prova i cajincí ladini"},
+{name:"Passo Campolongo (1.875m)",lat:46.5280,lng:11.8760,map:"https://maps.google.com/?q=Passo+Campolongo,+Italy",desc:"Il più dolce, chiude l'anello.",tip:"Foto ricordo all'ultimo passo!"},
+{name:"Lago di Fedaia",lat:46.4571,lng:11.8687,map:"https://maps.google.com/?q=Lago+di+Fedaia,+Italy",desc:"Ai piedi della Marmolada. Acqua turchese e ghiacciaio.",tip:"Deviazione 15 min — vale!"}],food:"Cajincí, speck, strudel a Corvara",sleep:"Canazei o Ortisei"},
+{day:6,title:"Giro Laghi Dolomitici",region:"Alto Adige",km:"~180 km",drive:"~3,5h",color:"#00B894",emoji:"💎",
+route:"https://www.google.com/maps/dir/Canazei+TN/Lago+di+Carezza/Lago+di+Braies/Lago+di+Dobbiaco/Lago+di+Landro/Tre+Cime+di+Lavaredo",routeLabel:"Giro dei Laghi",stops:[
+{name:"Lago di Carezza",lat:46.4103,lng:11.5753,map:"https://maps.google.com/?q=Lago+di+Carezza,+BZ,+Italy",desc:"Acqua smeraldo che riflette Latemar e Catinaccio. 20 min per girarlo.",tip:"⚠️ Arriva PRIMA delle 9!",warn:true},
+{name:"Lago di Braies",lat:46.6940,lng:12.0855,map:"https://maps.google.com/?q=Lago+di+Braies,+BZ,+Italy",desc:"Il più fotografato d'Italia. Acqua turchese, barchette in legno.",tip:"⚠️ AGOSTO: bus navetta da Villabassa!",warn:true},
+{name:"Lago di Dobbiaco",lat:46.7184,lng:12.1750,map:"https://maps.google.com/?q=Lago+di+Dobbiaco,+Italy",desc:"Tranquillo! Parco naturale con sentieri facili. Ristorante sulla riva.",tip:"Contrasto piacevole col caos di Braies"},
+{name:"Lago di Landro",lat:46.6625,lng:12.1854,map:"https://maps.google.com/?q=Lago+di+Landro,+Italy",desc:"Gioiello nascosto. Acqua cristallina, quasi nessun turista.",tip:"Fermata veloce — pochissima gente"},
+{name:"Tre Cime di Lavaredo",lat:46.6190,lng:12.3020,map:"https://maps.google.com/?q=Tre+Cime+di+Lavaredo,+Italy",desc:"Icona delle Dolomiti! Giro 10 km o 30 min dal Rifugio Auronzo.",tip:"⚠️ Pedaggio ~30€, parcheggio pieno presto!",warn:true}],food:"Kaiserschmarrn, Schlutzkrapfen, Knödel",sleep:"Dobbiaco o Villabassa"},
+{day:7,title:"Val Pusteria → Alto Garda",region:"Trentino",km:"~200 km",drive:"~3h",color:"#0984E3",emoji:"🌊",
+route:"https://www.google.com/maps/dir/Dobbiaco/Lago+di+Tenno/Cascate+del+Varone/Arco+TN/Riva+del+Garda+TN",routeLabel:"Percorso Alto Garda",stops:[
+{name:"Lago di Tenno",lat:45.9345,lng:10.8197,map:"https://maps.google.com/?q=Lago+di+Tenno,+TN,+Italy",desc:"Segreto del Trentino! Acqua turchese irreale, ci si può fare il bagno.",tip:"10 min da Riva — imperdibile!"},
+{name:"Canale di Tenno",lat:45.9292,lng:10.8211,map:"https://maps.google.com/?q=Canale+di+Tenno,+TN,+Italy",desc:"Borgo medievale. Vicoli in pietra, atelier d'artisti, silenzio.",tip:"Piccolissimo ma super fotogenico"},
+{name:"Cascate del Varone",lat:45.8939,lng:10.8394,map:"https://maps.google.com/?q=Cascate+del+Varone,+Italy",desc:"Acqua dentro una forra da 20.000 anni! Passerelle nella grotta.",tip:"Ingresso ~7€ — porta un k-way!"},
+{name:"Arco",lat:45.9187,lng:10.8862,map:"https://maps.google.com/?q=Arco,+TN,+Italy",desc:"Castello sulla rupe, centro con palazzi rinascimentali e uliveti.",tip:"Salita al castello: 20 min, vista pazzesca"},
+{name:"Riva del Garda",lat:45.8860,lng:10.8413,map:"https://maps.google.com/?q=Riva+del+Garda,+TN,+Italy",desc:"Punta nord del Garda. Lungolago, Rocca, tramonto spettacolare.",tip:"Cena con pesce di lago sul lungolago"}],food:"Carne salada, pesce di lago, strangolapreti",sleep:"Riva del Garda o Arco"},
+{day:8,title:"Riva → Napoli",region:"Trentino / Emilia / Campania",km:"~600 km",drive:"~5,5h",color:"#D35400",emoji:"🏠",route:null,routeLabel:"",stops:[
+{name:"Parma",lat:44.8015,lng:10.3279,map:"https://maps.google.com/?q=Parma,+Italy",desc:"Parmigiano, Prosciutto, Culatello. Duomo col Battistero in marmo rosa.",tip:"Caseifici con visite il sabato mattina"}],food:"Parmigiano, Prosciutto di Parma, tortelli",sleep:"Casa — Napoli! 🏠"}
+];
+
+// Build flat stop list with coords for map
+DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>ALL_STOPS.push({...s,di,si,dayColor:d.color,dayNum:d.day})));
+
+const ROUTES=[
+{label:"Percorso Andata",sub:"Napoli → Bologna → Dolomiti",icon:"🚗",color:"#2E86AB",url:"https://www.google.com/maps/dir/Napoli/Scanno+AQ/Campo+Imperatore+AQ/Castelluccio+di+Norcia+PG/Brisighella+RA/Bologna/Canazei+TN"},
+{label:"Giro 4 Passi",sub:"Pordoi → Sella → Gardena → Campolongo",icon:"⛰️",color:"#8E44AD",url:"https://www.google.com/maps/dir/Canazei+TN/Passo+Pordoi/Passo+Sella/Passo+Gardena/Corvara+in+Badia+BZ/Passo+Campolongo/Canazei+TN"},
+{label:"Giro Laghi",sub:"Carezza → Braies → Tre Cime",icon:"💎",color:"#00B894",url:"https://www.google.com/maps/dir/Canazei+TN/Lago+di+Carezza/Lago+di+Braies/Lago+di+Dobbiaco/Lago+di+Landro/Tre+Cime+di+Lavaredo"},
+{label:"Alto Garda",sub:"Tenno → Varone → Arco → Riva",icon:"🌊",color:"#0984E3",url:"https://www.google.com/maps/dir/Dobbiaco/Lago+di+Tenno/Cascate+del+Varone/Arco+TN/Riva+del+Garda+TN"},
+{label:"Ritorno",sub:"Riva → Parma → Napoli",icon:"🏠",color:"#D35400",url:"https://www.google.com/maps/dir/Riva+del+Garda+TN/Parma/Napoli"}];
+
+const CATS=[{id:"fuel",name:"Carburante",emoji:"⛽",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"🛣️",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"🏨",color:"#2E86AB"},{id:"food",name:"Cibo",emoji:"🍽️",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"🎫",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"📦",color:"#556"}];
+
+// Route polyline coords (simplified)
+const ROUTE_LINE = [
+[40.8518,14.2681],[41.9047,13.8810],[42.4382,13.5628],[42.8282,13.2074],
+[44.2219,11.7744],[44.4949,11.3426],[46.4767,11.7703],[46.4872,11.8128],
+[46.5092,11.7581],[46.5536,11.8097],[46.5500,11.8740],[46.4103,11.5753],
+[46.6940,12.0855],[46.7184,12.1750],[46.6190,12.3020],[45.9345,10.8197],
+[45.8860,10.8413],[44.8015,10.3279],[40.8518,14.2681]];
+
+// ============ STATE ============
+let isAdmin=false, showPinModal=true, pinError="";
+let checks={},expenses=[],openDay=null,openStop=null,tab="map";
+let expCat="food",expDay=0,expFilter="all";
+let livePos=null, lastUpdate=null, gpsWatchId=null, isTracking=false;
+let leafletMap=null, posMarker=null, routeLine=null;
+
+// Storage
+function loadLocal(){
+  try{const d=localStorage.getItem("alpi-v6-checks");if(d)checks=JSON.parse(d)}catch{}
+  try{const d=localStorage.getItem("alpi-v6-expenses");if(d)expenses=JSON.parse(d)}catch{}
+  try{const d=localStorage.getItem("alpi-v6-admin");if(d==="true"){isAdmin=true;showPinModal=false}}catch{}
+}
+function saveChecks(){
+  try{localStorage.setItem("alpi-v6-checks",JSON.stringify(checks))}catch{}
+  if(firebaseReady)dbRef.child('checks').set(checks);
+}
+function saveExpenses(){try{localStorage.setItem("alpi-v6-expenses",JSON.stringify(expenses))}catch{}}
+function saveAdmin(){try{localStorage.setItem("alpi-v6-admin",isAdmin?"true":"false")}catch{}}
+
+// Firebase listeners
+function initFirebase(){
+  if(!firebaseReady)return;
+  // Listen for position updates
+  dbRef.child('position').on('value',snap=>{
+    const val=snap.val();
+    if(val){livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;updateMapMarker()}
+  });
+  // Listen for check updates
+  dbRef.child('checks').on('value',snap=>{
+    const val=snap.val();
+    if(val&&!isAdmin){checks=val;render()}
+  });
+}
+
+// GPS
+function startTracking(){
+  if(!navigator.geolocation)return;
+  isTracking=true;
+  gpsWatchId=navigator.geolocation.watchPosition(pos=>{
+    livePos={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    lastUpdate=Date.now();
+    if(firebaseReady)dbRef.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});
+    updateMapMarker();
+    render();
+  },err=>{console.warn("GPS error",err)},{enableHighAccuracy:true,maximumAge:10000,timeout:15000});
+  render();
+}
+function stopTracking(){
+  if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
+  gpsWatchId=null;isTracking=false;render();
+}
+function sendPositionOnce(){
+  navigator.geolocation.getCurrentPosition(pos=>{
+    livePos={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    lastUpdate=Date.now();
+    if(firebaseReady)dbRef.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});
+    updateMapMarker();render();
+  },err=>alert("Errore GPS: "+err.message),{enableHighAccuracy:true,timeout:10000});
+}
+
+// Map
+function initMap(){
+  if(leafletMap)return;
+  leafletMap=L.map('map',{zoomControl:false,attributionControl:false}).setView([44.5,12.0],6);
+  L.control.zoom({position:'topright'}).addTo(leafletMap);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
+  // Route line
+  routeLine=L.polyline(ROUTE_LINE,{color:'#2E86AB',weight:3,opacity:.4,dashArray:'8,8'}).addTo(leafletMap);
+  // Stop markers
+  ALL_STOPS.forEach(s=>{
+    if(!s.lat)return;
+    const done=!!checks[s.di+"-"+s.si];
+    const icon=L.divIcon({className:'custom-marker',html:`<div class="marker-pin" style="background:${done?s.dayColor:s.dayColor+'40'};border-color:${done?'#fff':s.dayColor}">${done?'✓':s.dayNum}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
+    L.marker([s.lat,s.lng],{icon}).addTo(leafletMap).bindPopup(`<b>${s.name}</b><br><span style="font-size:11px;color:#666">${s.desc.slice(0,80)}...</span><br><a href="${s.map}" target="_blank" style="font-size:11px">📍 Apri in Google Maps</a>`);
+  });
+  // Fit bounds
+  leafletMap.fitBounds(routeLine.getBounds().pad(0.1));
+}
+function updateMapMarker(){
+  if(!leafletMap||!livePos)return;
+  if(!posMarker){
+    const icon=L.divIcon({className:'custom-marker',html:'<div class="marker-you"></div>',iconSize:[18,18],iconAnchor:[9,9]});
+    posMarker=L.marker([livePos.lat,livePos.lng],{icon,zIndexOffset:1000}).addTo(leafletMap);
+  }else{
+    posMarker.setLatLng([livePos.lat,livePos.lng]);
+  }
+}
+function centerOnMe(){
+  if(leafletMap&&livePos)leafletMap.setView([livePos.lat,livePos.lng],13,{animate:true});
+}
+
+// Helpers
+function ring(sz,sw,pct,col){const r=(sz-sw)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}" class="ring" style="transform:rotate(-90deg)"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-bg" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-fg" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}"/></svg>`}
+function totalDone(){return Object.values(checks).filter(Boolean).length}
+function totalStops(){return DAYS.reduce((a,d)=>a+d.stops.length,0)}
+function dayProg(di){const d=DAYS[di],n=d.stops.filter((_,si)=>checks[di+"-"+si]).length;return d.stops.length?n/d.stops.length:0}
+function isDayDone(di){return dayProg(di)===1}
+function timeSince(ts){if(!ts)return"";const s=Math.floor((Date.now()-ts)/1000);if(s<60)return"adesso";if(s<3600)return Math.floor(s/60)+" min fa";if(s<86400)return Math.floor(s/3600)+"h fa";return Math.floor(s/86400)+"g fa"}
+function distKm(lat1,lng1,lat2,lng2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180,a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
+function nextStop(){for(let di=0;di<DAYS.length;di++)for(let si=0;si<DAYS[di].stops.length;si++)if(!checks[di+"-"+si])return{...DAYS[di].stops[si],di,si,dayColor:DAYS[di].color};return null}
+
+// ============ RENDER ============
+function render(){
+const done=totalDone(),tot=totalStops(),pct=tot?done/tot:0;
+const ns=nextStop();
+let h="";
+
+// PIN MODAL
+if(showPinModal){
+h+=`<div class="pin-overlay"><div class="pin-box">
+<h2>🏔️ Benvenuto!</h2>
+<p>Inserisci il PIN per la modalità viaggiatore,<br>oppure continua come spettatore</p>
+<input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="• • • •" oninput="checkPin(this.value)" autocomplete="off">
+<div class="pin-error">${pinError}</div>
+<button class="pin-skip" onclick="skipPin()">Continua come spettatore →</button>
+</div></div>`;
+document.getElementById("app").innerHTML=h;return;
+}
+
+// HERO
+h+=`<div class="hero"><div class="hero-inner">
+<p class="label">Road Trip • Agosto 2026</p>
+<h1>Alpi &amp; Appennini</h1>
+<div class="names">Daniele & Angela</div>
+<p class="sub">~2.080 km · 8 giorni · Da Napoli a Napoli</p>
+<div class="hero-stats">${ring(58,4,pct,"#48C9B0")}
+<div><div class="hero-num">${done}<span>/${tot}</span></div>
+<div class="hero-meta">tappe completate</div>
+${pct===1?'<div class="badge">🎉 VIAGGIO COMPLETATO!</div>':""}
+</div></div>
+<div class="pbar"><div class="pbar-fill" style="width:${pct*100}%"></div></div>
+<div class="day-dots">${DAYS.map((_,i)=>`<div class="day-dot" style="background:${isDayDone(i)?DAYS[i].color:'rgba(255,255,255,.1)'}"></div>`).join("")}</div>
+${livePos?`<div class="live-badge"><div class="live-dot"></div>In viaggio · agg. ${timeSince(lastUpdate)}</div>`:""}
+</div></div>`;
+
+// TABS
+h+=`<div class="tabs">
+<button class="tab ${tab==="map"?"active":""}" onclick="switchTab('map')">📍 Mappa</button>
+<button class="tab ${tab==="checklist"?"active":""}" onclick="switchTab('checklist')">📋 Tappe</button>
+<button class="tab ${tab==="routes"?"active":""}" onclick="switchTab('routes')">🗺️ Maps</button>
+${isAdmin?`<button class="tab ${tab==="expenses"?"active":""}" onclick="switchTab('expenses')">💰 Spese</button>`:""}
+</div>`;
+
+// ======= MAP TAB =======
+if(tab==="map"){
+h+='<div id="map-container"><div id="map"></div></div>';
+h+='<div class="map-info">';
+
+// Admin controls
+if(isAdmin){
+h+=`<div class="admin-bar">
+<button class="admin-btn admin-btn-primary" onclick="${isTracking?'stopTracking()':'startTracking()'}">
+${isTracking?'⏹ Ferma tracking':'📡 Attiva tracking GPS'}</button>
+<button class="admin-btn admin-btn-secondary" onclick="sendPositionOnce()">📍 Invia posizione una volta</button>
+${isTracking?`<div class="admin-tracking"><div class="admin-tracking-dot"></div><span class="admin-tracking-text">GPS attivo — posizione condivisa in tempo reale</span></div>`:""}
+${livePos?`<div class="admin-gps-status">${livePos.lat.toFixed(4)}, ${livePos.lng.toFixed(4)} · ${timeSince(lastUpdate)}</div>`:""}
+</div>`}
+
+// Position status
+if(livePos){
+h+=`<div class="map-status"><div class="map-status-dot" style="background:#48C9B0;animation:pulse 2s infinite"></div>
+<div class="map-status-text"><div class="map-status-title">📍 Daniele & Angela sono in viaggio!</div>
+<div class="map-status-sub">Ultima posizione: ${timeSince(lastUpdate)}</div></div></div>`;
+if(ns&&ns.lat&&livePos){
+const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
+h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><div style="flex:1">
+<div class="map-next-label">Prossima tappa</div><div class="map-next-name">${ns.name}</div>
+<div class="map-next-dist">~${d<1?(d*1000).toFixed(0)+' m':d.toFixed(1)+' km'} in linea d'aria</div></div></div>`}
+}else{
+h+=`<div class="map-status"><div class="map-status-dot" style="background:#556"></div>
+<div class="map-status-text"><div class="map-status-title">In attesa della posizione...</div>
+<div class="map-status-sub">${isAdmin?"Attiva il tracking GPS qui sopra":"La posizione si aggiornerà quando Daniele e Angela la condividono"}</div></div></div>`}
+
+if(livePos){h+=`<button class="admin-btn admin-btn-secondary" style="margin-top:8px" onclick="centerOnMe()">🎯 Centra sulla posizione</button>`}
+h+='</div>'}
+
+// ======= CHECKLIST TAB =======
+if(tab==="checklist"){
+h+='<div class="content">';
+DAYS.forEach((day,di)=>{
+const isOpen=openDay===di,prog=dayProg(di),complete=isDayDone(di);
+const doneN=day.stops.filter((_,si)=>checks[di+"-"+si]).length;
+h+=`<div class="day" style="background:${isOpen?'#131f2e':'#111c29'};border:1px solid ${complete?day.color+'20':'#1a2535'}">`;
+h+=`<div class="day-head" onclick="toggleDay(${di})" style="background:${complete?day.color+'08':'transparent'}">
+<div class="day-emoji" style="background:${complete?day.color:day.color+'20'}">${complete?"✅":day.emoji}</div>
+<div class="day-info"><div><span class="day-tag" style="color:${day.color}">G${day.day}</span><span class="day-region">${day.region}</span></div>
+<div class="day-title">${day.title}</div><div class="day-km">${day.km} · ${day.drive}</div></div>
+<div class="day-prog">${ring(32,3,prog,day.color)}<span class="day-prog-txt">${doneN}/${day.stops.length}</span></div>
+<div class="day-arrow ${isOpen?'open':''}">▾</div></div>`;
+if(isOpen){h+='<div class="day-body">';
+day.stops.forEach((stop,si)=>{
+const ck=!!checks[di+"-"+si],exp=openStop===di+"-"+si;
+h+=`<div class="stop" style="background:${ck?day.color+'0a':'#0d1520'};border:1px solid ${ck?day.color+'25':'#162030'}">
+<div class="stop-row">`;
+if(isAdmin){h+=`<div class="check ${ck?'on':''}" style="--c:${day.color}" onclick="event.stopPropagation();toggleCheck(${di},${si})">${ck?"✓":""}</div>`}
+else{h+=`<div class="check ${ck?'on':''} readonly" style="--c:${day.color}">${ck?"✓":""}</div>`}
+h+=`<div class="stop-text" onclick="toggleStop('${di}-${si}')">
+<div class="stop-name ${ck?'done':''}" style="color:${ck?'#7a9aaa':'#ccd'}">${stop.name}</div>
+${!exp?`<div class="stop-preview">${stop.desc.slice(0,55)}...</div>`:""}</div>
+<a href="${stop.map}" target="_blank" rel="noopener" class="maps-btn" style="color:${day.color};border:1px solid ${day.color}35" onclick="event.stopPropagation()">📍</a></div>`;
+if(exp){h+=`<div class="stop-detail"><p class="stop-desc">${stop.desc}</p>`;
+if(stop.tip){if(stop.warn)h+=`<div class="warn-tip">⚠️ ${stop.tip}</div>`;else h+=`<div class="stop-tip">💡 ${stop.tip}</div>`}h+='</div>'}h+='</div>'});
+h+=`<div class="info-row">
+<div class="info-box" style="background:#c0392b0a;border-left:3px solid #c0392b30"><div class="info-label" style="color:#c0392b">🍽️ Da provare</div><div class="info-val" style="color:#8a6666">${day.food}</div></div>
+<div class="info-box" style="background:#f39c120a;border-left:3px solid #f39c1230"><div class="info-label" style="color:#f39c12">🏨 Dove dormire</div><div class="info-val" style="color:#8a7744">${day.sleep}</div></div></div>`;
+if(day.route)h+=`<a href="${day.route}" target="_blank" class="special-route" style="background:${day.color}12;border:1px solid ${day.color}25;color:${day.color}">🗺️ ${day.routeLabel} →</a>`;
+h+='</div>'}h+='</div>'});h+='</div>'}
+
+// ======= ROUTES TAB =======
+if(tab==="routes"){
+h+='<div class="content">';
+ROUTES.forEach(r=>{h+=`<a href="${r.url}" target="_blank" class="route-card" style="background:linear-gradient(135deg,${r.color}18,${r.color}08);border:1px solid ${r.color}30"><div class="route-icon" style="background:${r.color}20">${r.icon}</div><div style="flex:1"><div class="route-label">${r.label}</div><div class="route-sub">${r.sub}</div></div><div class="route-arrow" style="color:${r.color}">→</div></a>`});
+h+='<div class="pins-section"><p style="font-size:10px;text-transform:uppercase;letter-spacing:3px;color:#445;margin-bottom:12px">Tutti i luoghi</p>';
+DAYS.forEach((day,di)=>{h+=`<div class="pins-day-label" style="color:${day.color}">G${day.day} — ${day.region}</div><div class="pins-wrap">`;
+day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+=`<a href="${s.map}" target="_blank" class="pin" style="background:${ck?day.color+'20':'#151f2e'};border:1px solid ${ck?day.color+'40':'#1e2d3d'};color:${ck?'#8cb4cc':'#7a8a9a'}">📍 ${s.name}${ck?" ✓":""}</a>`});h+='</div>'});h+='</div></div>'}
+
+// ======= EXPENSES TAB (admin only) =======
+if(tab==="expenses"&&isAdmin){
+h+='<div class="content">';
+const totalExp=expenses.reduce((a,e)=>a+e.amount,0);
+const catTotals={};CATS.forEach(c=>catTotals[c.id]=0);expenses.forEach(e=>catTotals[e.cat]=(catTotals[e.cat]||0)+e.amount);
+h+=`<div class="exp-summary"><div class="exp-total"><div class="exp-total-num">€ ${totalExp.toFixed(2)}</div><div class="exp-total-label">Spesa totale</div><div class="exp-total-pp">€ ${(totalExp/2).toFixed(2)} a testa</div></div>`;
+CATS.forEach(c=>{if(catTotals[c.id]>0)h+=`<div class="exp-cat-card"><div class="exp-cat-icon" style="background:${c.color}15">${c.emoji}</div><div><div class="exp-cat-name">${c.name}</div><div class="exp-cat-val">€ ${catTotals[c.id].toFixed(2)}</div></div></div>`});
+h+='</div>';
+h+=`<div class="exp-add-bar"><div style="font-size:11px;font-weight:700;color:#5a8fa8;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">+ Aggiungi spesa</div>
+<div class="exp-add-row"><input class="exp-input exp-input-desc" id="exp-desc" type="text" placeholder="Descrizione..." autocomplete="off"><input class="exp-input exp-input-amount" id="exp-amount" type="number" inputmode="decimal" placeholder="€" step="0.01" min="0"></div>
+<div class="exp-cats">${CATS.map(c=>`<button class="exp-cat-btn ${expCat===c.id?'active':''}" style="--c:${c.color}" onclick="setExpCat('${c.id}')">${c.emoji} ${c.name}</button>`).join("")}</div>
+<div class="exp-day-select"><button class="exp-day-btn ${expDay===0?'active':''}" onclick="setExpDay(0)">Gen</button>${DAYS.map((d,i)=>`<button class="exp-day-btn ${expDay===i+1?'active':''}" onclick="setExpDay(${i+1})">G${d.day}</button>`).join("")}</div>
+<button class="exp-submit" onclick="addExpense()">Aggiungi</button></div>`;
+h+='<div class="exp-filter">';h+=`<button class="exp-filter-btn ${expFilter==='all'?'active':''}" onclick="setExpFilter('all')">Tutte</button>`;
+DAYS.forEach((d,i)=>{const dt=expenses.filter(e=>e.day===i+1).reduce((a,e)=>a+e.amount,0);if(dt>0)h+=`<button class="exp-filter-btn ${expFilter===i+1?'active':''}" onclick="setExpFilter(${i+1})">G${d.day} €${dt.toFixed(0)}</button>`});
+CATS.forEach(c=>{if(catTotals[c.id]>0)h+=`<button class="exp-filter-btn ${expFilter===c.id?'active':''}" onclick="setExpFilter('${c.id}')">${c.emoji} €${catTotals[c.id].toFixed(0)}</button>`});h+='</div>';
+const filtered=expenses.filter(e=>{if(expFilter==='all')return true;if(typeof expFilter==='number')return e.day===expFilter;return e.cat===expFilter}).sort((a,b)=>b.ts-a.ts);
+if(!filtered.length)h+='<div class="exp-empty">Nessuna spesa ancora.</div>';
+else{h+='<div class="exp-list">';filtered.forEach(e=>{const cat=CATS.find(c=>c.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
+h+=`<div class="exp-item"><div class="exp-item-icon">${cat.emoji}</div><div class="exp-item-info"><div class="exp-item-name">${e.desc||cat.name}</div><div class="exp-item-meta">${e.day>0?'G'+e.day:'Gen'} · ${cat.name}</div></div><div class="exp-item-amount">€ ${e.amount.toFixed(2)}</div><button class="exp-item-del" onclick="deleteExpense(${ri})">✕</button></div>`});h+='</div>'}
+if(expenses.length>0)h+=`<div style="text-align:center;margin-top:16px"><button style="background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit" onclick="clearExpenses()">🗑 Cancella tutte</button></div>`;
+h+='</div>'}
+
+// Admin badge
+if(isAdmin)h+=`<button class="reset-btn" onclick="logout()" title="Esci da admin">🔓</button>`;
+
+document.getElementById("app").innerHTML=h;
+
+// Init map after DOM render
+if(tab==="map")setTimeout(()=>{initMap();updateMapMarker()},50);
+}
+
+// ============ ACTIONS ============
+function switchTab(t){tab=t;openDay=null;openStop=null;render();window.scrollTo(0,0)}
+function toggleDay(di){openDay=openDay===di?null:di;openStop=null;render()}
+function toggleStop(key){openStop=openStop===key?null:key;render()}
+function toggleCheck(di,si){if(!isAdmin)return;const k=di+"-"+si;checks[k]=!checks[k];if(!checks[k])delete checks[k];saveChecks();render()}
+function checkPin(val){if(val.length===4){if(val===ADMIN_PIN){isAdmin=true;showPinModal=false;pinError="";saveAdmin();render();initFirebase()}else{pinError="PIN errato";render();setTimeout(()=>{const el=document.getElementById('pin-input');if(el){el.value='';el.focus()}},100)}}}
+function skipPin(){isAdmin=false;showPinModal=false;saveAdmin();render();initFirebase()}
+function logout(){isAdmin=false;showPinModal=true;stopTracking();saveAdmin();tab="map";render()}
+function setExpCat(c){expCat=c;render()}
+function setExpDay(d){expDay=d;render()}
+function setExpFilter(f){expFilter=f;render()}
+function addExpense(){const de=document.getElementById("exp-desc"),ae=document.getElementById("exp-amount"),amt=parseFloat(ae.value);if(!amt||amt<=0){ae.focus();return}expenses.push({desc:de.value.trim()||CATS.find(c=>c.id===expCat).name,amount:amt,cat:expCat,day:expDay,ts:Date.now()});saveExpenses();expCat="food";expDay=0;render()}
+function deleteExpense(i){expenses.splice(i,1);saveExpenses();render()}
+function clearExpenses(){if(confirm("Cancellare tutte le spese?")){expenses=[];saveExpenses();render()}}
+
+// ============ INIT ============
+loadLocal();
+render();
+initFirebase();
+</script>
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  📖 GUIDA CONFIGURAZIONE FIREBASE (10 minuti)              ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  1. Vai su https://console.firebase.google.com               ║
+║  2. Clicca "Aggiungi progetto" → nome: "alpi-trip"           ║
+║  3. Disattiva Google Analytics (non serve) → Crea progetto   ║
+║  4. Nel menu a sinistra: "Realtime Database" → "Crea DB"     ║
+║  5. Scegli "europe-west1" → "Avvia in modalità test"         ║
+║  6. Clicca l'ingranaggio ⚙️ → "Impostazioni progetto"       ║
+║  7. Scorri in basso → "App web" → icona </>                 ║
+║  8. Nome: "alpi-trip-web" → Registra app                    ║
+║  9. Copia i valori di firebaseConfig nel codice sopra        ║
+║                                                              ║
+║  PER METTERE ONLINE (GitHub Pages):                         ║
+║  1. Crea account su github.com                              ║
+║  2. Nuovo repository → nome: "alpi-trip"                    ║
+║  3. Carica questo file come "index.html"                    ║
+║  4. Settings → Pages → Source: main → Save                  ║
+║  5. Il sito sarà su: tuonome.github.io/alpi-trip            ║
+║                                                              ║
+║  SICUREZZA FIREBASE (prima di partire):                     ║
+║  Nel Realtime Database → Regole, imposta:                   ║
+║  {                                                           ║
+║    "rules": {                                                ║
+║      "trip": {                                               ║
+║        ".read": true,                                        ║
+║        ".write": true                                        ║
+║      }                                                       ║
+║    }                                                         ║
+║  }                                                           ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+</body>
+</html>
