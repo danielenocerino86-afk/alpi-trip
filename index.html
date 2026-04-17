@@ -15,7 +15,6 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- 🔥 FIREBASE: Sostituisci con le TUE credenziali (vedi guida in fondo) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
@@ -23,8 +22,6 @@
 html{background:#0d1520}
 body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;overflow-x:hidden}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2a3a4a;border-radius:3px}
-
-/* Hero */
 .hero{background:linear-gradient(170deg,#0d1520,#142233 50%,#1a3a4a);padding:max(env(safe-area-inset-top),20px) 20px 28px;text-align:center;position:relative}
 .hero::before{content:'';position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px),radial-gradient(circle at 80% 20%,#fff 1px,transparent 1px);background-size:80px 80px,120px 120px}
 .hero-inner{position:relative}
@@ -44,15 +41,11 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:#48C9B0;background:rgba(72,201,176,.08);padding:4px 12px;border-radius:20px}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* Tabs */
 .tabs{display:flex;background:#111c29;border-bottom:1px solid #1a2a3a;position:sticky;top:0;z-index:1000}
 .tab{flex:1;padding:11px 0;border:none;background:transparent;color:#556;font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit}
 .tab.active{color:#fff;font-weight:700;border-bottom-color:#2E86AB}
 .tab.hidden{display:none}
 .content{padding:12px 12px 80px}
-
-/* Map */
 #map-container{width:100%;height:55vh;min-height:300px;background:#0a1018;position:relative}
 #map{width:100%;height:100%}
 .map-info{padding:12px}
@@ -66,8 +59,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .map-next-label{font-size:10px;color:#0984E3;font-weight:600;text-transform:uppercase;letter-spacing:1px}
 .map-next-name{font-size:14px;font-weight:700;color:#dde}
 .map-next-dist{font-size:11px;color:#556}
-
-/* Admin controls */
 .admin-bar{background:#1a2535;border:1px solid #2a3a4a;border-radius:12px;padding:12px;margin:8px 12px}
 .admin-btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
 .admin-btn:active{opacity:.7}
@@ -77,8 +68,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .admin-tracking{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;background:rgba(72,201,176,.05);border-radius:8px;margin-top:6px}
 .admin-tracking-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 1.5s infinite}
 .admin-tracking-text{font-size:11px;color:#48C9B0;font-weight:600}
-
-/* PIN modal */
 .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
 .pin-box{background:#111c29;border:1px solid #2a3a4a;border-radius:20px;padding:32px 24px;text-align:center;width:100%;max-width:320px}
 .pin-box h2{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:6px}
@@ -86,9 +75,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .pin-input{width:100%;padding:14px;border-radius:12px;border:2px solid #2a3a4a;background:#0d1520;color:#fff;font-size:24px;text-align:center;letter-spacing:12px;font-family:inherit;outline:none}
 .pin-input:focus{border-color:#2E86AB}
 .pin-error{color:#e74c3c;font-size:11px;margin-top:8px;min-height:16px}
-.pin-skip{margin-top:16px;background:none;border:none;color:#556;font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit}
-
-/* Routes */
 .route-card{display:flex;align-items:center;gap:14px;padding:16px 18px;margin-bottom:10px;border-radius:14px;text-decoration:none}
 .route-icon{font-size:28px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .route-label{font-size:15px;font-weight:700;color:#e8e8e8}
@@ -98,8 +84,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .pins-day-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
 .pins-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
 .pin{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;text-decoration:none;font-size:12px;font-weight:500;transition:all .2s}
-
-/* Day cards */
 .day{margin-bottom:8px;border-radius:14px;overflow:hidden;transition:all .3s}
 .day-head{padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
 .day-emoji{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:background .3s}
@@ -131,8 +115,6 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .info-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .info-val{font-size:11px;line-height:1.5;margin-top:2px}
 .special-route{display:block;margin-top:10px;padding:11px 14px;border-radius:10px;text-decoration:none;text-align:center;font-size:12px;font-weight:700}
-
-/* Expenses (admin only) */
 .exp-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
 .exp-total{grid-column:1/-1;background:linear-gradient(135deg,#1a2a3a,#142233);border:1px solid #2a3a4a;border-radius:14px;padding:18px;text-align:center}
 .exp-total-num{font-size:32px;font-weight:700;color:#fff}
@@ -171,12 +153,9 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .exp-filter-btn.active{border-color:#2E86AB;color:#fff;background:rgba(46,134,171,.15)}
 .exp-empty{text-align:center;padding:40px 20px;color:#334;font-size:13px}
 .exp-clear button{background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:16px}
-
 .reset-btn{position:fixed;bottom:max(16px,env(safe-area-inset-bottom,16px));right:16px;width:44px;height:44px;border-radius:22px;background:#1a2535;border:1px solid #2a3a4a;color:#556;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:20}
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 .ring{flex-shrink:0}.ring-bg{fill:none;stroke:rgba(255,255,255,.1)}.ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
-
-/* Leaflet overrides */
 .leaflet-container{background:#0a1018!important}
 .custom-marker{background:none;border:none}
 .marker-pin{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
@@ -188,13 +167,8 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 <div id="app"></div>
 
 <script>
-// =============================================
-// 🔧 CONFIGURAZIONE — MODIFICA QUESTE RIGHE
-// =============================================
-const ADMIN_PIN = "2026";  // Cambia con il PIN che preferisci
+const ADMIN_PIN = "2026";
 
-// 🔥 FIREBASE CONFIG — Sostituisci con i tuoi dati
-// Segui la guida in fondo al file per ottenere questi valori
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAzBhxPJyyQNum773cBgBfZmV_FVECoOzY",
   authDomain: "viaggio2026-6053f.firebaseapp.com",
@@ -205,7 +179,6 @@ const FIREBASE_CONFIG = {
   appId: "1:446199022338:web:c45d5062a9f5cf7b7e381b",
   measurementId: "G-4Y01L13W7Z"
 };
-// =============================================
 
 let firebaseReady = false;
 let dbRef = null;
@@ -215,7 +188,6 @@ try {
   firebaseReady = true;
 } catch(e) { console.warn("Firebase non configurato:", e); }
 
-// ============ DATA ============
 const ALL_STOPS = [];
 const DAYS=[
 {day:1,title:"Napoli → Scanno / Roccaraso",region:"Abruzzo",km:"~200 km",drive:"~2,5h",color:"#2E86AB",emoji:"🏔️",route:null,routeLabel:"",stops:[
@@ -261,7 +233,6 @@ route:"https://www.google.com/maps/dir/Dobbiaco/Lago+di+Tenno/Cascate+del+Varone
 {name:"Parma",lat:44.8015,lng:10.3279,map:"https://maps.google.com/?q=Parma,+Italy",desc:"Parmigiano, Prosciutto, Culatello. Duomo col Battistero in marmo rosa.",tip:"Caseifici con visite il sabato mattina"}],food:"Parmigiano, Prosciutto di Parma, tortelli",sleep:"Casa — Napoli! 🏠"}
 ];
 
-// Build flat stop list with coords for map
 DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>ALL_STOPS.push({...s,di,si,dayColor:d.color,dayNum:d.day})));
 
 const ROUTES=[
@@ -273,7 +244,6 @@ const ROUTES=[
 
 const CATS=[{id:"fuel",name:"Carburante",emoji:"⛽",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"🛣️",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"🏨",color:"#2E86AB"},{id:"food",name:"Cibo",emoji:"🍽️",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"🎫",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"📦",color:"#556"}];
 
-// Route polyline coords (simplified)
 const ROUTE_LINE = [
 [40.8518,14.2681],[41.9047,13.8810],[42.4382,13.5628],[42.8282,13.2074],
 [44.2219,11.7744],[44.4949,11.3426],[46.4767,11.7703],[46.4872,11.8128],
@@ -281,18 +251,16 @@ const ROUTE_LINE = [
 [46.6940,12.0855],[46.7184,12.1750],[46.6190,12.3020],[45.9345,10.8197],
 [45.8860,10.8413],[44.8015,10.3279],[40.8518,14.2681]];
 
-// ============ STATE ============
 let isAdmin=false, showPinModal=true, pinError="";
 let checks={},expenses=[],openDay=null,openStop=null,tab="map";
 let expCat="food",expDay=0,expFilter="all";
 let livePos=null, lastUpdate=null, gpsWatchId=null, isTracking=false;
 let leafletMap=null, posMarker=null, routeLine=null;
 
-// Storage
 function loadLocal(){
   try{const d=localStorage.getItem("alpi-v6-checks");if(d)checks=JSON.parse(d)}catch{}
   try{const d=localStorage.getItem("alpi-v6-expenses");if(d)expenses=JSON.parse(d)}catch{}
-  try{const d=localStorage.getItem("alpi-v6-admin");if(d==="true"){isAdmin=true;showPinModal=false}}catch{}
+  try{const d=localStorage.getItem("alpi-v6-admin");if(d==="true"){isAdmin=true;showPinModal=false}else if(d==="false"){isAdmin=false;showPinModal=false}}catch{}
 }
 function saveChecks(){
   try{localStorage.setItem("alpi-v6-checks",JSON.stringify(checks))}catch{}
@@ -301,22 +269,18 @@ function saveChecks(){
 function saveExpenses(){try{localStorage.setItem("alpi-v6-expenses",JSON.stringify(expenses))}catch{}}
 function saveAdmin(){try{localStorage.setItem("alpi-v6-admin",isAdmin?"true":"false")}catch{}}
 
-// Firebase listeners
 function initFirebase(){
   if(!firebaseReady)return;
-  // Listen for position updates
   dbRef.child('position').on('value',snap=>{
     const val=snap.val();
-    if(val){livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;updateMapMarker()}
+    if(val){livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;updateMapMarker();render()}
   });
-  // Listen for check updates
   dbRef.child('checks').on('value',snap=>{
     const val=snap.val();
     if(val&&!isAdmin){checks=val;render()}
   });
 }
 
-// GPS
 function startTracking(){
   if(!navigator.geolocation)return;
   isTracking=true;
@@ -324,8 +288,7 @@ function startTracking(){
     livePos={lat:pos.coords.latitude,lng:pos.coords.longitude};
     lastUpdate=Date.now();
     if(firebaseReady)dbRef.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});
-    updateMapMarker();
-    render();
+    updateMapMarker();render();
   },err=>{console.warn("GPS error",err)},{enableHighAccuracy:true,maximumAge:10000,timeout:15000});
   render();
 }
@@ -342,22 +305,18 @@ function sendPositionOnce(){
   },err=>alert("Errore GPS: "+err.message),{enableHighAccuracy:true,timeout:10000});
 }
 
-// Map
 function initMap(){
   if(leafletMap)return;
   leafletMap=L.map('map',{zoomControl:false,attributionControl:false}).setView([44.5,12.0],6);
   L.control.zoom({position:'topright'}).addTo(leafletMap);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
-  // Route line
   routeLine=L.polyline(ROUTE_LINE,{color:'#2E86AB',weight:3,opacity:.4,dashArray:'8,8'}).addTo(leafletMap);
-  // Stop markers
   ALL_STOPS.forEach(s=>{
     if(!s.lat)return;
     const done=!!checks[s.di+"-"+s.si];
     const icon=L.divIcon({className:'custom-marker',html:`<div class="marker-pin" style="background:${done?s.dayColor:s.dayColor+'40'};border-color:${done?'#fff':s.dayColor}">${done?'✓':s.dayNum}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
     L.marker([s.lat,s.lng],{icon}).addTo(leafletMap).bindPopup(`<b>${s.name}</b><br><span style="font-size:11px;color:#666">${s.desc.slice(0,80)}...</span><br><a href="${s.map}" target="_blank" style="font-size:11px">📍 Apri in Google Maps</a>`);
   });
-  // Fit bounds
   leafletMap.fitBounds(routeLine.getBounds().pad(0.1));
 }
 function updateMapMarker(){
@@ -365,15 +324,10 @@ function updateMapMarker(){
   if(!posMarker){
     const icon=L.divIcon({className:'custom-marker',html:'<div class="marker-you"></div>',iconSize:[18,18],iconAnchor:[9,9]});
     posMarker=L.marker([livePos.lat,livePos.lng],{icon,zIndexOffset:1000}).addTo(leafletMap);
-  }else{
-    posMarker.setLatLng([livePos.lat,livePos.lng]);
-  }
+  }else{posMarker.setLatLng([livePos.lat,livePos.lng])}
 }
-function centerOnMe(){
-  if(leafletMap&&livePos)leafletMap.setView([livePos.lat,livePos.lng],13,{animate:true});
-}
+function centerOnMe(){if(leafletMap&&livePos)leafletMap.setView([livePos.lat,livePos.lng],13,{animate:true})}
 
-// Helpers
 function ring(sz,sw,pct,col){const r=(sz-sw)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}" class="ring" style="transform:rotate(-90deg)"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-bg" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-fg" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}"/></svg>`}
 function totalDone(){return Object.values(checks).filter(Boolean).length}
 function totalStops(){return DAYS.reduce((a,d)=>a+d.stops.length,0)}
@@ -383,25 +337,28 @@ function timeSince(ts){if(!ts)return"";const s=Math.floor((Date.now()-ts)/1000);
 function distKm(lat1,lng1,lat2,lng2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180,a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 function nextStop(){for(let di=0;di<DAYS.length;di++)for(let si=0;si<DAYS[di].stops.length;si++)if(!checks[di+"-"+si])return{...DAYS[di].stops[si],di,si,dayColor:DAYS[di].color};return null}
 
-// ============ RENDER ============
 function render(){
 const done=totalDone(),tot=totalStops(),pct=tot?done/tot:0;
 const ns=nextStop();
 let h="";
 
-// PIN MODAL
+// WELCOME SCREEN
 if(showPinModal){
 h+=`<div class="pin-overlay"><div class="pin-box">
-<h2>🏔️ Benvenuto!</h2>
-<p>Inserisci il PIN per la modalità viaggiatore,<br>oppure continua come spettatore</p>
-<input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="• • • •" oninput="checkPin(this.value)" autocomplete="off">
+<div style="font-size:48px;margin-bottom:12px">🏔️</div>
+<h2>Daniele & Angela</h2>
+<p style="font-size:14px;color:#48C9B0;margin-bottom:4px;font-weight:600">Alpi & Appennini — Agosto 2026</p>
+<p style="margin-bottom:24px">Segui il nostro road trip in tempo reale!<br>8 giorni, 2.080 km, da Napoli alle Dolomiti</p>
+<button onclick="skipPin()" style="width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#48C9B0,#1ABC9C);color:#0d1520;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">Segui il viaggio in diretta →</button>
+<div style="border-top:1px solid #1e2d3d;padding-top:14px;margin-top:4px">
+<p style="font-size:10px;color:#445;margin-bottom:8px">Sei Daniele o Angela? Inserisci il PIN</p>
+<input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="• • • •" oninput="checkPin(this.value)" autocomplete="off" style="max-width:160px;font-size:18px;padding:10px;letter-spacing:8px">
 <div class="pin-error">${pinError}</div>
-<button class="pin-skip" onclick="skipPin()">Continua come spettatore →</button>
+</div>
 </div></div>`;
 document.getElementById("app").innerHTML=h;return;
 }
 
-// HERO
 h+=`<div class="hero"><div class="hero-inner">
 <p class="label">Road Trip • Agosto 2026</p>
 <h1>Alpi &amp; Appennini</h1>
@@ -417,7 +374,6 @@ ${pct===1?'<div class="badge">🎉 VIAGGIO COMPLETATO!</div>':""}
 ${livePos?`<div class="live-badge"><div class="live-dot"></div>In viaggio · agg. ${timeSince(lastUpdate)}</div>`:""}
 </div></div>`;
 
-// TABS
 h+=`<div class="tabs">
 <button class="tab ${tab==="map"?"active":""}" onclick="switchTab('map')">📍 Mappa</button>
 <button class="tab ${tab==="checklist"?"active":""}" onclick="switchTab('checklist')">📋 Tappe</button>
@@ -425,12 +381,8 @@ h+=`<div class="tabs">
 ${isAdmin?`<button class="tab ${tab==="expenses"?"active":""}" onclick="switchTab('expenses')">💰 Spese</button>`:""}
 </div>`;
 
-// ======= MAP TAB =======
 if(tab==="map"){
-h+='<div id="map-container"><div id="map"></div></div>';
-h+='<div class="map-info">';
-
-// Admin controls
+h+='<div id="map-container"><div id="map"></div></div><div class="map-info">';
 if(isAdmin){
 h+=`<div class="admin-bar">
 <button class="admin-btn admin-btn-primary" onclick="${isTracking?'stopTracking()':'startTracking()'}">
@@ -439,14 +391,11 @@ ${isTracking?'⏹ Ferma tracking':'📡 Attiva tracking GPS'}</button>
 ${isTracking?`<div class="admin-tracking"><div class="admin-tracking-dot"></div><span class="admin-tracking-text">GPS attivo — posizione condivisa in tempo reale</span></div>`:""}
 ${livePos?`<div class="admin-gps-status">${livePos.lat.toFixed(4)}, ${livePos.lng.toFixed(4)} · ${timeSince(lastUpdate)}</div>`:""}
 </div>`}
-
-// Position status
 if(livePos){
 h+=`<div class="map-status"><div class="map-status-dot" style="background:#48C9B0;animation:pulse 2s infinite"></div>
 <div class="map-status-text"><div class="map-status-title">📍 Daniele & Angela sono in viaggio!</div>
 <div class="map-status-sub">Ultima posizione: ${timeSince(lastUpdate)}</div></div></div>`;
-if(ns&&ns.lat&&livePos){
-const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
+if(ns&&ns.lat&&livePos){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
 h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><div style="flex:1">
 <div class="map-next-label">Prossima tappa</div><div class="map-next-name">${ns.name}</div>
 <div class="map-next-dist">~${d<1?(d*1000).toFixed(0)+' m':d.toFixed(1)+' km'} in linea d'aria</div></div></div>`}
@@ -454,11 +403,9 @@ h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><
 h+=`<div class="map-status"><div class="map-status-dot" style="background:#556"></div>
 <div class="map-status-text"><div class="map-status-title">In attesa della posizione...</div>
 <div class="map-status-sub">${isAdmin?"Attiva il tracking GPS qui sopra":"La posizione si aggiornerà quando Daniele e Angela la condividono"}</div></div></div>`}
-
 if(livePos){h+=`<button class="admin-btn admin-btn-secondary" style="margin-top:8px" onclick="centerOnMe()">🎯 Centra sulla posizione</button>`}
 h+='</div>'}
 
-// ======= CHECKLIST TAB =======
 if(tab==="checklist"){
 h+='<div class="content">';
 DAYS.forEach((day,di)=>{
@@ -490,7 +437,6 @@ h+=`<div class="info-row">
 if(day.route)h+=`<a href="${day.route}" target="_blank" class="special-route" style="background:${day.color}12;border:1px solid ${day.color}25;color:${day.color}">🗺️ ${day.routeLabel} →</a>`;
 h+='</div>'}h+='</div>'});h+='</div>'}
 
-// ======= ROUTES TAB =======
 if(tab==="routes"){
 h+='<div class="content">';
 ROUTES.forEach(r=>{h+=`<a href="${r.url}" target="_blank" class="route-card" style="background:linear-gradient(135deg,${r.color}18,${r.color}08);border:1px solid ${r.color}30"><div class="route-icon" style="background:${r.color}20">${r.icon}</div><div style="flex:1"><div class="route-label">${r.label}</div><div class="route-sub">${r.sub}</div></div><div class="route-arrow" style="color:${r.color}">→</div></a>`});
@@ -498,7 +444,6 @@ h+='<div class="pins-section"><p style="font-size:10px;text-transform:uppercase;
 DAYS.forEach((day,di)=>{h+=`<div class="pins-day-label" style="color:${day.color}">G${day.day} — ${day.region}</div><div class="pins-wrap">`;
 day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+=`<a href="${s.map}" target="_blank" class="pin" style="background:${ck?day.color+'20':'#151f2e'};border:1px solid ${ck?day.color+'40':'#1e2d3d'};color:${ck?'#8cb4cc':'#7a8a9a'}">📍 ${s.name}${ck?" ✓":""}</a>`});h+='</div>'});h+='</div></div>'}
 
-// ======= EXPENSES TAB (admin only) =======
 if(tab==="expenses"&&isAdmin){
 h+='<div class="content">';
 const totalExp=expenses.reduce((a,e)=>a+e.amount,0);
@@ -521,16 +466,12 @@ h+=`<div class="exp-item"><div class="exp-item-icon">${cat.emoji}</div><div clas
 if(expenses.length>0)h+=`<div style="text-align:center;margin-top:16px"><button style="background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit" onclick="clearExpenses()">🗑 Cancella tutte</button></div>`;
 h+='</div>'}
 
-// Admin badge
 if(isAdmin)h+=`<button class="reset-btn" onclick="logout()" title="Esci da admin">🔓</button>`;
 
 document.getElementById("app").innerHTML=h;
-
-// Init map after DOM render
 if(tab==="map")setTimeout(()=>{initMap();updateMapMarker()},50);
 }
 
-// ============ ACTIONS ============
 function switchTab(t){tab=t;openDay=null;openStop=null;render();window.scrollTo(0,0)}
 function toggleDay(di){openDay=openDay===di?null:di;openStop=null;render()}
 function toggleStop(key){openStop=openStop===key?null:key;render()}
@@ -545,46 +486,9 @@ function addExpense(){const de=document.getElementById("exp-desc"),ae=document.g
 function deleteExpense(i){expenses.splice(i,1);saveExpenses();render()}
 function clearExpenses(){if(confirm("Cancellare tutte le spese?")){expenses=[];saveExpenses();render()}}
 
-// ============ INIT ============
 loadLocal();
 render();
 initFirebase();
 </script>
-
-<!--
-╔══════════════════════════════════════════════════════════════╗
-║  📖 GUIDA CONFIGURAZIONE FIREBASE (10 minuti)              ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  1. Vai su https://console.firebase.google.com               ║
-║  2. Clicca "Aggiungi progetto" → nome: "alpi-trip"           ║
-║  3. Disattiva Google Analytics (non serve) → Crea progetto   ║
-║  4. Nel menu a sinistra: "Realtime Database" → "Crea DB"     ║
-║  5. Scegli "europe-west1" → "Avvia in modalità test"         ║
-║  6. Clicca l'ingranaggio ⚙️ → "Impostazioni progetto"       ║
-║  7. Scorri in basso → "App web" → icona </>                 ║
-║  8. Nome: "alpi-trip-web" → Registra app                    ║
-║  9. Copia i valori di firebaseConfig nel codice sopra        ║
-║                                                              ║
-║  PER METTERE ONLINE (GitHub Pages):                         ║
-║  1. Crea account su github.com                              ║
-║  2. Nuovo repository → nome: "alpi-trip"                    ║
-║  3. Carica questo file come "index.html"                    ║
-║  4. Settings → Pages → Source: main → Save                  ║
-║  5. Il sito sarà su: tuonome.github.io/alpi-trip            ║
-║                                                              ║
-║  SICUREZZA FIREBASE (prima di partire):                     ║
-║  Nel Realtime Database → Regole, imposta:                   ║
-║  {                                                           ║
-║    "rules": {                                                ║
-║      "trip": {                                               ║
-║        ".read": true,                                        ║
-║        ".write": true                                        ║
-║      }                                                       ║
-║    }                                                         ║
-║  }                                                           ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
--->
 </body>
 </html>
