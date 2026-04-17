@@ -153,6 +153,24 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;ma
 .exp-filter-btn.active{border-color:#2E86AB;color:#fff;background:rgba(46,134,171,.15)}
 .exp-empty{text-align:center;padding:40px 20px;color:#334;font-size:13px}
 .exp-clear button{background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:16px}
+.gal-upload-btns{display:flex;gap:8px;margin-bottom:14px}
+.gal-upload-btn{flex:1;background:#111c29;border:1px solid #1e2d3d;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:border-color .2s}
+.gal-upload-btn:active{border-color:#2E86AB}
+.gal-upload-btn-icon{font-size:24px;margin-bottom:4px}
+.gal-upload-btn-text{font-size:12px;color:#8ab4cc;font-weight:600}
+.gal-preview-card{background:#111c29;border:1px solid #2E86AB40;border-radius:14px;padding:14px;margin-bottom:14px;animation:fadeIn .3s ease}
+.gal-preview-img{width:100%;max-height:240px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#0a1018}
+.gal-preview-input{width:100%;background:#0d1520;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;color:#dde;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px}
+.gal-preview-input:focus{border-color:#2E86AB}
+.gal-preview-input::placeholder{color:#334}
+.gal-preview-days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.gal-preview-day{padding:5px 12px;border-radius:16px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.gal-preview-day.active{border-color:#48C9B0;color:#48C9B0;background:rgba(72,201,176,.1)}
+.gal-preview-actions{display:flex;gap:8px}
+.gal-preview-send{flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#48C9B0,#1ABC9C);color:#0d1520;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.gal-preview-send:active{opacity:.8}
+.gal-preview-cancel{padding:12px 18px;border-radius:10px;border:1px solid #2a3a4a;background:transparent;color:#556;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.gal-uploading-bar{background:rgba(46,134,171,.08);border:1px solid #2E86AB40;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px}
 .gal-upload{background:#111c29;border:2px dashed #1e2d3d;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px;cursor:pointer;transition:border-color .2s}
 .gal-upload:active{border-color:#2E86AB}
 .gal-upload-icon{font-size:32px;margin-bottom:6px}
@@ -280,6 +298,7 @@ const ROUTE_LINE = [
 let isAdmin=false, showLoginPopup=false, pinError="";
 let checks={},expenses=[],photos=[],openDay=null,openStop=null,tab="map";
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
+let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
 let livePos=null, lastUpdate=null, gpsWatchId=null, isTracking=false;
 let leafletMap=null, posMarker=null, routeLine=null;
 
@@ -299,7 +318,20 @@ function initFirebase(){
   if(!firebaseReady)return;
   dbRef.child('position').on('value',snap=>{
     const val=snap.val();
-    if(val){livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;updateMapMarker();render()}
+    if(val){
+      livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;
+      updateMapMarker();
+      // Only re-render non-map parts to avoid destroying the map
+      if(tab!=="map")render();
+      else{
+        // Update just the info section below map
+        const infoEl=document.querySelector('.map-info');
+        if(infoEl)renderMapInfo(infoEl);
+        // Update hero live badge
+        const heroEl=document.querySelector('.live-badge');
+        if(!heroEl&&livePos){render()}
+      }
+    }
   });
   dbRef.child('checks').on('value',snap=>{
     const val=snap.val();
@@ -307,9 +339,28 @@ function initFirebase(){
   });
   dbRef.child('photos').on('value',snap=>{
     const val=snap.val();
-    if(val){photos=Object.values(val).sort((a,b)=>b.ts-a.ts);render()}
-    else{photos=[];render()}
+    if(val){photos=Object.values(val).sort((a,b)=>b.ts-a.ts);if(tab==="gallery")render()}
+    else{photos=[];if(tab==="gallery")render()}
   });
+}
+
+function renderMapInfo(container){
+  const ns=nextStop();
+  let h='';
+  if(livePos){
+    h+=`<div class="map-status"><div class="map-status-dot" style="background:#48C9B0;animation:pulse 2s infinite"></div>
+    <div class="map-status-text"><div class="map-status-title">📍 Daniele & Angela sono in viaggio!</div>
+    <div class="map-status-sub">Ultima posizione: ${timeSince(lastUpdate)}</div></div></div>`;
+    if(ns&&ns.lat){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
+    h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><div style="flex:1">
+    <div class="map-next-label">Prossima tappa</div><div class="map-next-name">${ns.name}</div>
+    <div class="map-next-dist">~${d<1?(d*1000).toFixed(0)+' m':d.toFixed(1)+' km'} in linea d'aria</div></div></div>`}
+    h+=`<button class="admin-btn admin-btn-secondary" style="margin-top:8px" onclick="centerOnMe()">🎯 Centra sulla posizione</button>`;
+  }else{
+    h+=`<div class="map-status"><div class="map-status-dot" style="background:#556"></div>
+    <div class="map-status-text"><div class="map-status-title">In attesa della posizione...</div>
+    <div class="map-status-sub">La posizione si aggiornerà quando Daniele e Angela la condividono</div></div></div>`}
+  container.innerHTML=h;
 }
 
 function startTracking(){
@@ -337,8 +388,10 @@ function sendPositionOnce(){
 }
 
 function initMap(){
-  if(leafletMap)return;
-  leafletMap=L.map('map',{zoomControl:false,attributionControl:false}).setView([44.5,12.0],6);
+  if(leafletMap){leafletMap.remove();leafletMap=null;posMarker=null;routeLine=null}
+  const el=document.getElementById('map');
+  if(!el)return;
+  leafletMap=L.map(el,{zoomControl:false,attributionControl:false}).setView([44.5,12.0],6);
   L.control.zoom({position:'topright'}).addTo(leafletMap);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
   routeLine=L.polyline(ROUTE_LINE,{color:'#2E86AB',weight:3,opacity:.4,dashArray:'8,8'}).addTo(leafletMap);
@@ -349,6 +402,7 @@ function initMap(){
     L.marker([s.lat,s.lng],{icon}).addTo(leafletMap).bindPopup(`<b>${s.name}</b><br><span style="font-size:11px;color:#666">${s.desc.slice(0,80)}...</span><br><a href="${s.map}" target="_blank" style="font-size:11px">📍 Apri in Google Maps</a>`);
   });
   leafletMap.fitBounds(routeLine.getBounds().pad(0.1));
+  setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},200);
 }
 function updateMapMarker(){
   if(!leafletMap||!livePos)return;
@@ -474,13 +528,37 @@ day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+=`<a href="${s.map}" t
 
 if(tab==="gallery"){
 h+='<div class="content">';
-// Upload button (admin only)
+// Upload area (admin only)
 if(isAdmin){
-h+=`<div class="gal-upload ${uploading?'gal-uploading':''}" onclick="${uploading?'':'pickPhoto()'}">
-<input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="uploadPhoto(this.files[0])">
-${uploading?'<div class="gal-upload-icon">⏳</div><div class="gal-upload-text">Caricamento in corso...</div>'
-:'<div class="gal-upload-icon">📷</div><div class="gal-upload-text">Scatta o carica una foto</div><div class="gal-upload-sub">Tap per aprire la fotocamera</div>'}
+if(uploading){
+h+='<div class="gal-uploading-bar"><div style="font-size:32px;margin-bottom:6px">⏳</div><div style="font-size:13px;color:#2E86AB;font-weight:600">Caricamento in corso...</div></div>';
+}else if(pendingFile){
+h+=`<div class="gal-preview-card">
+<img class="gal-preview-img" src="${pendingPreview}" alt="Anteprima">
+<input class="gal-preview-input" id="photo-caption" type="text" placeholder="Aggiungi una didascalia..." value="${pendingCaption}" oninput="pendingCaption=this.value" autocomplete="off">
+<div style="font-size:10px;color:#556;margin-bottom:6px;font-weight:600">Giorno:</div>
+<div class="gal-preview-days">
+${DAYS.map(d=>`<button class="gal-preview-day ${pendingDay===d.day?'active':''}" onclick="pendingDay=${d.day};render()">G${d.day}</button>`).join("")}
+</div>
+<div class="gal-preview-actions">
+<button class="gal-preview-cancel" onclick="cancelPending()">Annulla</button>
+<button class="gal-preview-send" onclick="confirmUpload()">Pubblica foto</button>
+</div>
 </div>`;
+}else{
+h+=`<div class="gal-upload-btns">
+<input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="preparePhoto(this.files[0])">
+<input type="file" id="photo-gallery" accept="image/*" style="display:none" onchange="preparePhoto(this.files[0])">
+<div class="gal-upload-btn" onclick="document.getElementById('photo-camera').click()">
+<div class="gal-upload-btn-icon">📷</div>
+<div class="gal-upload-btn-text">Scatta foto</div>
+</div>
+<div class="gal-upload-btn" onclick="document.getElementById('photo-gallery').click()">
+<div class="gal-upload-btn-icon">🖼️</div>
+<div class="gal-upload-btn-text">Dalla galleria</div>
+</div>
+</div>`;
+}
 }
 // Day filter
 const photoDays=[...new Set(photos.map(p=>p.day))].sort();
@@ -503,6 +581,7 @@ h+=`<div class="gal-thumb" onclick="openLightbox(${globalIdx})">
 <img src="${p.thumb||p.url}" alt="${p.caption||'Foto G'+p.day}" loading="lazy">
 <div class="gal-thumb-day">G${p.day}</div>
 ${isAdmin?`<button class="gal-thumb-del" onclick="event.stopPropagation();deletePhoto('${p.id}')">✕</button>`:''}
+${p.caption?`<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:9px;color:#ddd;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${p.caption}</div>`:''}
 </div>`;
 });
 h+='</div>';
@@ -571,7 +650,7 @@ function clearExpenses(){if(confirm("Cancellare tutte le spese?")){expenses=[];s
 
 // Gallery functions
 function setGalFilter(f){galFilter=f;render()}
-function pickPhoto(){document.getElementById('photo-input').click()}
+function pickPhoto(){document.getElementById('photo-gallery').click()}
 function openLightbox(idx){lightboxIdx=idx;render()}
 function closeLightbox(){lightboxIdx=-1;render()}
 function navLightbox(dir){
@@ -588,12 +667,29 @@ function guessDay(){
   return 1;
 }
 
-async function uploadPhoto(file){
-  if(!file||uploading)return;
+function preparePhoto(file){
+  if(!file)return;
+  pendingFile=file;
+  pendingCaption="";
+  pendingDay=guessDay();
+  const reader=new FileReader();
+  reader.onload=function(e){pendingPreview=e.target.result;render()};
+  reader.readAsDataURL(file);
+}
+
+function cancelPending(){
+  pendingFile=null;pendingPreview=null;pendingCaption="";pendingDay=0;
+  render();
+}
+
+async function confirmUpload(){
+  if(!pendingFile||uploading)return;
+  // Grab caption from input before render wipes it
+  const capEl=document.getElementById('photo-caption');
+  if(capEl)pendingCaption=capEl.value;
   uploading=true;render();
   try{
-    // Resize image before upload
-    const resized=await resizeImage(file,1200);
+    const resized=await resizeImage(pendingFile,1200);
     const fd=new FormData();
     fd.append('image',resized);
     const resp=await fetch('https://api.imgur.com/3/image',{
@@ -607,8 +703,8 @@ async function uploadPhoto(file){
         id:'p'+Date.now(),
         url:data.data.link,
         thumb:data.data.link.replace(/(\.\w+)$/,'m$1'),
-        day:guessDay(),
-        caption:'',
+        day:pendingDay||guessDay(),
+        caption:pendingCaption.trim(),
         ts:Date.now()
       };
       if(firebaseReady)await dbRef.child('photos/'+photo.id).set(photo);
@@ -616,7 +712,7 @@ async function uploadPhoto(file){
     }else{alert('Errore upload: '+JSON.stringify(data.data))}
   }catch(e){alert('Errore: '+e.message)}
   uploading=false;
-  document.getElementById('photo-input').value='';
+  pendingFile=null;pendingPreview=null;pendingCaption="";pendingDay=0;
   render();
 }
 
