@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="D&A Trip">
-<meta name="theme-color" content="#0d1520">
-<meta name="description" content="Segui il viaggio di Daniele e Angela tra Alpi e Appennini!">
-<meta property="og:title" content="🏔️ Daniele & Angela — Alpi & Appennini">
-<meta property="og:description" content="Segui il nostro road trip in tempo reale! 8 giorni, 2.080 km, da Napoli alle Dolomiti.">
-<title>🏔️ Daniele & Angela — Alpi & Appennini</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
+<meta name="theme-color" content="#2D6A4F">
+<meta name="description" content="Segui il viaggio di Daniele e Angela: Abruzzo, Dolomiti e Umbria!">
+<meta property="og:title" content="Daniele & Angela — Abruzzo, Dolomiti & Umbria">
+<meta property="og:description" content="Segui il nostro road trip in tempo reale! 10 giorni, 9-18 agosto 2026.">
+<title>Daniele & Angela — Viaggio 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x26F0;</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -19,736 +19,708 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{background:#0d1520}
-body{font-family:'DM Sans',system-ui,sans-serif;background:#0d1520;color:#dde;max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;overflow-x:hidden}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#2a3a4a;border-radius:3px}
-.hero{background:linear-gradient(170deg,#0d1520,#142233 50%,#1a3a4a);padding:max(env(safe-area-inset-top),20px) 20px 28px;text-align:center;position:relative}
-.hero::before{content:'';position:absolute;inset:0;opacity:.03;background-image:radial-gradient(circle at 20% 50%,#fff 1px,transparent 1px),radial-gradient(circle at 80% 20%,#fff 1px,transparent 1px);background-size:80px 80px,120px 120px}
-.hero-inner{position:relative}
-.hero .label{font-size:10px;text-transform:uppercase;letter-spacing:4px;color:#5a8fa8;margin-bottom:6px}
-.hero h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:2px}
-.hero .names{font-size:14px;color:#48C9B0;font-weight:600;margin-bottom:4px}
-.hero .sub{font-size:12px;color:#5a8fa8;margin-bottom:20px}
-.hero-stats{display:flex;align-items:center;justify-content:center;gap:14px}
-.hero-num{font-size:26px;font-weight:700;color:#fff;line-height:1}
-.hero-num span{font-size:14px;color:#5a8fa8}
-.hero-meta{font-size:11px;color:#5a8fa8}
-.badge{margin-top:4px;font-size:10px;font-weight:700;background:#48C9B0;color:#0d1520;padding:2px 10px;border-radius:20px;display:inline-block}
-.pbar{margin-top:16px;height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
-.pbar-fill{height:100%;background:linear-gradient(90deg,#48C9B0,#2E86AB);border-radius:4px;transition:width .5s ease}
+html,body{background:#F5F2EB;font-family:'DM Sans',system-ui,sans-serif;color:#3C3226;max-width:480px;margin:0 auto;min-height:100dvh;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#C4B99A;border-radius:3px}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#2D6A4F 0%,#40916C 60%,#52B788 100%);padding:max(env(safe-area-inset-top),16px) 20px 24px;color:#fff;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:-20px;left:0;right:0;height:40px;background:#F5F2EB;border-radius:50% 50% 0 0}
+.hero-inner{position:relative;z-index:1}
+.hero .tag{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:#B7E4C7;margin-bottom:4px}
+.hero h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:2px}
+.hero .names{font-size:13px;font-weight:600;color:#D8F3DC}
+.hero .sub{font-size:11px;color:#B7E4C7;margin:4px 0 16px}
+.countdown{background:rgba(255,255,255,.15);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:inline-block}
+.countdown-num{font-size:22px;font-weight:700}
+.countdown-label{font-size:9px;color:#B7E4C7;text-transform:uppercase;letter-spacing:1px}
+.countdown-units{display:flex;gap:12px;justify-content:center}
+.countdown-unit{text-align:center}
+.stats{display:flex;align-items:center;justify-content:center;gap:12px}
+.stats-ring{position:relative;width:46px;height:46px}
+.stats-ring svg{transform:rotate(-90deg)}
+.stats-ring-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.pbar{height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;margin-top:12px}
+.pbar-fill{height:100%;background:#D8F3DC;border-radius:4px;transition:width .5s}
 .day-dots{display:flex;justify-content:space-between;margin-top:6px}
-.day-dot{width:6px;height:6px;border-radius:3px;transition:background .3s}
-.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:#48C9B0;background:rgba(72,201,176,.08);padding:4px 12px;border-radius:20px}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 2s infinite}
+.day-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .3s}
+.live-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:10px;color:#D8F3DC;background:rgba(255,255,255,.12);padding:4px 12px;border-radius:16px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#D8F3DC;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.tabs{display:flex;background:#111c29;border-bottom:1px solid #1a2a3a;position:sticky;top:0;z-index:1000}
-.tab{flex:1;padding:11px 0;border:none;background:transparent;color:#556;font-size:11px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:inherit}
-.tab.active{color:#fff;font-weight:700;border-bottom-color:#2E86AB}
-.tab.hidden{display:none}
-.content{padding:12px 12px 80px}
-#map-container{width:100%;height:55vh;min-height:300px;background:#0a1018;position:relative}
-#map{width:100%;height:100%}
-.map-info{padding:12px}
-.map-status{background:#111c29;border:1px solid #1a2535;border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.map-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.map-status-text{flex:1}
-.map-status-title{font-size:13px;font-weight:600;color:#dde}
-.map-status-sub{font-size:10px;color:#556;margin-top:1px}
-.map-next{background:#0984E310;border:1px solid #0984E325;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
-.map-next-icon{font-size:22px}
-.map-next-label{font-size:10px;color:#0984E3;font-weight:600;text-transform:uppercase;letter-spacing:1px}
-.map-next-name{font-size:14px;font-weight:700;color:#dde}
-.map-next-dist{font-size:11px;color:#556}
-.admin-bar{background:#1a2535;border:1px solid #2a3a4a;border-radius:12px;padding:12px;margin:8px 12px}
-.admin-btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:6px;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.admin-btn:active{opacity:.7}
-.admin-btn-primary{background:linear-gradient(135deg,#48C9B0,#1ABC9C);color:#0d1520}
-.admin-btn-secondary{background:#0d1520;border:1px solid #2a3a4a;color:#8ab4cc}
-.admin-gps-status{text-align:center;font-size:10px;color:#556;margin-top:4px}
-.admin-tracking{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px;background:rgba(72,201,176,.05);border-radius:8px;margin-top:6px}
-.admin-tracking-dot{width:8px;height:8px;border-radius:50%;background:#48C9B0;animation:pulse 1.5s infinite}
-.admin-tracking-text{font-size:11px;color:#48C9B0;font-weight:600}
-.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
-.pin-box{background:#111c29;border:1px solid #2a3a4a;border-radius:20px;padding:32px 24px;text-align:center;width:100%;max-width:320px}
-.pin-box h2{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:6px}
-.pin-box p{font-size:12px;color:#556;margin-bottom:20px}
-.pin-input{width:100%;padding:14px;border-radius:12px;border:2px solid #2a3a4a;background:#0d1520;color:#fff;font-size:24px;text-align:center;letter-spacing:12px;font-family:inherit;outline:none}
-.pin-input:focus{border-color:#2E86AB}
-.pin-error{color:#e74c3c;font-size:11px;margin-top:8px;min-height:16px}
-.route-card{display:flex;align-items:center;gap:14px;padding:16px 18px;margin-bottom:10px;border-radius:14px;text-decoration:none}
-.route-icon{font-size:28px;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.route-label{font-size:15px;font-weight:700;color:#e8e8e8}
-.route-sub{font-size:12px;color:#6a8a9a;margin-top:2px}
-.route-arrow{font-size:18px;flex-shrink:0}
-.pins-section{margin-top:24px}
-.pins-day-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
-.pins-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.pin{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;text-decoration:none;font-size:12px;font-weight:500;transition:all .2s}
-.day{margin-bottom:8px;border-radius:14px;overflow:hidden;transition:all .3s}
-.day-head{padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
-.day-emoji{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;transition:background .3s}
-.day-info{flex:1;min-width:0}
-.day-tag{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
-.day-region{font-size:9px;color:#445;background:rgba(255,255,255,.03);padding:1px 6px;border-radius:6px;margin-left:6px}
-.day-title{font-size:14px;font-weight:600;color:#dde;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.day-km{font-size:10px;color:#4a6070;margin-top:1px}
-.day-prog{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
-.day-prog-txt{font-size:8px;color:#445}
-.day-arrow{font-size:14px;color:#334;transition:transform .3s;flex-shrink:0}.day-arrow.open{transform:rotate(180deg)}
-.day-body{padding:0 12px 14px}
-.stop{margin:6px 0;border-radius:10px;overflow:hidden;transition:all .3s}
-.stop-row{display:flex;align-items:center;gap:10px;padding:11px 12px}
-.check{width:26px;height:26px;border-radius:7px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;transition:all .2s;border:2px solid #2a3a4a;background:transparent}
-.check.on{border-color:var(--c);background:var(--c)}
-.check.readonly{cursor:default;opacity:.7}
-.stop-text{flex:1;cursor:pointer;min-width:0}
-.stop-name{font-size:13px;font-weight:600;transition:all .3s}
-.stop-name.done{text-decoration:line-through}
-.stop-preview{font-size:10px;color:#3a5060;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.maps-btn{font-size:9px;font-weight:700;text-decoration:none;padding:5px 10px;border-radius:14px;white-space:nowrap;flex-shrink:0}
-.stop-detail{padding:0 12px 12px 48px;animation:fadeIn .3s ease}
-.stop-desc{font-size:12px;color:#7a8a9a;line-height:1.7}
-.stop-tip{margin-top:8px;font-size:11px;color:#48C9B0;background:rgba(72,201,176,.03);padding:7px 10px;border-radius:8px;border-left:3px solid rgba(72,201,176,.2)}
-.warn-tip{margin-top:8px;font-size:11px;color:#E67E22;background:rgba(230,126,34,.04);padding:7px 10px;border-radius:8px;border-left:3px solid rgba(230,126,34,.25)}
-.info-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-.info-box{flex:1 1 170px;border-radius:8px;padding:8px 12px}
-.info-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+
+/* Tabs */
+.tabs{display:flex;background:#fff;border-bottom:.5px solid #E8E2D4;position:sticky;top:0;z-index:1000}
+.tab{flex:1;padding:10px 0;border:none;background:transparent;color:#B0A48E;font-size:10px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;transition:all .2s}
+.tab.active{color:#2D6A4F;border-bottom-color:#2D6A4F}
+.content{padding:12px 14px 90px}
+
+/* Map */
+#map-container{width:100%;height:50vh;min-height:280px;position:relative}
+#map{width:100%;height:100%;border-radius:0 0 12px 12px}
+.map-info{padding:12px 14px}
+.map-status{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.map-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.map-status-title{font-size:13px;font-weight:600;color:#3C3226}
+.map-status-sub{font-size:10px;color:#8B7355;margin-top:1px}
+.map-next{background:#E8F5E9;border:.5px solid #C8E6C9;border-radius:12px;padding:12px;margin-top:8px;display:flex;align-items:center;gap:10px}
+
+/* Weather */
+.weather{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:12px;margin-top:8px;display:flex;align-items:center;gap:12px}
+.weather-icon{font-size:28px}
+.weather-temp{font-size:22px;font-weight:700;color:#3C3226}
+.weather-desc{font-size:11px;color:#8B7355}
+.weather-place{font-size:10px;color:#B0A48E}
+
+/* Cards */
+.card{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;margin-bottom:8px;overflow:hidden;transition:all .2s}
+.card-head{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.card-emoji{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-tag{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.card-date{font-size:9px;color:#B0A48E;margin-left:6px;font-weight:500}
+.card-title{font-size:14px;font-weight:600;color:#3C3226;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-km{font-size:10px;color:#8B7355;margin-top:1px}
+.card-prog{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.card-prog-txt{font-size:8px;color:#B0A48E}
+.card-arrow{font-size:12px;color:#C4B99A;transition:transform .3s;flex-shrink:0}
+.card-arrow.open{transform:rotate(180deg)}
+.card-body{padding:0 14px 14px}
+
+/* Stops */
+.stop{margin:6px 0;background:#FAFAF6;border:.5px solid #E8E2D4;border-radius:10px;overflow:hidden}
+.stop-row{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.chk{width:24px;height:24px;border-radius:6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;border:2px solid #D4C9B8;background:transparent;transition:all .2s}
+.chk.on{border-color:var(--c);background:var(--c)}
+.chk.readonly{cursor:default;opacity:.6}
+.stop-name{font-size:13px;font-weight:600;color:#3C3226}
+.stop-name.done{text-decoration:line-through;color:#B0A48E}
+.stop-preview{font-size:10px;color:#8B7355;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stop-maps{font-size:9px;font-weight:600;color:#2D6A4F;text-decoration:none;padding:4px 10px;border-radius:12px;border:.5px solid #2D6A4F40;white-space:nowrap;flex-shrink:0}
+.stop-detail{padding:0 12px 10px 44px}
+.stop-desc{font-size:12px;color:#6B5D4D;line-height:1.65}
+.stop-tip{margin-top:6px;font-size:11px;color:#2D6A4F;background:#E8F5E9;padding:6px 10px;border-radius:8px;border-left:3px solid #2D6A450}
+.stop-warn{margin-top:6px;font-size:11px;color:#854F0B;background:#FFF8E1;padding:6px 10px;border-radius:8px;border-left:3px solid #F9A82540}
+
+/* Timeline */
+.timeline{display:flex;gap:4px;padding:8px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:8px}
+.timeline::-webkit-scrollbar{display:none}
+.tl-item{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:54px;padding:6px 4px;background:#FAFAF6;border:.5px solid #E8E2D4;border-radius:8px;font-size:9px;color:#8B7355;text-align:center;flex-shrink:0}
+.tl-time{font-weight:700;color:#2D6A4F;font-size:10px}
+.tl-name{font-size:8px;color:#6B5D4D;line-height:1.2}
+
+/* Info row */
+.info-row{display:flex;gap:6px;margin-top:10px}
+.info-box{flex:1;border-radius:8px;padding:8px 10px}
+.info-label{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .info-val{font-size:11px;line-height:1.5;margin-top:2px}
-.special-route{display:block;margin-top:10px;padding:11px 14px;border-radius:10px;text-decoration:none;text-align:center;font-size:12px;font-weight:700}
-.exp-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
-.exp-total{grid-column:1/-1;background:linear-gradient(135deg,#1a2a3a,#142233);border:1px solid #2a3a4a;border-radius:14px;padding:18px;text-align:center}
-.exp-total-num{font-size:32px;font-weight:700;color:#fff}
-.exp-total-label{font-size:11px;color:#5a8fa8;margin-top:2px}
-.exp-total-pp{font-size:14px;color:#48C9B0;margin-top:6px;font-weight:600}
-.exp-cat-card{background:#111c29;border:1px solid #1a2535;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px}
-.exp-cat-icon{font-size:22px;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.exp-cat-name{font-size:11px;color:#667}
-.exp-cat-val{font-size:16px;font-weight:700;color:#dde}
-.exp-add-bar{background:#111c29;border:1px solid #1e2d3d;border-radius:14px;padding:14px;margin-bottom:14px}
-.exp-add-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.exp-input{background:#0d1520;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;color:#dde;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
-.exp-input:focus{border-color:#2E86AB}
-.exp-input::placeholder{color:#334}
-.exp-input-desc{flex:1;min-width:120px}
-.exp-input-amount{width:90px;text-align:right}
-.exp-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.exp-cat-btn{padding:6px 12px;border-radius:20px;border:1px solid #1e2d3d;background:transparent;color:#667;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
-.exp-cat-btn.active{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
-.exp-day-select{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
-.exp-day-btn{padding:4px 10px;border-radius:16px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
-.exp-day-btn.active{border-color:#2E86AB;color:#2E86AB;background:rgba(46,134,171,.1)}
-.exp-submit{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#2E86AB,#1a6b8a);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
-.exp-submit:active{opacity:.8}
-.exp-list{margin-top:8px}
-.exp-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111c29;border:1px solid #1a2535;border-radius:10px;margin-bottom:6px}
-.exp-item-icon{font-size:16px;flex-shrink:0}
-.exp-item-info{flex:1;min-width:0}
-.exp-item-name{font-size:13px;font-weight:600;color:#ccd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.exp-item-meta{font-size:10px;color:#445;margin-top:1px}
-.exp-item-amount{font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
-.exp-item-del{width:28px;height:28px;border-radius:7px;border:none;background:rgba(192,57,43,.1);color:#e74c3c;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.exp-filter{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.exp-filter::-webkit-scrollbar{display:none}
-.exp-filter-btn{padding:6px 14px;border-radius:20px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0}
-.exp-filter-btn.active{border-color:#2E86AB;color:#fff;background:rgba(46,134,171,.15)}
-.exp-empty{text-align:center;padding:40px 20px;color:#334;font-size:13px}
-.exp-clear button{background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit;margin-top:16px}
-.gal-upload-btns{display:flex;gap:8px;margin-bottom:14px}
-.gal-upload-btn{flex:1;background:#111c29;border:1px solid #1e2d3d;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:border-color .2s}
-.gal-upload-btn:active{border-color:#2E86AB}
-.gal-upload-btn-icon{font-size:24px;margin-bottom:4px}
-.gal-upload-btn-text{font-size:12px;color:#8ab4cc;font-weight:600}
-.gal-preview-card{background:#111c29;border:1px solid #2E86AB40;border-radius:14px;padding:14px;margin-bottom:14px;animation:fadeIn .3s ease}
-.gal-preview-img{width:100%;max-height:240px;object-fit:contain;border-radius:8px;margin-bottom:12px;background:#0a1018}
-.gal-preview-input{width:100%;background:#0d1520;border:1px solid #1e2d3d;border-radius:10px;padding:10px 12px;color:#dde;font-size:14px;font-family:inherit;outline:none;margin-bottom:10px}
-.gal-preview-input:focus{border-color:#2E86AB}
-.gal-preview-input::placeholder{color:#334}
-.gal-preview-days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
-.gal-preview-day{padding:5px 12px;border-radius:16px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-.gal-preview-day.active{border-color:#48C9B0;color:#48C9B0;background:rgba(72,201,176,.1)}
-.gal-preview-actions{display:flex;gap:8px}
-.gal-preview-send{flex:1;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#48C9B0,#1ABC9C);color:#0d1520;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
-.gal-preview-send:active{opacity:.8}
-.gal-preview-cancel{padding:12px 18px;border-radius:10px;border:1px solid #2a3a4a;background:transparent;color:#556;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
-.gal-uploading-bar{background:rgba(46,134,171,.08);border:1px solid #2E86AB40;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px}
-.gal-upload{background:#111c29;border:2px dashed #1e2d3d;border-radius:14px;padding:20px;text-align:center;margin-bottom:14px;cursor:pointer;transition:border-color .2s}
-.gal-upload:active{border-color:#2E86AB}
-.gal-upload-icon{font-size:32px;margin-bottom:6px}
-.gal-upload-text{font-size:13px;color:#556;font-weight:600}
-.gal-upload-sub{font-size:10px;color:#334;margin-top:2px}
-.gal-uploading{background:rgba(46,134,171,.05);border-color:#2E86AB}
-.gal-day-filter{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
-.gal-day-filter::-webkit-scrollbar{display:none}
-.gal-day-btn{padding:6px 14px;border-radius:20px;border:1px solid #1e2d3d;background:transparent;color:#556;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;flex-shrink:0;transition:all .2s}
-.gal-day-btn.active{border-color:#2E86AB;color:#fff;background:rgba(46,134,171,.15)}
+.special-route{display:block;margin-top:10px;padding:10px;border-radius:10px;text-decoration:none;text-align:center;font-size:12px;font-weight:600}
+
+/* Diary */
+.diary-entry{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px;margin-bottom:10px}
+.diary-date{font-size:10px;color:#2D6A4F;font-weight:600;margin-bottom:4px}
+.diary-text{font-size:13px;color:#3C3226;line-height:1.7}
+.diary-add{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px;margin-bottom:14px}
+.diary-textarea{width:100%;background:#FAFAF6;border:.5px solid #E8E2D4;border-radius:10px;padding:10px;color:#3C3226;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:80px}
+.diary-textarea:focus{border-color:#2D6A4F}
+.diary-textarea::placeholder{color:#C4B99A}
+
+/* Routes */
+.route-card{display:flex;align-items:center;gap:12px;padding:14px;margin-bottom:8px;border-radius:12px;text-decoration:none;background:#fff;border:.5px solid #E8E2D4}
+.route-icon{font-size:24px;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.route-label{font-size:14px;font-weight:600;color:#3C3226}
+.route-sub{font-size:11px;color:#8B7355;margin-top:1px}
+.pins-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.pin-chip{display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border-radius:16px;text-decoration:none;font-size:11px;font-weight:500;background:#fff;border:.5px solid #E8E2D4;color:#6B5D4D;transition:all .2s}
+
+/* Gallery */
+.gal-btns{display:flex;gap:8px;margin-bottom:12px}
+.gal-btn{flex:1;background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer}
+.gal-btn-icon{font-size:22px;margin-bottom:2px}
+.gal-btn-text{font-size:11px;color:#2D6A4F;font-weight:600}
 .gal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
-.gal-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:#111c29}
-.gal-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
-.gal-thumb:active img{transform:scale(1.05)}
-.gal-thumb-day{position:absolute;top:4px;left:4px;font-size:9px;font-weight:700;background:rgba(0,0,0,.6);color:#fff;padding:2px 6px;border-radius:8px}
-.gal-thumb-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(192,57,43,.8);color:#fff;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.gal-empty{text-align:center;padding:40px 20px;color:#334;font-size:13px}
-.gal-count{font-size:11px;color:#5a8fa8;text-align:center;margin-bottom:12px}
+.gal-thumb{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;background:#E8E2D4}
+.gal-thumb img{width:100%;height:100%;object-fit:cover}
+.gal-thumb-day{position:absolute;top:4px;left:4px;font-size:8px;font-weight:700;background:rgba(0,0,0,.5);color:#fff;padding:2px 6px;border-radius:6px}
+.gal-thumb-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(192,57,43,.8);color:#fff;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gal-preview{background:#fff;border:.5px solid #2D6A4F40;border-radius:12px;padding:14px;margin-bottom:14px}
+.gal-preview img{width:100%;max-height:200px;object-fit:contain;border-radius:8px;margin-bottom:10px;background:#FAFAF6}
+.gal-input{width:100%;background:#FAFAF6;border:.5px solid #E8E2D4;border-radius:10px;padding:10px;color:#3C3226;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px}
+.gal-input:focus{border-color:#2D6A4F}
+.gal-day-sel{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.gal-day-btn{padding:4px 10px;border-radius:14px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
+.gal-day-btn.act{border-color:#2D6A4F;color:#2D6A4F;background:#E8F5E9}
+.gal-filter{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.gal-filter::-webkit-scrollbar{display:none}
+.gal-filter-btn{padding:5px 12px;border-radius:16px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.gal-filter-btn.act{border-color:#2D6A4F;color:#2D6A4F;background:#E8F5E9}
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:12px;flex-direction:column}
-.lightbox img{max-width:100%;max-height:75vh;border-radius:8px;object-fit:contain}
+.lightbox img{max-width:100%;max-height:70vh;border-radius:8px;object-fit:contain}
 .lightbox-caption{color:#aaa;font-size:12px;margin-top:10px;text-align:center}
-.lightbox-close{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.lightbox-prev{left:8px}
-.lightbox-next{right:8px}
-.reset-btn{position:fixed;bottom:max(16px,env(safe-area-inset-bottom,16px));right:16px;width:44px;height:44px;border-radius:22px;background:#1a2535;border:1px solid #2a3a4a;color:#556;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.4);z-index:20}
-@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.ring{flex-shrink:0}.ring-bg{fill:none;stroke:rgba(255,255,255,.1)}.ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
-.leaflet-container{background:#0a1018!important}
+.lightbox-close{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lightbox-prev{left:8px}.lightbox-next{right:8px}
+
+/* Admin/Private */
+.sub-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sub-tabs::-webkit-scrollbar{display:none}
+.sub-tab{padding:7px 12px;border-radius:16px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.sub-tab.act{border-color:#2D6A4F;color:#2D6A4F;background:#E8F5E9}
+.exp-total-card{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:16px;text-align:center;margin-bottom:12px}
+.exp-total-num{font-size:28px;font-weight:700;color:#3C3226}
+.exp-total-sub{font-size:11px;color:#8B7355;margin-top:2px}
+.exp-total-pp{font-size:14px;color:#2D6A4F;font-weight:600;margin-top:4px}
+.exp-cats-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.exp-cat-card{background:#fff;border:.5px solid #E8E2D4;border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px}
+.exp-cat-icon{font-size:18px}
+.exp-cat-name{font-size:10px;color:#8B7355}
+.exp-cat-val{font-size:14px;font-weight:700;color:#3C3226}
+.form-box{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px;margin-bottom:12px}
+.form-label{font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.form-row{display:flex;gap:6px;margin-bottom:8px}
+.form-input{flex:1;background:#FAFAF6;border:.5px solid #E8E2D4;border-radius:8px;padding:9px 10px;color:#3C3226;font-size:13px;font-family:inherit;outline:none;min-width:0}
+.form-input:focus{border-color:#2D6A4F}
+.form-input::placeholder{color:#C4B99A}
+.form-cats{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.form-cat{padding:5px 10px;border-radius:14px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit}
+.form-cat.act{border-color:var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 8%,#fff)}
+.form-days{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.form-day{padding:4px 9px;border-radius:12px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit}
+.form-day.act{border-color:#2D6A4F;color:#2D6A4F;background:#E8F5E9}
+.btn-primary{width:100%;padding:11px;border-radius:10px;border:none;background:#2D6A4F;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-primary:active{opacity:.8}
+.btn-secondary{padding:10px 16px;border-radius:10px;border:.5px solid #E8E2D4;background:#fff;color:#8B7355;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.exp-item{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fff;border:.5px solid #E8E2D4;border-radius:10px;margin-bottom:5px}
+.exp-item-name{font-size:12px;font-weight:600;color:#3C3226;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-item-meta{font-size:9px;color:#B0A48E;margin-top:1px}
+.exp-item-amount{font-size:13px;font-weight:700;color:#3C3226;flex-shrink:0}
+.exp-item-del{width:24px;height:24px;border-radius:6px;border:none;background:#FEF0F0;color:#C0392B;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hotel-card{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px;margin-bottom:8px;position:relative}
+.hotel-name{font-size:15px;font-weight:600;color:#3C3226;margin-bottom:6px}
+.hotel-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#6B5D4D;margin-top:4px}
+.hotel-nav{display:flex;gap:6px;margin-top:10px}
+.hotel-nav a{flex:1;padding:9px;border-radius:8px;text-decoration:none;text-align:center;font-size:12px;font-weight:600}
+.nav-go{background:#E8F5E9;color:#2D6A4F;border:.5px solid #C8E6C9}
+.nav-call{background:#FFF8E1;color:#854F0B;border:.5px solid #FFE082}
+.hotel-del{position:absolute;top:10px;right:10px;width:22px;height:22px;border-radius:6px;background:#FEF0F0;color:#C0392B;border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.hotel-day-tag{font-size:8px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:6px}
+.note-card{background:#fff;border:.5px solid #E8E2D4;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;gap:8px;align-items:flex-start}
+.note-warn{border-left:3px solid #F9A825;background:#FFFDE7}
+.note-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.note-text{font-size:11px;color:#6B5D4D;line-height:1.6}
+.note-text strong{color:#3C3226}
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.budget-card{background:#fff;border:.5px solid #E8E2D4;border-radius:10px;padding:10px}
+.budget-label{font-size:9px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:1px}
+.budget-val{font-size:17px;font-weight:700;color:#3C3226;margin-top:2px}
+.budget-sub{font-size:9px;color:#B0A48E;margin-top:1px}
+.precheck-item{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fff;border:.5px solid #E8E2D4;border-radius:10px;margin-bottom:5px}
+.precheck-text{flex:1;font-size:12px;color:#3C3226}
+.precheck-text.done{text-decoration:line-through;color:#B0A48E}
+
+/* Floating buttons */
+.fab{position:fixed;bottom:max(16px,env(safe-area-inset-bottom));right:14px;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.12);z-index:20;font-size:14px}
+.fab-admin{background:#2D6A4F;color:#fff}
+.fab-login{background:#fff;color:#8B7355;border:.5px solid #E8E2D4}
+
+/* Login popup */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-box{background:#fff;border-radius:16px;padding:28px 24px;text-align:center;width:100%;max-width:300px}
+.pin-box h2{font-family:'Playfair Display',serif;font-size:20px;color:#3C3226;margin-bottom:4px}
+.pin-box p{font-size:11px;color:#8B7355;margin-bottom:16px}
+.pin-input{width:140px;padding:10px;border-radius:10px;border:.5px solid #E8E2D4;background:#FAFAF6;color:#3C3226;font-size:18px;text-align:center;letter-spacing:8px;font-family:inherit;outline:none}
+.pin-input:focus{border-color:#2D6A4F}
+.pin-error{color:#C0392B;font-size:10px;margin-top:6px;min-height:14px}
+.pin-cancel{margin-top:12px;background:none;border:none;color:#B0A48E;font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit}
+
+/* Summary */
+.summary-card{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:16px;margin-bottom:10px;text-align:center}
+.summary-big{font-size:28px;font-weight:700;color:#2D6A4F}
+.summary-label{font-size:11px;color:#8B7355;margin-top:2px}
+
+.empty{text-align:center;padding:30px 20px;color:#B0A48E;font-size:12px}
+.leaflet-container{background:#E8E2D4!important}
 .custom-marker{background:none;border:none}
-.marker-pin{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4)}
-.marker-you{width:18px;height:18px;border-radius:50%;background:#48C9B0;border:3px solid #fff;box-shadow:0 0 12px rgba(72,201,176,.6),0 2px 8px rgba(0,0,0,.4);animation:pulseMarker 2s infinite}
-@keyframes pulseMarker{0%,100%{box-shadow:0 0 12px rgba(72,201,176,.6),0 2px 8px rgba(0,0,0,.4)}50%{box-shadow:0 0 24px rgba(72,201,176,.8),0 2px 8px rgba(0,0,0,.4)}}
+.marker-pin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.marker-you{width:16px;height:16px;border-radius:50%;background:#2D6A4F;border:3px solid #fff;box-shadow:0 0 10px rgba(45,106,79,.5),0 2px 6px rgba(0,0,0,.2);animation:pulseM 2s infinite}
+@keyframes pulseM{0%,100%{box-shadow:0 0 10px rgba(45,106,79,.5)}50%{box-shadow:0 0 20px rgba(45,106,79,.7)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
-const ADMIN_PIN = "2026";
-const IMGUR_CLIENT_ID = "546c25a59c58ad7";
+const PIN="2026";
+const IMGUR_CID="546c25a59c58ad7";
+const TRIP_START=new Date(2026,7,9);
+const TRIP_END=new Date(2026,7,18);
+const FB={apiKey:"AIzaSyAzBhxPJyyQNum773cBgBfZmV_FVECoOzY",authDomain:"viaggio2026-6053f.firebaseapp.com",databaseURL:"https://viaggio2026-6053f-default-rtdb.europe-west1.firebasedatabase.app",projectId:"viaggio2026-6053f",storageBucket:"viaggio2026-6053f.firebasestorage.app",messagingSenderId:"446199022338",appId:"1:446199022338:web:c45d5062a9f5cf7b7e381b"};
+let fbOk=false,db=null;
+try{firebase.initializeApp(FB);db=firebase.database().ref('trip');fbOk=true}catch(e){}
 
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAzBhxPJyyQNum773cBgBfZmV_FVECoOzY",
-  authDomain: "viaggio2026-6053f.firebaseapp.com",
-  databaseURL: "https://viaggio2026-6053f-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "viaggio2026-6053f",
-  storageBucket: "viaggio2026-6053f.firebasestorage.app",
-  messagingSenderId: "446199022338",
-  appId: "1:446199022338:web:c45d5062a9f5cf7b7e381b",
-  measurementId: "G-4Y01L13W7Z"
-};
-
-let firebaseReady = false;
-let dbRef = null;
-try {
-  firebase.initializeApp(FIREBASE_CONFIG);
-  dbRef = firebase.database().ref('trip');
-  firebaseReady = true;
-} catch(e) { console.warn("Firebase non configurato:", e); }
-
-const ALL_STOPS = [];
 const DAYS=[
-{day:1,title:"Napoli → Scanno / Roccaraso",region:"Abruzzo",km:"~200 km",drive:"~2,5h",color:"#2E86AB",emoji:"🏔️",route:null,routeLabel:"",stops:[
-{name:"Scanno",lat:41.9047,lng:13.8810,map:"https://maps.google.com/?q=Scanno,+AQ,+Italy",desc:"Uno dei borghi più belli d'Italia. Vicoli in pietra, archi medievali.",tip:"Visita al tramonto per la luce dorata"},
-{name:"Lago di Scanno",lat:41.9270,lng:13.8540,map:"https://maps.google.com/?q=Lago+di+Scanno,+Italy",desc:"Lago a forma di cuore. Camminata di 20 min per una vista indimenticabile.",tip:"Sentiero dal parcheggio SP479"},
-{name:"Pescocostanzo",lat:41.8885,lng:14.0658,map:"https://maps.google.com/?q=Pescocostanzo,+AQ,+Italy",desc:"Borgo elegante a 1.400m. Palazzetti rinascimentali e merletto a tombolo.",tip:"Prova gli arrosticini!"},
-{name:"Roccaraso",lat:41.8491,lng:14.0780,map:"https://maps.google.com/?q=Roccaraso,+AQ,+Italy",desc:"In estate passeggiate tra boschi di faggio e aria fresca.",tip:"Ottima base per la zona"}],food:"Arrosticini, sagne e fagioli, Centerba",sleep:"Pescocostanzo o Scanno"},
-{day:2,title:"Gran Sasso → Castelluccio",region:"Abruzzo / Umbria",km:"~220 km",drive:"~3,5h",color:"#E67E22",emoji:"🌾",route:null,routeLabel:"",stops:[
-{name:"Campo Imperatore",lat:42.4382,lng:13.5628,map:"https://maps.google.com/?q=Campo+Imperatore,+AQ,+Italy",desc:"Il 'Piccolo Tibet'. Altopiano a 1.800m con panorami lunari.",tip:"Mattino presto per le foto migliori"},
-{name:"Castelluccio di Norcia",lat:42.8282,lng:13.2074,map:"https://maps.google.com/?q=Castelluccio+di+Norcia,+PG,+Italy",desc:"Borgo a 1.452m sopra il Pian Grande. Vastità e silenzio impressionanti.",tip:"Panorami spettacolari in ogni stagione"},
-{name:"Norcia",lat:42.7925,lng:13.0928,map:"https://maps.google.com/?q=Norcia,+PG,+Italy",desc:"Patria della norcineria. Tartufo nero e salumi ovunque.",tip:"Tartufo nero: qualità top, prezzi onesti"}],food:"Tartufo nero, lenticchie IGP, strangozzi",sleep:"Castelluccio o Norcia"},
-{day:3,title:"Appennino → Bologna",region:"Emilia-Romagna",km:"~280 km",drive:"~3,5h",color:"#C0392B",emoji:"🍝",route:null,routeLabel:"",stops:[
-{name:"Passo della Futa",lat:44.1069,lng:11.3047,map:"https://maps.google.com/?q=Passo+della+Futa,+Italy",desc:"Valico a 903m. Strada bellissima per le curve.",tip:"Caffè con vista al bar del passo"},
-{name:"Brisighella",lat:44.2219,lng:11.7744,map:"https://maps.google.com/?q=Brisighella,+RA,+Italy",desc:"Tre colli con torre, rocca e santuario. Via degli Asini unica!",tip:"Olio DOP tra i migliori d'Italia"},
-{name:"Bologna",lat:44.4949,lng:11.3426,map:"https://maps.google.com/?q=Bologna,+Italy",desc:"La 'Rossa', 'Grassa', 'Dotta'. 40 km di portici UNESCO!",tip:"Il Quadrilatero è il mercato storico"},
-{name:"Torre degli Asinelli",lat:44.4942,lng:11.3469,map:"https://maps.google.com/?q=Torre+degli+Asinelli,+Bologna,+Italy",desc:"498 gradini, 97 metri. Panorama su tutti i tetti rossi.",tip:"Sali presto per evitare la coda"}],food:"Tortellini, tagliatelle al ragù, mortadella",sleep:"Bologna centro"},
-{day:4,title:"Bologna → Dolomiti",region:"Trentino-Alto Adige",km:"~280 km",drive:"~3,5h",color:"#1ABC9C",emoji:"🌲",route:null,routeLabel:"",stops:[
-{name:"Canazei",lat:46.4767,lng:11.7703,map:"https://maps.google.com/?q=Canazei,+TN,+Italy",desc:"Base per i passi. Funivia Col dei Rossi: 360° su Marmolada.",tip:"Guest Card: funivie e bus gratis!"},
-{name:"Val di Fassa",lat:46.4283,lng:11.7678,map:"https://maps.google.com/?q=Val+di+Fassa,+TN,+Italy",desc:"Valle ladina. Al tramonto l'enrosadira: Dolomiti rosa!",tip:"Enrosadira verso le 20:30 in estate"}],food:"Canederli, speck, strudel, polenta e cervo",sleep:"Canazei o Campitello"},
-{day:5,title:"Giro dei 4 Passi",region:"Cuore delle Dolomiti",km:"~120 km",drive:"~3-4h",color:"#8E44AD",emoji:"⛰️",
-route:"https://www.google.com/maps/dir/Canazei+TN/Passo+Pordoi/Passo+Sella/Passo+Gardena/Corvara+in+Badia+BZ/Passo+Campolongo/Canazei+TN",routeLabel:"Giro dei 4 Passi",stops:[
-{name:"Passo Pordoi (2.239m)",lat:46.4872,lng:11.8128,map:"https://maps.google.com/?q=Passo+Pordoi,+Italy",desc:"Valico più alto. Funivia Sass Pordoi: 'terrazza delle Dolomiti'.",tip:"Funivia ~15€ A/R — imperdibile!"},
-{name:"Passo Sella (2.240m)",lat:46.5092,lng:11.7581,map:"https://maps.google.com/?q=Passo+Sella,+Italy",desc:"Sassolungo con pareti verticali. Paesaggio lunare.",tip:"Rifugio al passo: terrazza mozzafiato"},
-{name:"Passo Gardena (2.121m)",lat:46.5536,lng:11.8097,map:"https://maps.google.com/?q=Passo+Gardena,+Italy",desc:"Ingresso Val Gardena. Panorama sulle Odle.",tip:"Scendi a Corvara per pranzo"},
-{name:"Corvara in Badia",lat:46.5500,lng:11.8740,map:"https://maps.google.com/?q=Corvara+in+Badia,+BZ,+Italy",desc:"Borgo ladino. Cajincí con vista sul Sassongher.",tip:"Prova i cajincí ladini"},
-{name:"Passo Campolongo (1.875m)",lat:46.5280,lng:11.8760,map:"https://maps.google.com/?q=Passo+Campolongo,+Italy",desc:"Il più dolce, chiude l'anello.",tip:"Foto ricordo all'ultimo passo!"},
-{name:"Lago di Fedaia",lat:46.4571,lng:11.8687,map:"https://maps.google.com/?q=Lago+di+Fedaia,+Italy",desc:"Ai piedi della Marmolada. Acqua turchese e ghiacciaio.",tip:"Deviazione 15 min — vale!"}],food:"Cajincí, speck, strudel a Corvara",sleep:"Canazei o Ortisei"},
-{day:6,title:"Giro Laghi Dolomitici",region:"Alto Adige",km:"~180 km",drive:"~3,5h",color:"#00B894",emoji:"💎",
-route:"https://www.google.com/maps/dir/Canazei+TN/Lago+di+Carezza/Lago+di+Braies/Lago+di+Dobbiaco/Lago+di+Landro/Tre+Cime+di+Lavaredo",routeLabel:"Giro dei Laghi",stops:[
-{name:"Lago di Carezza",lat:46.4103,lng:11.5753,map:"https://maps.google.com/?q=Lago+di+Carezza,+BZ,+Italy",desc:"Acqua smeraldo che riflette Latemar e Catinaccio. 20 min per girarlo.",tip:"⚠️ Arriva PRIMA delle 9!",warn:true},
-{name:"Lago di Braies",lat:46.6940,lng:12.0855,map:"https://maps.google.com/?q=Lago+di+Braies,+BZ,+Italy",desc:"Il più fotografato d'Italia. Acqua turchese, barchette in legno.",tip:"⚠️ AGOSTO: bus navetta da Villabassa!",warn:true},
-{name:"Lago di Dobbiaco",lat:46.7184,lng:12.1750,map:"https://maps.google.com/?q=Lago+di+Dobbiaco,+Italy",desc:"Tranquillo! Parco naturale con sentieri facili. Ristorante sulla riva.",tip:"Contrasto piacevole col caos di Braies"},
-{name:"Lago di Landro",lat:46.6625,lng:12.1854,map:"https://maps.google.com/?q=Lago+di+Landro,+Italy",desc:"Gioiello nascosto. Acqua cristallina, quasi nessun turista.",tip:"Fermata veloce — pochissima gente"},
-{name:"Tre Cime di Lavaredo",lat:46.6190,lng:12.3020,map:"https://maps.google.com/?q=Tre+Cime+di+Lavaredo,+Italy",desc:"Icona delle Dolomiti! Giro 10 km o 30 min dal Rifugio Auronzo.",tip:"⚠️ Pedaggio ~30€, parcheggio pieno presto!",warn:true}],food:"Kaiserschmarrn, Schlutzkrapfen, Knödel",sleep:"Dobbiaco o Villabassa"},
-{day:7,title:"Val Pusteria → Alto Garda",region:"Trentino",km:"~200 km",drive:"~3h",color:"#0984E3",emoji:"🌊",
-route:"https://www.google.com/maps/dir/Dobbiaco/Lago+di+Tenno/Cascate+del+Varone/Arco+TN/Riva+del+Garda+TN",routeLabel:"Percorso Alto Garda",stops:[
-{name:"Lago di Tenno",lat:45.9345,lng:10.8197,map:"https://maps.google.com/?q=Lago+di+Tenno,+TN,+Italy",desc:"Segreto del Trentino! Acqua turchese irreale, ci si può fare il bagno.",tip:"10 min da Riva — imperdibile!"},
-{name:"Canale di Tenno",lat:45.9292,lng:10.8211,map:"https://maps.google.com/?q=Canale+di+Tenno,+TN,+Italy",desc:"Borgo medievale. Vicoli in pietra, atelier d'artisti, silenzio.",tip:"Piccolissimo ma super fotogenico"},
-{name:"Cascate del Varone",lat:45.8939,lng:10.8394,map:"https://maps.google.com/?q=Cascate+del+Varone,+Italy",desc:"Acqua dentro una forra da 20.000 anni! Passerelle nella grotta.",tip:"Ingresso ~7€ — porta un k-way!"},
-{name:"Arco",lat:45.9187,lng:10.8862,map:"https://maps.google.com/?q=Arco,+TN,+Italy",desc:"Castello sulla rupe, centro con palazzi rinascimentali e uliveti.",tip:"Salita al castello: 20 min, vista pazzesca"},
-{name:"Riva del Garda",lat:45.8860,lng:10.8413,map:"https://maps.google.com/?q=Riva+del+Garda,+TN,+Italy",desc:"Punta nord del Garda. Lungolago, Rocca, tramonto spettacolare.",tip:"Cena con pesce di lago sul lungolago"}],food:"Carne salada, pesce di lago, strangolapreti",sleep:"Riva del Garda o Arco"},
-{day:8,title:"Riva → Napoli",region:"Trentino / Emilia / Campania",km:"~600 km",drive:"~5,5h",color:"#D35400",emoji:"🏠",route:null,routeLabel:"",stops:[
-{name:"Parma",lat:44.8015,lng:10.3279,map:"https://maps.google.com/?q=Parma,+Italy",desc:"Parmigiano, Prosciutto, Culatello. Duomo col Battistero in marmo rosa.",tip:"Caseifici con visite il sabato mattina"}],food:"Parmigiano, Prosciutto di Parma, tortelli",sleep:"Casa — Napoli! 🏠"}
+{day:1,title:"Napoli \u2192 Sulmona \u00B7 Tirino",region:"Abruzzo",km:"~190",drive:"~2,5h",color:"#2D6A4F",emoji:"\u{1F3D4}",date:"Sab 9 ago",
+timeline:[{t:"08:00",n:"Partenza Napoli"},{t:"10:30",n:"Arrivo Sulmona"},{t:"11:00",n:"Centro storico"},{t:"13:00",n:"Pranzo"},{t:"15:00",n:"Fiume Tirino"},{t:"18:00",n:"Rientro hotel"}],
+stops:[
+{name:"Sulmona",lat:42.0484,lng:13.9259,map:"https://maps.google.com/?q=Sulmona,+AQ",desc:"Citt\u00E0 natale di Ovidio, famosa per i confetti. Centro storico medievale con Piazza Garibaldi, l'Acquedotto e Corso Ovidio.",tip:"Compra i confetti Pelino \u2014 fabbrica storica dal 1783"},
+{name:"Fiume Tirino",lat:42.1642,lng:13.7253,map:"https://maps.google.com/?q=Sorgenti+del+Tirino+Capestrano",desc:"Il fiume pi\u00F9 limpido d'Italia! Acque cristalline color smeraldo. Canoa, kayak o rafting dolce tra le sorgenti.",tip:"Prenota canoa/kayak in anticipo"}],
+food:"Confetti, arrosticini, maccheroni alla chitarra",sleep:"Sulmona (3\u2605 ~115\u20AC/notte)"},
+{day:2,title:"Campo Imperatore \u00B7 Gran Sasso",region:"Abruzzo",km:"~80",drive:"~1,5h",color:"#E67E22",emoji:"\u26F0\uFE0F",date:"Dom 10 ago",
+timeline:[{t:"07:30",n:"Partenza"},{t:"09:00",n:"Campo Imperatore"},{t:"11:30",n:"Funivia Gran Sasso"},{t:"13:00",n:"Pranzo rifugio"},{t:"16:00",n:"Rientro"}],
+stops:[
+{name:"Campo Imperatore",lat:42.4382,lng:13.5628,map:"https://maps.google.com/?q=Campo+Imperatore",desc:"Il 'Piccolo Tibet'. Altopiano a 1.800m: panorami lunari e selvaggi.",tip:"Mattino presto per la luce migliore"},
+{name:"Gran Sasso",lat:42.4684,lng:13.5655,map:"https://maps.google.com/?q=Gran+Sasso+d'Italia",desc:"Massiccio pi\u00F9 alto degli Appennini (2.912m). Funivia da Fonte Cerreto.",tip:"Porta giacca anche in agosto!"}],
+food:"Arrosticini, pecorino, lenticchie di S. Stefano",sleep:"Sulmona"},
+{day:3,title:"Scanno \u00B7 Lago \u00B7 Gole Sagittario",region:"Abruzzo",km:"~60",drive:"~1h",color:"#1ABC9C",emoji:"\u{1F48E}",date:"Lun 11 ago",
+timeline:[{t:"09:00",n:"Partenza"},{t:"10:00",n:"Gole Sagittario"},{t:"12:00",n:"Scanno borgo"},{t:"13:30",n:"Pranzo"},{t:"15:30",n:"Lago di Scanno"},{t:"18:00",n:"Tramonto"}],
+stops:[
+{name:"Scanno",lat:41.9047,lng:13.8810,map:"https://maps.google.com/?q=Scanno+AQ",desc:"Borghi pi\u00F9 belli d'Italia. Vicoli in pietra, archi medievali.",tip:"Visita al tramonto \u2014 luce dorata"},
+{name:"Lago di Scanno",lat:41.9270,lng:13.8540,map:"https://maps.google.com/?q=Lago+di+Scanno",desc:"Lago a forma di cuore. Sentiero panoramico 20 min.",tip:"Sentiero dal parcheggio SP479"},
+{name:"Gole del Sagittario",lat:41.9610,lng:13.8640,map:"https://maps.google.com/?q=Gole+del+Sagittario",desc:"Riserva WWF. Canyon con cascatelle e vegetazione rigogliosa.",tip:"Scarpe comode!"}],
+food:"Polenta rognosa, formaggi, mostaccioli",sleep:"Scanno"},
+{day:4,title:"Lago S. Domenico \u00B7 Trabocchi",region:"Abruzzo",km:"~140",drive:"~2h",color:"#C0392B",emoji:"\u{1F30A}",date:"Mar 12 ago",
+timeline:[{t:"09:00",n:"Lago S. Domenico"},{t:"10:30",n:"Partenza costa"},{t:"12:30",n:"Costa Trabocchi"},{t:"13:00",n:"Pranzo mare"},{t:"16:00",n:"Spiaggia"},{t:"20:00",n:"Cena trabocco"}],
+stops:[
+{name:"Lago di San Domenico",lat:41.9380,lng:13.8870,map:"https://maps.google.com/?q=Lago+San+Domenico+Villalago",desc:"Acqua turchese con l'Eremo scavato nella roccia.",tip:"Eremo accessibile \u2014 visita breve"},
+{name:"Costa dei Trabocchi",lat:42.2550,lng:14.4000,map:"https://maps.google.com/?q=Costa+dei+Trabocchi",desc:"Antiche macchine da pesca su palafitte, oggi ristoranti sul mare.",tip:"\u26A0\uFE0F Prenota trabocco per cena con settimane di anticipo!",warn:true},
+{name:"San Vito Chietino",lat:42.3092,lng:14.4500,map:"https://maps.google.com/?q=San+Vito+Chietino",desc:"Borgo dove D'Annunzio scrisse. Trabocchi e spiagge cristalline.",tip:"Tramonto dai trabocchi \u00E8 spettacolare"}],
+food:"Cena al trabocco! Brodetto, vongole, frittura",sleep:"Costa Trabocchi (~100\u20AC)"},
+{day:5,title:"Trasferimento \u2192 Canazei",region:"Abruzzo \u2192 Trentino",km:"~480",drive:"~5h",color:"#8E44AD",emoji:"\u{1F697}",date:"Mer 13 ago",
+timeline:[{t:"07:00",n:"Partenza costa"},{t:"09:30",n:"Sosta A14"},{t:"12:00",n:"Arrivo Canazei"},{t:"13:00",n:"Pranzo"},{t:"15:00",n:"Lago di Fedaia"},{t:"18:00",n:"Relax paese"}],
+route:"https://www.google.com/maps/dir/San+Vito+Chietino/Canazei+TN",routeLabel:"Costa \u2192 Canazei",
+stops:[
+{name:"Canazei",lat:46.4767,lng:11.7703,map:"https://maps.google.com/?q=Canazei+TN",desc:"Base per le Dolomiti. Funivia Col dei Rossi: 360\u00B0 su Marmolada.",tip:"Guest Card gratuita con l'alloggio!"},
+{name:"Lago di Fedaia",lat:46.4571,lng:11.8687,map:"https://maps.google.com/?q=Lago+di+Fedaia",desc:"Ai piedi della Marmolada. Acqua turchese e ghiacciaio.",tip:"15 min da Canazei \u2014 perfetto per il pomeriggio"}],
+food:"Canederli, speck, strudel, polenta",sleep:"Canazei (3\u2605 ~180\u20AC o appart. ~130\u20AC)"},
+{day:6,title:"Val Gardena",region:"Alto Adige",km:"~60",drive:"~1,5h",color:"#00B894",emoji:"\u{1F332}",date:"Gio 14 ago",
+route:"https://www.google.com/maps/dir/Canazei+TN/Passo+Sella/Selva+di+Val+Gardena/Ortisei+BZ/Canazei+TN",routeLabel:"Giro Val Gardena",
+timeline:[{t:"08:30",n:"Partenza"},{t:"09:30",n:"Passo Sella"},{t:"11:00",n:"Selva"},{t:"13:00",n:"Pranzo Ortisei"},{t:"15:00",n:"Alpe di Siusi"},{t:"18:00",n:"Rientro"}],
+stops:[
+{name:"Passo Sella (2.240m)",lat:46.5092,lng:11.7581,map:"https://maps.google.com/?q=Passo+Sella",desc:"Sassolungo con pareti verticali. Paesaggio lunare.",tip:"Rifugio: terrazza mozzafiato"},
+{name:"Selva di Val Gardena",lat:46.5557,lng:11.7593,map:"https://maps.google.com/?q=Selva+di+Val+Gardena",desc:"Cuore della Val Gardena. Escursioni con le Odle sullo sfondo.",tip:"Funivie e sentieri verso il Sella"},
+{name:"Ortisei",lat:46.5735,lng:11.6717,map:"https://maps.google.com/?q=Ortisei+BZ",desc:"Borgo ladino. Sculture in legno, funivia per Alpe di Siusi.",tip:"Alpe di Siusi imperdibile \u2014 prenota funivia"}],
+food:"Cajinc\u00ED ladini, Schlutzkrapfen, strudel",sleep:"Canazei"},
+{day:7,title:"Lago di Braies",region:"Alto Adige",km:"~180",drive:"~2,5h",color:"#0984E3",emoji:"\u{1F4A7}",date:"Ven 15 ago (Ferragosto!)",
+timeline:[{t:"05:30",n:"Partenza!"},{t:"08:00",n:"Arrivo Braies"},{t:"08:30",n:"Giro lago"},{t:"11:00",n:"Barchette"},{t:"13:00",n:"Pranzo"},{t:"16:00",n:"Rientro Canazei"}],
+stops:[
+{name:"Lago di Braies",lat:46.6940,lng:12.0855,map:"https://maps.google.com/?q=Lago+di+Braies",desc:"Il pi\u00F9 fotografato d'Italia! Acqua turchese, barchette in legno.",tip:"\u26A0\uFE0F FERRAGOSTO! Navetta da Monguelfo, prenota su pragser-wildsee.it. Partenza 05:30!",warn:true}],
+route:null,routeLabel:"",food:"Kaiserschmarrn, Kn\u00F6del, Gulasch",sleep:"Canazei"},
+{day:8,title:"Dolomiti libero \u00B7 sera \u2192 Perugia",region:"Trentino \u2192 Umbria",km:"~500",drive:"~5h",color:"#D4AC0D",emoji:"\u{1F304}",date:"Sab 16 ago",
+timeline:[{t:"09:00",n:"Mattina libera"},{t:"12:00",n:"Pranzo"},{t:"14:00",n:"Ultime foto"},{t:"16:30",n:"Partenza"},{t:"21:30",n:"Arrivo Perugia"}],
+route:"https://www.google.com/maps/dir/Canazei+TN/Perugia",routeLabel:"Canazei \u2192 Perugia",
+stops:[
+{name:"Mattina libera Dolomiti",lat:46.4767,lng:11.7703,map:"https://maps.google.com/?q=Canazei+TN",desc:"Passeggiate, funivie, relax, shopping tipico. Partenza pomeriggio verso Perugia.",tip:"Partenza ore 16-17"},
+{name:"Perugia",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Perugia",desc:"Arrivo sera. Centro medievale magico di notte.",tip:"E45 Orte\u2192Perugia gratuita!"}],
+food:"Pranzo rifugio, cena Perugia",sleep:"Perugia (~130\u20AC)"},
+{day:9,title:"Perugia centro storico",region:"Umbria",km:"a piedi",drive:"0",color:"#9B59B6",emoji:"\u{1F3DB}\uFE0F",date:"Dom 17 ago",
+timeline:[{t:"09:30",n:"Colazione"},{t:"10:30",n:"Corso Vannucci"},{t:"11:30",n:"Fontana Maggiore"},{t:"13:00",n:"Pranzo"},{t:"15:00",n:"Rocca Paolina"},{t:"17:00",n:"San Pietro"},{t:"20:00",n:"Cena"}],
+stops:[
+{name:"Corso Vannucci",lat:43.1107,lng:12.3885,map:"https://maps.google.com/?q=Corso+Vannucci+Perugia",desc:"Salotto di Perugia. Palazzi, caff\u00E8 e vista valle.",tip:"Caff\u00E8 Sandri \u2014 pasticceria dal 1860"},
+{name:"Fontana Maggiore",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Fontana+Maggiore+Perugia",desc:"Capolavoro XIII sec. tra Cattedrale e Palazzo dei Priori.",tip:"Siediti ai gradini della cattedrale"},
+{name:"Rocca Paolina",lat:43.1067,lng:12.3892,map:"https://maps.google.com/?q=Rocca+Paolina+Perugia",desc:"Fortezza sotterranea. Scale mobili attraverso strade medievali sepolte.",tip:"Entra da Piazza Partigiani \u2014 gratis!"},
+{name:"Basilica San Pietro",lat:43.1020,lng:12.3961,map:"https://maps.google.com/?q=Basilica+San+Pietro+Perugia",desc:"Chiostro rinascimentale e belvedere sulla campagna umbra.",tip:"Belvedere dietro il chiostro"}],
+food:"Torta al testo, strangozzi al tartufo, Sagrantino",sleep:"Perugia"},
+{day:10,title:"Perugia \u2192 Napoli",region:"Umbria \u2192 Campania",km:"~400",drive:"~4h",color:"#D35400",emoji:"\u{1F3E0}",date:"Lun 18 ago",
+timeline:[{t:"09:00",n:"Ultimo caff\u00E8"},{t:"10:00",n:"Partenza"},{t:"12:30",n:"Sosta pranzo A1"},{t:"14:00",n:"Arrivo Napoli"}],
+route:"https://www.google.com/maps/dir/Perugia/Napoli",routeLabel:"Perugia \u2192 Napoli",
+stops:[
+{name:"Perugia (partenza)",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Perugia",desc:"E45 gratuita fino a Orte, poi A1.",tip:"E45 gratuita!"}],
+food:"Porchetta umbra da viaggio",sleep:"Casa \u2014 Napoli!"}
 ];
 
+const ALL_STOPS=[];
 DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>ALL_STOPS.push({...s,di,si,dayColor:d.color,dayNum:d.day})));
 
 const ROUTES=[
-{label:"Percorso Andata",sub:"Napoli → Bologna → Dolomiti",icon:"🚗",color:"#2E86AB",url:"https://www.google.com/maps/dir/Napoli/Scanno+AQ/Campo+Imperatore+AQ/Castelluccio+di+Norcia+PG/Brisighella+RA/Bologna/Canazei+TN"},
-{label:"Giro 4 Passi",sub:"Pordoi → Sella → Gardena → Campolongo",icon:"⛰️",color:"#8E44AD",url:"https://www.google.com/maps/dir/Canazei+TN/Passo+Pordoi/Passo+Sella/Passo+Gardena/Corvara+in+Badia+BZ/Passo+Campolongo/Canazei+TN"},
-{label:"Giro Laghi",sub:"Carezza → Braies → Tre Cime",icon:"💎",color:"#00B894",url:"https://www.google.com/maps/dir/Canazei+TN/Lago+di+Carezza/Lago+di+Braies/Lago+di+Dobbiaco/Lago+di+Landro/Tre+Cime+di+Lavaredo"},
-{label:"Alto Garda",sub:"Tenno → Varone → Arco → Riva",icon:"🌊",color:"#0984E3",url:"https://www.google.com/maps/dir/Dobbiaco/Lago+di+Tenno/Cascate+del+Varone/Arco+TN/Riva+del+Garda+TN"},
-{label:"Ritorno",sub:"Riva → Parma → Napoli",icon:"🏠",color:"#D35400",url:"https://www.google.com/maps/dir/Riva+del+Garda+TN/Parma/Napoli"}];
+{label:"Napoli \u2192 Sulmona",sub:"G1: A1+A25",icon:"\u{1F697}",color:"#2D6A4F",url:"https://www.google.com/maps/dir/Napoli/Sulmona+AQ"},
+{label:"Abruzzo interno",sub:"G2-3: Gran Sasso \u2192 Scanno",icon:"\u{1F3D4}",color:"#E67E22",url:"https://www.google.com/maps/dir/Sulmona/Campo+Imperatore/Scanno+AQ"},
+{label:"Costa dei Trabocchi",sub:"G4: Scanno \u2192 costa",icon:"\u{1F30A}",color:"#C0392B",url:"https://www.google.com/maps/dir/Scanno+AQ/San+Vito+Chietino"},
+{label:"Costa \u2192 Canazei",sub:"G5: A14+A22",icon:"\u{1F697}",color:"#8E44AD",url:"https://www.google.com/maps/dir/San+Vito+Chietino/Canazei+TN"},
+{label:"Val Gardena",sub:"G6: Sella \u2192 Ortisei",icon:"\u{1F332}",color:"#00B894",url:"https://www.google.com/maps/dir/Canazei+TN/Passo+Sella/Selva+di+Val+Gardena/Ortisei+BZ/Canazei+TN"},
+{label:"Canazei \u2192 Perugia",sub:"G8: A22+E45",icon:"\u{1F3DB}",color:"#D4AC0D",url:"https://www.google.com/maps/dir/Canazei+TN/Perugia"},
+{label:"Perugia \u2192 Napoli",sub:"G10: E45+A1",icon:"\u{1F3E0}",color:"#D35400",url:"https://www.google.com/maps/dir/Perugia/Napoli"}];
 
-const CATS=[{id:"fuel",name:"Carburante",emoji:"⛽",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"🛣️",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"🏨",color:"#2E86AB"},{id:"food",name:"Cibo",emoji:"🍽️",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"🎫",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"📦",color:"#556"}];
+const CATS=[{id:"fuel",name:"Carburante",emoji:"\u26FD",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"\u{1F6E3}",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"\u{1F3E8}",color:"#2D6A4F"},{id:"food",name:"Cibo",emoji:"\u{1F37D}",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"\u{1F3AB}",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"\u{1F4E6}",color:"#8B7355"}];
 
-const ROUTE_LINE = [
-[40.8518,14.2681],[41.9047,13.8810],[42.4382,13.5628],[42.8282,13.2074],
-[44.2219,11.7744],[44.4949,11.3426],[46.4767,11.7703],[46.4872,11.8128],
-[46.5092,11.7581],[46.5536,11.8097],[46.5500,11.8740],[46.4103,11.5753],
-[46.6940,12.0855],[46.7184,12.1750],[46.6190,12.3020],[45.9345,10.8197],
-[45.8860,10.8413],[44.8015,10.3279],[40.8518,14.2681]];
+const ROUTE_LINE=[[40.85,14.27],[42.05,13.93],[42.44,13.56],[41.90,13.88],[41.94,13.89],[42.31,14.45],[46.48,11.77],[46.46,11.87],[46.51,11.76],[46.57,11.67],[46.69,12.09],[43.11,12.39],[40.85,14.27]];
 
-let isAdmin=false, showLoginPopup=false, pinError="";
-let checks={},expenses=[],photos=[],openDay=null,openStop=null,tab="map";
+const PRECHECKS=[
+{text:"Prenotare navetta Lago di Braies (pragser-wildsee.it)",cat:"critical"},
+{text:"Prenotare cena al trabocco",cat:"critical"},
+{text:"Prenotare hotel Sulmona (G1-G2)",cat:"hotel"},
+{text:"Prenotare hotel/appart. Canazei (G5-G8)",cat:"hotel"},
+{text:"Prenotare hotel Perugia (G8-G9)",cat:"hotel"},
+{text:"Prenotare alloggio Costa Trabocchi (G4)",cat:"hotel"},
+{text:"Prenotare alloggio Scanno (G3)",cat:"hotel"},
+{text:"Controllare stazioni GPL lungo A14+A22",cat:"auto"},
+{text:"Controllare pressione gomme e livelli auto",cat:"auto"},
+{text:"Funivia Alpe di Siusi \u2014 prenotare online",cat:"attivita"},
+{text:"Canoa Fiume Tirino \u2014 prenotare",cat:"attivita"},
+{text:"Scaricare mappe offline Google Maps (Abruzzo + Dolomiti)",cat:"prep"},
+{text:"Preparare valigie (giacca montagna!)",cat:"prep"},
+{text:"Fare il pieno GPL prima della partenza",cat:"auto"},
+];
+
+// STATE
+let isAdmin=false,showLogin=false,pinErr="",tab="map",adminSub="expenses",openDay=null,openStop=null;
+let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={};
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
-let livePos=null, lastUpdate=null, gpsWatchId=null, isTracking=false;
-let leafletMap=null, posMarker=null, routeLine=null;
+let livePos=null,lastUpdate=null,gpsWatchId=null,isTracking=false;
+let leafletMap=null,posMarker=null,weather=null;
 
-function loadLocal(){
-  try{const d=localStorage.getItem("alpi-v6-checks");if(d)checks=JSON.parse(d)}catch{}
-  try{const d=localStorage.getItem("alpi-v6-expenses");if(d)expenses=JSON.parse(d)}catch{}
-  try{const d=localStorage.getItem("alpi-v6-admin");if(d==="true")isAdmin=true}catch{}
+// STORAGE
+const LS=(k)=>"dea-"+k;
+function loadAll(){
+try{checks=JSON.parse(localStorage.getItem(LS("chk")))||{}}catch(e){checks={}}
+try{expenses=JSON.parse(localStorage.getItem(LS("exp")))||[]}catch(e){expenses=[]}
+try{hotels=JSON.parse(localStorage.getItem(LS("htl")))||[]}catch(e){hotels=[]}
+try{notes=JSON.parse(localStorage.getItem(LS("nts")))||[]}catch(e){notes=[]}
+try{diary=JSON.parse(localStorage.getItem(LS("dry")))||[]}catch(e){diary=[]}
+try{prechecks=JSON.parse(localStorage.getItem(LS("prc")))||{}}catch(e){prechecks={}}
+try{if(localStorage.getItem(LS("adm"))==="1")isAdmin=true}catch(e){}
 }
-function saveChecks(){
-  try{localStorage.setItem("alpi-v6-checks",JSON.stringify(checks))}catch{}
-  if(firebaseReady)dbRef.child('checks').set(checks);
-}
-function saveExpenses(){try{localStorage.setItem("alpi-v6-expenses",JSON.stringify(expenses))}catch{}}
-function saveAdmin(){try{localStorage.setItem("alpi-v6-admin",isAdmin?"true":"false")}catch{}}
+function save(k,v){try{localStorage.setItem(LS(k),JSON.stringify(v))}catch(e){}}
+function saveChk(){save("chk",checks);if(fbOk)db.child('checks').set(checks)}
+function saveExp(){save("exp",expenses)}
+function saveHtl(){save("htl",hotels)}
+function saveNts(){save("nts",notes)}
+function saveDry(){save("dry",diary);if(fbOk)db.child('diary').set(diary)}
+function savePrc(){save("prc",prechecks)}
+function saveAdm(){try{localStorage.setItem(LS("adm"),isAdmin?"1":"0")}catch(e){}}
 
-function initFirebase(){
-  if(!firebaseReady)return;
-  dbRef.child('position').on('value',snap=>{
-    const val=snap.val();
-    if(val){
-      livePos={lat:val.lat,lng:val.lng};lastUpdate=val.ts;
-      updateMapMarker();
-      // Only re-render non-map parts to avoid destroying the map
-      if(tab!=="map")render();
-      else{
-        // Update just the info section below map
-        const infoEl=document.querySelector('.map-info');
-        if(infoEl)renderMapInfo(infoEl);
-        // Update hero live badge
-        const heroEl=document.querySelector('.live-badge');
-        if(!heroEl&&livePos){render()}
-      }
-    }
-  });
-  dbRef.child('checks').on('value',snap=>{
-    const val=snap.val();
-    if(val&&!isAdmin){checks=val;render()}
-  });
-  dbRef.child('photos').on('value',snap=>{
-    const val=snap.val();
-    if(val){photos=Object.values(val).sort((a,b)=>b.ts-a.ts);if(tab==="gallery")render()}
-    else{photos=[];if(tab==="gallery")render()}
-  });
+// FIREBASE
+function initFB(){
+if(!fbOk)return;
+db.child('position').on('value',s=>{const v=s.val();if(v){livePos={lat:v.lat,lng:v.lng};lastUpdate=v.ts;updateMarker();if(tab!=="map")render()}});
+db.child('checks').on('value',s=>{const v=s.val();if(v&&!isAdmin){checks=v;render()}});
+db.child('diary').on('value',s=>{const v=s.val();if(v&&!isAdmin){diary=Array.isArray(v)?v:Object.values(v);render()}});
+db.child('photos').on('value',s=>{const v=s.val();if(v){photos=Object.values(v).sort((a,b)=>b.ts-a.ts)}else{photos=[]}if(tab==="gallery")render()});
 }
 
-function renderMapInfo(container){
-  const ns=nextStop();
-  let h='';
-  if(livePos){
-    h+=`<div class="map-status"><div class="map-status-dot" style="background:#48C9B0;animation:pulse 2s infinite"></div>
-    <div class="map-status-text"><div class="map-status-title">📍 Daniele & Angela sono in viaggio!</div>
-    <div class="map-status-sub">Ultima posizione: ${timeSince(lastUpdate)}</div></div></div>`;
-    if(ns&&ns.lat){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
-    h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><div style="flex:1">
-    <div class="map-next-label">Prossima tappa</div><div class="map-next-name">${ns.name}</div>
-    <div class="map-next-dist">~${d<1?(d*1000).toFixed(0)+' m':d.toFixed(1)+' km'} in linea d'aria</div></div></div>`}
-    h+=`<button class="admin-btn admin-btn-secondary" style="margin-top:8px" onclick="centerOnMe()">🎯 Centra sulla posizione</button>`;
-  }else{
-    h+=`<div class="map-status"><div class="map-status-dot" style="background:#556"></div>
-    <div class="map-status-text"><div class="map-status-title">In attesa della posizione...</div>
-    <div class="map-status-sub">La posizione si aggiornerà quando Daniele e Angela la condividono</div></div></div>`}
-  container.innerHTML=h;
-}
+// GPS
+function startGPS(){if(!navigator.geolocation)return;isTracking=true;gpsWatchId=navigator.geolocation.watchPosition(p=>{livePos={lat:p.coords.latitude,lng:p.coords.longitude};lastUpdate=Date.now();if(fbOk)db.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});updateMarker();render()},e=>{},{enableHighAccuracy:true,maximumAge:10000,timeout:15000});render()}
+function stopGPS(){if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);gpsWatchId=null;isTracking=false;render()}
+function sendPos(){navigator.geolocation.getCurrentPosition(p=>{livePos={lat:p.coords.latitude,lng:p.coords.longitude};lastUpdate=Date.now();if(fbOk)db.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});updateMarker();render()},e=>alert("GPS: "+e.message),{enableHighAccuracy:true,timeout:10000})}
 
-function startTracking(){
-  if(!navigator.geolocation)return;
-  isTracking=true;
-  gpsWatchId=navigator.geolocation.watchPosition(pos=>{
-    livePos={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    lastUpdate=Date.now();
-    if(firebaseReady)dbRef.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});
-    updateMapMarker();render();
-  },err=>{console.warn("GPS error",err)},{enableHighAccuracy:true,maximumAge:10000,timeout:15000});
-  render();
-}
-function stopTracking(){
-  if(gpsWatchId!==null)navigator.geolocation.clearWatch(gpsWatchId);
-  gpsWatchId=null;isTracking=false;render();
-}
-function sendPositionOnce(){
-  navigator.geolocation.getCurrentPosition(pos=>{
-    livePos={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    lastUpdate=Date.now();
-    if(firebaseReady)dbRef.child('position').set({lat:livePos.lat,lng:livePos.lng,ts:lastUpdate});
-    updateMapMarker();render();
-  },err=>alert("Errore GPS: "+err.message),{enableHighAccuracy:true,timeout:10000});
-}
-
+// MAP
 function initMap(){
-  if(leafletMap){leafletMap.remove();leafletMap=null;posMarker=null;routeLine=null}
-  const el=document.getElementById('map');
-  if(!el)return;
-  leafletMap=L.map(el,{zoomControl:false,attributionControl:false}).setView([44.5,12.0],6);
-  L.control.zoom({position:'topright'}).addTo(leafletMap);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
-  routeLine=L.polyline(ROUTE_LINE,{color:'#2E86AB',weight:3,opacity:.4,dashArray:'8,8'}).addTo(leafletMap);
-  ALL_STOPS.forEach(s=>{
-    if(!s.lat)return;
-    const done=!!checks[s.di+"-"+s.si];
-    const icon=L.divIcon({className:'custom-marker',html:`<div class="marker-pin" style="background:${done?s.dayColor:s.dayColor+'40'};border-color:${done?'#fff':s.dayColor}">${done?'✓':s.dayNum}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
-    L.marker([s.lat,s.lng],{icon}).addTo(leafletMap).bindPopup(`<b>${s.name}</b><br><span style="font-size:11px;color:#666">${s.desc.slice(0,80)}...</span><br><a href="${s.map}" target="_blank" style="font-size:11px">📍 Apri in Google Maps</a>`);
-  });
-  leafletMap.fitBounds(routeLine.getBounds().pad(0.1));
-  setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},200);
+if(leafletMap){leafletMap.remove();leafletMap=null;posMarker=null}
+const el=document.getElementById('map');if(!el)return;
+leafletMap=L.map(el,{zoomControl:false,attributionControl:false}).setView([43.5,13],6);
+L.control.zoom({position:'topright'}).addTo(leafletMap);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
+L.polyline(ROUTE_LINE,{color:'#2D6A4F',weight:3,opacity:.35,dashArray:'8,8'}).addTo(leafletMap);
+ALL_STOPS.forEach(s=>{if(!s.lat)return;const d=!!checks[s.di+"-"+s.si];const ic=L.divIcon({className:'custom-marker',html:'<div class="marker-pin" style="background:'+(d?s.dayColor:s.dayColor+'50')+';border-color:'+(d?'#fff':s.dayColor)+';color:#fff">'+(d?'\u2713':s.dayNum)+'</div>',iconSize:[26,26],iconAnchor:[13,13]});
+L.marker([s.lat,s.lng],{icon:ic}).addTo(leafletMap).bindPopup('<b>'+s.name+'</b><br><a href="'+s.map+'" target="_blank" style="font-size:11px">Apri in Maps</a>')});
+leafletMap.fitBounds(L.polyline(ROUTE_LINE).getBounds().pad(.1));
+setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},200);
 }
-function updateMapMarker(){
-  if(!leafletMap||!livePos)return;
-  if(!posMarker){
-    const icon=L.divIcon({className:'custom-marker',html:'<div class="marker-you"></div>',iconSize:[18,18],iconAnchor:[9,9]});
-    posMarker=L.marker([livePos.lat,livePos.lng],{icon,zIndexOffset:1000}).addTo(leafletMap);
-  }else{posMarker.setLatLng([livePos.lat,livePos.lng])}
-}
-function centerOnMe(){if(leafletMap&&livePos)leafletMap.setView([livePos.lat,livePos.lng],13,{animate:true})}
+function updateMarker(){if(!leafletMap||!livePos)return;if(!posMarker){posMarker=L.marker([livePos.lat,livePos.lng],{icon:L.divIcon({className:'custom-marker',html:'<div class="marker-you"></div>',iconSize:[16,16],iconAnchor:[8,8]}),zIndexOffset:1000}).addTo(leafletMap)}else posMarker.setLatLng([livePos.lat,livePos.lng])}
+function centerMe(){if(leafletMap&&livePos)leafletMap.setView([livePos.lat,livePos.lng],13,{animate:true})}
 
-function ring(sz,sw,pct,col){const r=(sz-sw)/2,c=2*Math.PI*r;return`<svg width="${sz}" height="${sz}" class="ring" style="transform:rotate(-90deg)"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-bg" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" class="ring-fg" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-pct)}"/></svg>`}
+// WEATHER
+async function fetchWeather(lat,lng){
+try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current=temperature_2m,weather_code&timezone=Europe/Rome');
+const d=await r.json();if(d.current){weather={temp:Math.round(d.current.temperature_2m),code:d.current.weather_code};render()}}catch(e){}}
+function weatherIcon(c){if(c<=1)return'\u2600\uFE0F';if(c<=3)return'\u26C5';if(c<=48)return'\u{1F32B}\uFE0F';if(c<=67)return'\u{1F327}\uFE0F';if(c<=77)return'\u{2744}\uFE0F';return'\u26C8\uFE0F'}
+function weatherDesc(c){if(c<=1)return'Sereno';if(c<=3)return'Parzialmente nuvoloso';if(c<=48)return'Nuvoloso';if(c<=67)return'Pioggia';if(c<=77)return'Neve';return'Temporale'}
+
+// HELPERS
+function ring(sz,sw,pct,col){const r=(sz-sw)/2,c=2*Math.PI*r;return'<svg width="'+sz+'" height="'+sz+'" style="transform:rotate(-90deg)"><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="'+sw+'"/><circle cx="'+sz/2+'" cy="'+sz/2+'" r="'+r+'" fill="none" stroke="'+(col||'#D8F3DC')+'" stroke-width="'+sw+'" stroke-dasharray="'+c+'" stroke-dashoffset="'+c*(1-pct)+'" stroke-linecap="round" style="transition:stroke-dashoffset .5s"/></svg>'}
 function totalDone(){return Object.values(checks).filter(Boolean).length}
 function totalStops(){return DAYS.reduce((a,d)=>a+d.stops.length,0)}
 function dayProg(di){const d=DAYS[di],n=d.stops.filter((_,si)=>checks[di+"-"+si]).length;return d.stops.length?n/d.stops.length:0}
 function isDayDone(di){return dayProg(di)===1}
 function timeSince(ts){if(!ts)return"";const s=Math.floor((Date.now()-ts)/1000);if(s<60)return"adesso";if(s<3600)return Math.floor(s/60)+" min fa";if(s<86400)return Math.floor(s/3600)+"h fa";return Math.floor(s/86400)+"g fa"}
-function distKm(lat1,lng1,lat2,lng2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180,a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
-function nextStop(){for(let di=0;di<DAYS.length;di++)for(let si=0;si<DAYS[di].stops.length;si++)if(!checks[di+"-"+si])return{...DAYS[di].stops[si],di,si,dayColor:DAYS[di].color};return null}
+function distKm(a,b,c,d){const R=6371,x=(c-a)*Math.PI/180,y=(d-b)*Math.PI/180,z=Math.sin(x/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)**2;return R*2*Math.atan2(Math.sqrt(z),Math.sqrt(1-z))}
+function nextStop(){for(let i=0;i<DAYS.length;i++)for(let j=0;j<DAYS[i].stops.length;j++)if(!checks[i+"-"+j])return{...DAYS[i].stops[j],di:i,si:j};return null}
+function countdownText(){const now=new Date(),diff=TRIP_START-now;if(diff<=0){if(new Date()>TRIP_END)return null;return{live:true}}const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000);return{d,h,m}}
+function tripFinished(){return new Date()>TRIP_END}
 
+// RENDER
 function render(){
 const done=totalDone(),tot=totalStops(),pct=tot?done/tot:0;
-const ns=nextStop();
+const ns=nextStop(),cd=countdownText(),fin=tripFinished();
 let h="";
 
-// LOGIN POPUP (overlay, only when showLoginPopup is true)
-if(showLoginPopup){
-h+=`<div class="pin-overlay" onclick="closeLogin()"><div class="pin-box" onclick="event.stopPropagation()">
-<div style="font-size:36px;margin-bottom:10px">🔐</div>
-<h2 style="font-size:18px">Area riservata</h2>
-<p style="font-size:11px;margin-bottom:16px">Inserisci il PIN per accedere</p>
-<input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="• • • •" oninput="checkPin(this.value)" autocomplete="off" style="max-width:160px;font-size:18px;padding:10px;letter-spacing:8px">
-<div class="pin-error">${pinError}</div>
-<button onclick="closeLogin()" style="margin-top:14px;background:none;border:none;color:#556;font-size:12px;cursor:pointer;text-decoration:underline;font-family:inherit">Annulla</button>
-</div></div>`;
+// Login popup
+if(showLogin){h+='<div class="pin-overlay" onclick="closeLogin()"><div class="pin-box" onclick="event.stopPropagation()"><h2>Area riservata</h2><p>Inserisci il PIN</p><input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="\u2022 \u2022 \u2022 \u2022" oninput="tryPin(this.value)" autocomplete="off"><div class="pin-error">'+pinErr+'</div><button class="pin-cancel" onclick="closeLogin()">Annulla</button></div></div>'}
+
+// HERO
+h+='<div class="hero"><div class="hero-inner">';
+h+='<div class="tag">Road Trip \u00B7 9-18 Agosto 2026</div>';
+h+='<h1>Abruzzo, Dolomiti & Umbria</h1>';
+h+='<div class="names">Daniele & Angela</div>';
+h+='<div class="sub">10 giorni \u00B7 Da Napoli a Napoli</div>';
+
+if(cd&&!cd.live){
+h+='<div class="countdown"><div class="countdown-units"><div class="countdown-unit"><div class="countdown-num">'+cd.d+'</div><div class="countdown-label">giorni</div></div><div class="countdown-unit"><div class="countdown-num">'+cd.h+'</div><div class="countdown-label">ore</div></div><div class="countdown-unit"><div class="countdown-num">'+cd.m+'</div><div class="countdown-label">min</div></div></div></div>';
 }
 
-h+=`<div class="hero"><div class="hero-inner">
-<p class="label">Road Trip • Agosto 2026</p>
-<h1>Alpi &amp; Appennini</h1>
-<div class="names">Daniele & Angela</div>
-<p class="sub">~2.080 km · 8 giorni · Da Napoli a Napoli</p>
-<div class="hero-stats">${ring(58,4,pct,"#48C9B0")}
-<div><div class="hero-num">${done}<span>/${tot}</span></div>
-<div class="hero-meta">tappe completate</div>
-${pct===1?'<div class="badge">🎉 VIAGGIO COMPLETATO!</div>':""}
-</div></div>
-<div class="pbar"><div class="pbar-fill" style="width:${pct*100}%"></div></div>
-<div class="day-dots">${DAYS.map((_,i)=>`<div class="day-dot" style="background:${isDayDone(i)?DAYS[i].color:'rgba(255,255,255,.1)'}"></div>`).join("")}</div>
-${livePos?`<div class="live-badge"><div class="live-dot"></div>In viaggio · agg. ${timeSince(lastUpdate)}</div>`:""}
-</div></div>`;
+h+='<div class="stats"><div class="stats-ring">'+ring(46,4,pct)+'<div class="stats-ring-text">'+done+'</div></div><div style="text-align:left"><div style="font-size:11px;color:#B7E4C7">'+done+'/'+tot+' tappe</div><div style="font-size:9px;color:#B7E4C7;opacity:.7">'+(pct===1?'Completato!':Math.round(pct*100)+'%')+'</div></div></div>';
+h+='<div class="pbar"><div class="pbar-fill" style="width:'+pct*100+'%"></div></div>';
+h+='<div class="day-dots">'+DAYS.map((_,i)=>'<div class="day-dot" style="background:'+(isDayDone(i)?'#D8F3DC':'rgba(255,255,255,.2)')+'"></div>').join('')+'</div>';
+if(livePos)h+='<div class="live-badge"><div class="live-dot"></div>In viaggio \u00B7 '+timeSince(lastUpdate)+'</div>';
+h+='</div></div>';
 
-h+=`<div class="tabs">
-<button class="tab ${tab==="map"?"active":""}" onclick="switchTab('map')">📍 Mappa</button>
-<button class="tab ${tab==="checklist"?"active":""}" onclick="switchTab('checklist')">📋 Tappe</button>
-<button class="tab ${tab==="gallery"?"active":""}" onclick="switchTab('gallery')">📸 Foto</button>
-<button class="tab ${tab==="routes"?"active":""}" onclick="switchTab('routes')">🗺️ Maps</button>
-${isAdmin?`<button class="tab ${tab==="expenses"?"active":""}" onclick="switchTab('expenses')">💰 Spese</button>`:""}
-</div>`;
+// TABS
+h+='<div class="tabs">';
+h+='<button class="tab '+(tab==="map"?"active":"")+'" onclick="sw(\'map\')">Mappa</button>';
+h+='<button class="tab '+(tab==="checklist"?"active":"")+'" onclick="sw(\'checklist\')">Tappe</button>';
+h+='<button class="tab '+(tab==="diary"?"active":"")+'" onclick="sw(\'diary\')">Diario</button>';
+h+='<button class="tab '+(tab==="gallery"?"active":"")+'" onclick="sw(\'gallery\')">Foto</button>';
+h+='<button class="tab '+(tab==="routes"?"active":"")+'" onclick="sw(\'routes\')">Maps</button>';
+if(isAdmin)h+='<button class="tab '+(tab==="private"?"active":"")+'" onclick="sw(\'private\')">Privato</button>';
+h+='</div>';
 
+// MAP TAB
 if(tab==="map"){
 h+='<div id="map-container"><div id="map"></div></div><div class="map-info">';
-if(isAdmin){
-h+=`<div class="admin-bar">
-<button class="admin-btn admin-btn-primary" onclick="${isTracking?'stopTracking()':'startTracking()'}">
-${isTracking?'⏹ Ferma tracking':'📡 Attiva tracking GPS'}</button>
-<button class="admin-btn admin-btn-secondary" onclick="sendPositionOnce()">📍 Invia posizione una volta</button>
-${isTracking?`<div class="admin-tracking"><div class="admin-tracking-dot"></div><span class="admin-tracking-text">GPS attivo — posizione condivisa in tempo reale</span></div>`:""}
-${livePos?`<div class="admin-gps-status">${livePos.lat.toFixed(4)}, ${livePos.lng.toFixed(4)} · ${timeSince(lastUpdate)}</div>`:""}
-</div>`}
+if(isAdmin){h+='<div style="background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:10px;margin-bottom:8px"><button class="btn-primary" style="margin-bottom:6px" onclick="'+(isTracking?'stopGPS()':'startGPS()')+'">'+
+(isTracking?'\u23F9 Ferma tracking':'\u{1F4E1} Attiva GPS')+'</button>'+
+'<button class="btn-secondary" style="width:100%" onclick="sendPos()">Invia posizione</button>'+
+(isTracking?'<div style="text-align:center;font-size:10px;color:#2D6A4F;margin-top:6px">GPS attivo</div>':'')+
+'</div>'}
 if(livePos){
-h+=`<div class="map-status"><div class="map-status-dot" style="background:#48C9B0;animation:pulse 2s infinite"></div>
-<div class="map-status-text"><div class="map-status-title">📍 Daniele & Angela sono in viaggio!</div>
-<div class="map-status-sub">Ultima posizione: ${timeSince(lastUpdate)}</div></div></div>`;
-if(ns&&ns.lat&&livePos){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
-h+=`<div class="map-next"><div class="map-next-icon">${DAYS[ns.di].emoji}</div><div style="flex:1">
-<div class="map-next-label">Prossima tappa</div><div class="map-next-name">${ns.name}</div>
-<div class="map-next-dist">~${d<1?(d*1000).toFixed(0)+' m':d.toFixed(1)+' km'} in linea d'aria</div></div></div>`}
-h+=`<button class="admin-btn admin-btn-secondary" style="margin-top:8px" onclick="centerOnMe()">🎯 Centra sulla posizione</button>`;
-}else{
-h+=`<div class="map-status"><div class="map-status-dot" style="background:#556"></div>
-<div class="map-status-text"><div class="map-status-title">In attesa della posizione...</div>
-<div class="map-status-sub">${isAdmin?"Attiva il tracking GPS qui sopra":"La posizione si aggiornerà quando Daniele e Angela la condividono"}</div></div></div>`}
-h+='</div>';
-}
+h+='<div class="map-status"><div class="map-status-dot" style="background:#2D6A4F;animation:pulse 2s infinite"></div><div><div class="map-status-title">Daniele & Angela sono in viaggio!</div><div class="map-status-sub">Aggiornamento: '+timeSince(lastUpdate)+'</div></div></div>';
+if(ns&&ns.lat){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
+h+='<div class="map-next"><div style="font-size:20px">'+DAYS[ns.di].emoji+'</div><div><div style="font-size:10px;color:#2D6A4F;font-weight:600">PROSSIMA TAPPA</div><div style="font-size:14px;font-weight:600">'+ns.name+'</div><div style="font-size:11px;color:#8B7355">~'+(d<1?(d*1000).toFixed(0)+'m':d.toFixed(1)+'km')+'</div></div></div>'}
+h+='<button class="btn-secondary" style="width:100%;margin-top:8px" onclick="centerMe()">Centra su di noi</button>';
+}else{h+='<div class="map-status"><div class="map-status-dot" style="background:#C4B99A"></div><div><div class="map-status-title">In attesa della posizione...</div><div class="map-status-sub">'+(isAdmin?'Attiva il GPS':'Si aggiorner\u00E0 quando Daniele e Angela condividono')+'</div></div></div>'}
+if(weather)h+='<div class="weather"><div class="weather-icon">'+weatherIcon(weather.code)+'</div><div><div class="weather-temp">'+weather.temp+'\u00B0C</div><div class="weather-desc">'+weatherDesc(weather.code)+'</div></div></div>';
+h+='</div>'}
 
+// CHECKLIST TAB
 if(tab==="checklist"){
 h+='<div class="content">';
 DAYS.forEach((day,di)=>{
-const isOpen=openDay===di,prog=dayProg(di),complete=isDayDone(di);
-const doneN=day.stops.filter((_,si)=>checks[di+"-"+si]).length;
-h+=`<div class="day" style="background:${isOpen?'#131f2e':'#111c29'};border:1px solid ${complete?day.color+'20':'#1a2535'}">`;
-h+=`<div class="day-head" onclick="toggleDay(${di})" style="background:${complete?day.color+'08':'transparent'}">
-<div class="day-emoji" style="background:${complete?day.color:day.color+'20'}">${complete?"✅":day.emoji}</div>
-<div class="day-info"><div><span class="day-tag" style="color:${day.color}">G${day.day}</span><span class="day-region">${day.region}</span></div>
-<div class="day-title">${day.title}</div><div class="day-km">${day.km} · ${day.drive}</div></div>
-<div class="day-prog">${ring(32,3,prog,day.color)}<span class="day-prog-txt">${doneN}/${day.stops.length}</span></div>
-<div class="day-arrow ${isOpen?'open':''}">▾</div></div>`;
-if(isOpen){h+='<div class="day-body">';
-day.stops.forEach((stop,si)=>{
-const ck=!!checks[di+"-"+si],exp=openStop===di+"-"+si;
-h+=`<div class="stop" style="background:${ck?day.color+'0a':'#0d1520'};border:1px solid ${ck?day.color+'25':'#162030'}">
-<div class="stop-row">`;
-if(isAdmin){h+=`<div class="check ${ck?'on':''}" style="--c:${day.color}" onclick="event.stopPropagation();toggleCheck(${di},${si})">${ck?"✓":""}</div>`}
-else{h+=`<div class="check ${ck?'on':''} readonly" style="--c:${day.color}">${ck?"✓":""}</div>`}
-h+=`<div class="stop-text" onclick="toggleStop('${di}-${si}')">
-<div class="stop-name ${ck?'done':''}" style="color:${ck?'#7a9aaa':'#ccd'}">${stop.name}</div>
-${!exp?`<div class="stop-preview">${stop.desc.slice(0,55)}...</div>`:""}</div>
-<a href="${stop.map}" target="_blank" rel="noopener" class="maps-btn" style="color:${day.color};border:1px solid ${day.color}35" onclick="event.stopPropagation()">📍</a></div>`;
-if(exp){h+=`<div class="stop-detail"><p class="stop-desc">${stop.desc}</p>`;
-if(stop.tip){if(stop.warn)h+=`<div class="warn-tip">⚠️ ${stop.tip}</div>`;else h+=`<div class="stop-tip">💡 ${stop.tip}</div>`}h+='</div>'}h+='</div>'});
-h+=`<div class="info-row">
-<div class="info-box" style="background:#c0392b0a;border-left:3px solid #c0392b30"><div class="info-label" style="color:#c0392b">🍽️ Da provare</div><div class="info-val" style="color:#8a6666">${day.food}</div></div>
-<div class="info-box" style="background:#f39c120a;border-left:3px solid #f39c1230"><div class="info-label" style="color:#f39c12">🏨 Dove dormire</div><div class="info-val" style="color:#8a7744">${day.sleep}</div></div></div>`;
-if(day.route)h+=`<a href="${day.route}" target="_blank" class="special-route" style="background:${day.color}12;border:1px solid ${day.color}25;color:${day.color}">🗺️ ${day.routeLabel} →</a>`;
-h+='</div>'}h+='</div>'});h+='</div>'}
+const isO=openDay===di,pr=dayProg(di),cmp=isDayDone(di),dn=day.stops.filter((_,si)=>checks[di+"-"+si]).length;
+h+='<div class="card" style="'+(cmp?'border-left:3px solid '+day.color:'border-left:3px solid transparent')+'">';
+h+='<div class="card-head" onclick="togDay('+di+')">';
+h+='<div class="card-emoji" style="background:'+day.color+'15">'+day.emoji+'</div>';
+h+='<div class="card-info"><div><span class="card-tag" style="color:'+day.color+'">G'+day.day+'</span><span class="card-date">'+day.date+'</span></div><div class="card-title">'+day.title+'</div><div class="card-km">'+day.km+' km \u00B7 '+day.drive+'</div></div>';
+h+='<div class="card-prog" style="position:relative;width:30px;height:30px">'+ring(30,3,pr,day.color)+'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:'+day.color+'">'+dn+'</div></div>';
+h+='<div class="card-arrow '+(isO?'open':'')+'">\u25BE</div></div>';
 
-if(tab==="routes"){
-h+='<div class="content">';
-ROUTES.forEach(r=>{h+=`<a href="${r.url}" target="_blank" class="route-card" style="background:linear-gradient(135deg,${r.color}18,${r.color}08);border:1px solid ${r.color}30"><div class="route-icon" style="background:${r.color}20">${r.icon}</div><div style="flex:1"><div class="route-label">${r.label}</div><div class="route-sub">${r.sub}</div></div><div class="route-arrow" style="color:${r.color}">→</div></a>`});
-h+='<div class="pins-section"><p style="font-size:10px;text-transform:uppercase;letter-spacing:3px;color:#445;margin-bottom:12px">Tutti i luoghi</p>';
-DAYS.forEach((day,di)=>{h+=`<div class="pins-day-label" style="color:${day.color}">G${day.day} — ${day.region}</div><div class="pins-wrap">`;
-day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+=`<a href="${s.map}" target="_blank" class="pin" style="background:${ck?day.color+'20':'#151f2e'};border:1px solid ${ck?day.color+'40':'#1e2d3d'};color:${ck?'#8cb4cc':'#7a8a9a'}">📍 ${s.name}${ck?" ✓":""}</a>`});h+='</div>'});h+='</div></div>'}
-
-if(tab==="gallery"){
-h+='<div class="content">';
-// Upload area (admin only)
-if(isAdmin){
-if(uploading){
-h+='<div class="gal-uploading-bar"><div style="font-size:32px;margin-bottom:6px">⏳</div><div style="font-size:13px;color:#2E86AB;font-weight:600">Caricamento in corso...</div></div>';
-}else if(pendingFile){
-h+=`<div class="gal-preview-card">
-<img class="gal-preview-img" src="${pendingPreview}" alt="Anteprima">
-<input class="gal-preview-input" id="photo-caption" type="text" placeholder="Aggiungi una didascalia..." value="${pendingCaption}" oninput="pendingCaption=this.value" autocomplete="off">
-<div style="font-size:10px;color:#556;margin-bottom:6px;font-weight:600">Giorno:</div>
-<div class="gal-preview-days">
-${DAYS.map(d=>`<button class="gal-preview-day ${pendingDay===d.day?'active':''}" onclick="pendingDay=${d.day};render()">G${d.day}</button>`).join("")}
-</div>
-<div class="gal-preview-actions">
-<button class="gal-preview-cancel" onclick="cancelPending()">Annulla</button>
-<button class="gal-preview-send" onclick="confirmUpload()">Pubblica foto</button>
-</div>
-</div>`;
-}else{
-h+=`<div class="gal-upload-btns">
-<input type="file" id="photo-camera" accept="image/*" capture="environment" style="display:none" onchange="preparePhoto(this.files[0])">
-<input type="file" id="photo-gallery" accept="image/*" style="display:none" onchange="preparePhoto(this.files[0])">
-<div class="gal-upload-btn" onclick="document.getElementById('photo-camera').click()">
-<div class="gal-upload-btn-icon">📷</div>
-<div class="gal-upload-btn-text">Scatta foto</div>
-</div>
-<div class="gal-upload-btn" onclick="document.getElementById('photo-gallery').click()">
-<div class="gal-upload-btn-icon">🖼️</div>
-<div class="gal-upload-btn-text">Dalla galleria</div>
-</div>
-</div>`;
-}
-}
-// Day filter
-const photoDays=[...new Set(photos.map(p=>p.day))].sort();
-if(photos.length>0){
-h+=`<div class="gal-count">${photos.length} foto del viaggio</div>`;
-h+='<div class="gal-day-filter">';
-h+=`<button class="gal-day-btn ${galFilter==='all'?'active':''}" onclick="setGalFilter('all')">Tutte</button>`;
-photoDays.forEach(d=>{
-const cnt=photos.filter(p=>p.day===d).length;
-h+=`<button class="gal-day-btn ${galFilter===d?'active':''}" onclick="setGalFilter(${d})">G${d} (${cnt})</button>`;
-});
+if(isO){
+h+='<div class="card-body">';
+// Timeline
+if(day.timeline){h+='<div class="timeline">';day.timeline.forEach(t=>{h+='<div class="tl-item"><div class="tl-time">'+t.t+'</div><div class="tl-name">'+t.n+'</div></div>'});h+='</div>'}
+// Stops
+day.stops.forEach((s,si)=>{
+const ck=!!checks[di+"-"+si],ex=openStop===di+"-"+si;
+h+='<div class="stop">';
+h+='<div class="stop-row">';
+if(isAdmin)h+='<div class="chk '+(ck?'on':'')+'" style="--c:'+day.color+'" onclick="event.stopPropagation();togChk('+di+','+si+')">'+(ck?'\u2713':'')+'</div>';
+else h+='<div class="chk '+(ck?'on':'')+' readonly" style="--c:'+day.color+'">'+(ck?'\u2713':'')+'</div>';
+h+='<div style="flex:1;min-width:0;cursor:pointer" onclick="togStop(\''+di+'-'+si+'\')"><div class="stop-name '+(ck?'done':'')+'">'+s.name+'</div>';
+if(!ex)h+='<div class="stop-preview">'+s.desc.slice(0,50)+'...</div>';
 h+='</div>';
-// Grid
-const filtered=galFilter==='all'?photos:photos.filter(p=>p.day===galFilter);
-if(filtered.length>0){
-h+='<div class="gal-grid">';
-filtered.forEach((p,i)=>{
-const globalIdx=photos.indexOf(p);
-h+=`<div class="gal-thumb" onclick="openLightbox(${globalIdx})">
-<img src="${p.thumb||p.url}" alt="${p.caption||'Foto G'+p.day}" loading="lazy">
-<div class="gal-thumb-day">G${p.day}</div>
-${isAdmin?`<button class="gal-thumb-del" onclick="event.stopPropagation();deletePhoto('${p.id}')">✕</button>`:''}
-${p.caption?`<div style="position:absolute;bottom:0;left:0;right:0;padding:4px 6px;background:linear-gradient(transparent,rgba(0,0,0,.7));font-size:9px;color:#ddd;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${p.caption}</div>`:''}
-</div>`;
-});
-h+='</div>';
-}else{h+='<div class="gal-empty">Nessuna foto per questo giorno</div>'}
-}else{
-h+=`<div class="gal-empty">${isAdmin?'Nessuna foto ancora. Usa il pulsante sopra per scattare!':'Le foto del viaggio appariranno qui man mano che Daniele e Angela le condividono 📸'}</div>`;
-}
-h+='</div>';
-}
-
-// Lightbox
-if(lightboxIdx>=0&&lightboxIdx<photos.length){
-const p=photos[lightboxIdx];
-h+=`<div class="lightbox" onclick="closeLightbox()">
-<button class="lightbox-close" onclick="closeLightbox()">✕</button>
-${photos.length>1?`<button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation();navLightbox(-1)">‹</button>
-<button class="lightbox-nav lightbox-next" onclick="event.stopPropagation();navLightbox(1)">›</button>`:''}
-<img src="${p.url}" alt="${p.caption||''}" onclick="event.stopPropagation()">
-<div class="lightbox-caption">Giorno ${p.day}${p.caption?' — '+p.caption:''} · ${new Date(p.ts).toLocaleDateString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-</div>`;
-}
-
-if(tab==="expenses"&&isAdmin){
-h+='<div class="content">';
-const totalExp=expenses.reduce((a,e)=>a+e.amount,0);
-const catTotals={};CATS.forEach(c=>catTotals[c.id]=0);expenses.forEach(e=>catTotals[e.cat]=(catTotals[e.cat]||0)+e.amount);
-h+=`<div class="exp-summary"><div class="exp-total"><div class="exp-total-num">€ ${totalExp.toFixed(2)}</div><div class="exp-total-label">Spesa totale</div><div class="exp-total-pp">€ ${(totalExp/2).toFixed(2)} a testa</div></div>`;
-CATS.forEach(c=>{if(catTotals[c.id]>0)h+=`<div class="exp-cat-card"><div class="exp-cat-icon" style="background:${c.color}15">${c.emoji}</div><div><div class="exp-cat-name">${c.name}</div><div class="exp-cat-val">€ ${catTotals[c.id].toFixed(2)}</div></div></div>`});
-h+='</div>';
-h+=`<div class="exp-add-bar"><div style="font-size:11px;font-weight:700;color:#5a8fa8;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">+ Aggiungi spesa</div>
-<div class="exp-add-row"><input class="exp-input exp-input-desc" id="exp-desc" type="text" placeholder="Descrizione..." autocomplete="off"><input class="exp-input exp-input-amount" id="exp-amount" type="number" inputmode="decimal" placeholder="€" step="0.01" min="0"></div>
-<div class="exp-cats">${CATS.map(c=>`<button class="exp-cat-btn ${expCat===c.id?'active':''}" style="--c:${c.color}" onclick="setExpCat('${c.id}')">${c.emoji} ${c.name}</button>`).join("")}</div>
-<div class="exp-day-select"><button class="exp-day-btn ${expDay===0?'active':''}" onclick="setExpDay(0)">Gen</button>${DAYS.map((d,i)=>`<button class="exp-day-btn ${expDay===i+1?'active':''}" onclick="setExpDay(${i+1})">G${d.day}</button>`).join("")}</div>
-<button class="exp-submit" onclick="addExpense()">Aggiungi</button></div>`;
-h+='<div class="exp-filter">';h+=`<button class="exp-filter-btn ${expFilter==='all'?'active':''}" onclick="setExpFilter('all')">Tutte</button>`;
-DAYS.forEach((d,i)=>{const dt=expenses.filter(e=>e.day===i+1).reduce((a,e)=>a+e.amount,0);if(dt>0)h+=`<button class="exp-filter-btn ${expFilter===i+1?'active':''}" onclick="setExpFilter(${i+1})">G${d.day} €${dt.toFixed(0)}</button>`});
-CATS.forEach(c=>{if(catTotals[c.id]>0)h+=`<button class="exp-filter-btn ${expFilter===c.id?'active':''}" onclick="setExpFilter('${c.id}')">${c.emoji} €${catTotals[c.id].toFixed(0)}</button>`});h+='</div>';
-const filtered=expenses.filter(e=>{if(expFilter==='all')return true;if(typeof expFilter==='number')return e.day===expFilter;return e.cat===expFilter}).sort((a,b)=>b.ts-a.ts);
-if(!filtered.length)h+='<div class="exp-empty">Nessuna spesa ancora.</div>';
-else{h+='<div class="exp-list">';filtered.forEach(e=>{const cat=CATS.find(c=>c.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
-h+=`<div class="exp-item"><div class="exp-item-icon">${cat.emoji}</div><div class="exp-item-info"><div class="exp-item-name">${e.desc||cat.name}</div><div class="exp-item-meta">${e.day>0?'G'+e.day:'Gen'} · ${cat.name}</div></div><div class="exp-item-amount">€ ${e.amount.toFixed(2)}</div><button class="exp-item-del" onclick="deleteExpense(${ri})">✕</button></div>`});h+='</div>'}
-if(expenses.length>0)h+=`<div style="text-align:center;margin-top:16px"><button style="background:none;border:1px solid #2a3535;color:#556;font-size:11px;padding:6px 16px;border-radius:20px;cursor:pointer;font-family:inherit" onclick="clearExpenses()">🗑 Cancella tutte</button></div>`;
+h+='<a href="'+s.map+'" target="_blank" class="stop-maps" onclick="event.stopPropagation()">Maps</a></div>';
+if(ex){h+='<div class="stop-detail" style="animation:fadeIn .3s"><div class="stop-desc">'+s.desc+'</div>';
+if(s.tip){if(s.warn)h+='<div class="stop-warn">'+s.tip+'</div>';else h+='<div class="stop-tip">'+s.tip+'</div>'}
+h+='</div>'}
+h+='</div>'});
+h+='<div class="info-row"><div class="info-box" style="background:#FEF0F0;border-left:3px solid #C0392B20"><div class="info-label" style="color:#C0392B">Da provare</div><div class="info-val" style="color:#6B3A2A">'+day.food+'</div></div>';
+h+='<div class="info-box" style="background:#FFF8E1;border-left:3px solid #F9A82520"><div class="info-label" style="color:#854F0B">Dove dormire</div><div class="info-val" style="color:#6B4E1F">'+day.sleep+'</div></div></div>';
+if(day.route)h+='<a href="'+day.route+'" target="_blank" class="special-route" style="background:#E8F5E9;color:#2D6A4F;border:.5px solid #C8E6C9">'+day.routeLabel+' \u2192</a>';
+h+='</div>'}
+h+='</div>'});
 h+='</div>'}
 
-if(isAdmin)h+=`<button class="reset-btn" onclick="logout()" title="Esci dall'area riservata">🔓</button>`;
-else h+=`<button class="reset-btn" onclick="openLogin()" title="Area riservata" style="font-size:13px">🔑</button>`;
+// DIARY TAB
+if(tab==="diary"){
+h+='<div class="content">';
+if(isAdmin){h+='<div class="diary-add"><div class="form-label">Scrivi nel diario</div><textarea class="diary-textarea" id="diary-text" placeholder="Come sta andando il viaggio?"></textarea><div class="form-days" style="margin-top:8px">'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div><button class="btn-primary" onclick="addDiary()">Pubblica</button></div>'}
+if(diary.length===0)h+='<div class="empty">'+(isAdmin?'Scrivi la prima nota del viaggio!':'Il diario del viaggio apparir\u00E0 qui...')+'</div>';
+else{diary.sort((a,b)=>b.ts-a.ts).forEach((e,i)=>{
+h+='<div class="diary-entry"><div class="diary-date">G'+(e.day||'?')+' \u00B7 '+new Date(e.ts).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div><div class="diary-text">'+e.text+'</div>';
+if(isAdmin)h+='<button style="margin-top:6px;background:none;border:none;color:#C0392B;font-size:10px;cursor:pointer" onclick="delDiary('+i+')">Elimina</button>';
+h+='</div>'})}
+h+='</div>'}
+
+// GALLERY TAB
+if(tab==="gallery"){
+h+='<div class="content">';
+if(isAdmin){
+if(uploading)h+='<div class="form-box" style="text-align:center"><div style="font-size:28px">\u23F3</div><div style="font-size:12px;color:#2D6A4F;font-weight:600">Caricamento...</div></div>';
+else if(pendingFile){
+h+='<div class="gal-preview"><img src="'+pendingPreview+'" alt="Anteprima"><input class="gal-input" id="photo-caption" type="text" placeholder="Didascalia..." value="'+pendingCaption+'" oninput="pendingCaption=this.value"><div class="gal-day-sel">'+DAYS.map(d=>'<button class="gal-day-btn '+(pendingDay===d.day?'act':'')+'" onclick="pendingDay='+d.day+';render()">G'+d.day+'</button>').join('')+'</div><div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelPhoto()">Annulla</button><button class="btn-primary" style="flex:1" onclick="confirmPhoto()">Pubblica</button></div></div>';
+}else{
+h+='<div class="gal-btns"><input type="file" id="cam" accept="image/*" capture="environment" style="display:none" onchange="prepPhoto(this.files[0])"><input type="file" id="gal" accept="image/*" style="display:none" onchange="prepPhoto(this.files[0])">';
+h+='<div class="gal-btn" onclick="document.getElementById(\'cam\').click()"><div class="gal-btn-icon">\u{1F4F7}</div><div class="gal-btn-text">Scatta</div></div>';
+h+='<div class="gal-btn" onclick="document.getElementById(\'gal\').click()"><div class="gal-btn-icon">\u{1F5BC}\uFE0F</div><div class="gal-btn-text">Galleria</div></div></div>'}}
+if(photos.length>0){
+h+='<div style="font-size:11px;color:#8B7355;text-align:center;margin-bottom:10px">'+photos.length+' foto</div>';
+const pDays=[...new Set(photos.map(p=>p.day))].sort();
+h+='<div class="gal-filter"><button class="gal-filter-btn '+(galFilter==='all'?'act':'')+'" onclick="galFilter=\'all\';render()">Tutte</button>';
+pDays.forEach(d=>{h+='<button class="gal-filter-btn '+(galFilter===d?'act':'')+'" onclick="galFilter='+d+';render()">G'+d+'</button>'});h+='</div>';
+const fp=galFilter==='all'?photos:photos.filter(p=>p.day===galFilter);
+h+='<div class="gal-grid">';fp.forEach((p,i)=>{const gi=photos.indexOf(p);
+h+='<div class="gal-thumb" onclick="lightboxIdx='+gi+';render()"><img src="'+(p.thumb||p.url)+'" loading="lazy"><div class="gal-thumb-day">G'+p.day+'</div>';
+if(p.caption)h+='<div style="position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:linear-gradient(transparent,rgba(0,0,0,.6));font-size:8px;color:#ddd;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+p.caption+'</div>';
+if(isAdmin)h+='<button class="gal-thumb-del" onclick="event.stopPropagation();delPhoto(\''+p.id+'\')">\u2715</button>';
+h+='</div>'});h+='</div>';
+}else h+='<div class="empty">'+(isAdmin?'Scatta la prima foto!':'Le foto appariranno qui...')+'</div>';
+h+='</div>'}
+
+// Lightbox
+if(lightboxIdx>=0&&lightboxIdx<photos.length){const p=photos[lightboxIdx];
+h+='<div class="lightbox" onclick="lightboxIdx=-1;render()"><button class="lightbox-close" onclick="lightboxIdx=-1;render()">\u2715</button>';
+if(photos.length>1){h+='<button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation();lightboxIdx=(lightboxIdx-1+photos.length)%photos.length;render()">\u2039</button>';
+h+='<button class="lightbox-nav lightbox-next" onclick="event.stopPropagation();lightboxIdx=(lightboxIdx+1)%photos.length;render()">\u203A</button>'}
+h+='<img src="'+p.url+'" onclick="event.stopPropagation()"><div class="lightbox-caption">G'+p.day+(p.caption?' \u2014 '+p.caption:'')+'</div></div>'}
+
+// ROUTES TAB
+if(tab==="routes"){
+h+='<div class="content">';
+ROUTES.forEach(r=>{h+='<a href="'+r.url+'" target="_blank" class="route-card"><div class="route-icon" style="background:'+r.color+'12">'+r.icon+'</div><div style="flex:1"><div class="route-label">'+r.label+'</div><div class="route-sub">'+r.sub+'</div></div><div style="color:'+r.color+'">\u2192</div></a>'});
+h+='<div style="font-size:10px;color:#B0A48E;text-transform:uppercase;letter-spacing:2px;margin:16px 0 10px">Tutti i luoghi</div>';
+DAYS.forEach((day,di)=>{h+='<div style="font-size:10px;font-weight:700;color:'+day.color+';margin:10px 0 6px">G'+day.day+' \u2014 '+day.region+'</div><div class="pins-wrap">';
+day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+='<a href="'+s.map+'" target="_blank" class="pin-chip" style="'+(ck?'border-color:'+day.color+';color:'+day.color:'')+'">'+s.name+(ck?' \u2713':'')+'</a>'});h+='</div>'});
+h+='</div>'}
+
+// PRIVATE TAB
+if(tab==="private"&&isAdmin){
+h+='<div class="content">';
+h+='<div class="sub-tabs">';
+['expenses','hotels','budget','notes','precheck'].forEach(s=>{
+const labels={expenses:'Spese',hotels:'Hotel',budget:'Budget',notes:'Note',precheck:'Pre-partenza'};
+h+='<button class="sub-tab '+(adminSub===s?'act':'')+'" onclick="adminSub=\''+s+'\';render()">'+labels[s]+'</button>'});
+h+='</div>';
+
+if(adminSub==='expenses'){
+const tot=expenses.reduce((a,e)=>a+e.amount,0);
+const ct={};CATS.forEach(c=>ct[c.id]=0);expenses.forEach(e=>ct[e.cat]=(ct[e.cat]||0)+e.amount);
+h+='<div class="exp-total-card"><div class="exp-total-num">\u20AC '+tot.toFixed(2)+'</div><div class="exp-total-sub">Spesa reale</div><div class="exp-total-pp">\u20AC '+(tot/2).toFixed(2)+' a testa</div></div>';
+h+='<div class="exp-cats-grid">';CATS.forEach(c=>{if(ct[c.id]>0)h+='<div class="exp-cat-card"><div class="exp-cat-icon">'+c.emoji+'</div><div><div class="exp-cat-name">'+c.name+'</div><div class="exp-cat-val">\u20AC'+ct[c.id].toFixed(0)+'</div></div></div>'});h+='</div>';
+h+='<div class="form-box"><div class="form-label">+ Aggiungi</div><div class="form-row"><input class="form-input" id="exp-desc" placeholder="Descrizione..."><input class="form-input" id="exp-amt" type="number" inputmode="decimal" placeholder="\u20AC" step=".01" style="max-width:80px"></div>';
+h+='<div class="form-cats">'+CATS.map(c=>'<button class="form-cat '+(expCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="expCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
+h+='<div class="form-days"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
+h+='<button class="btn-primary" onclick="addExp()">Aggiungi</button></div>';
+const fl=expenses.filter(e=>expFilter==='all'?true:typeof expFilter==='number'?e.day===expFilter:e.cat===expFilter).sort((a,b)=>b.ts-a.ts);
+if(fl.length)fl.forEach(e=>{const c=CATS.find(x=>x.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
+h+='<div class="exp-item"><div>'+c.emoji+'</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(e.desc||c.name)+'</div><div class="exp-item-meta">'+(e.day>0?'G'+e.day:'Gen')+' \u00B7 '+c.name+'</div></div><div class="exp-item-amount">\u20AC'+e.amount.toFixed(2)+'</div><button class="exp-item-del" onclick="delExp('+ri+')">\u2715</button></div>'});
+else h+='<div class="empty">Nessuna spesa</div>';
+}
+
+if(adminSub==='hotels'){
+h+='<div class="form-box"><div class="form-label">+ Aggiungi hotel</div><input class="form-input" id="h-name" placeholder="Nome hotel..."><input class="form-input" id="h-addr" placeholder="Indirizzo..."><div class="form-row"><input class="form-input" id="h-phone" type="tel" placeholder="Telefono..."><input class="form-input" id="h-price" type="number" placeholder="\u20AC/notte" style="max-width:90px"></div><input class="form-input" id="h-conf" placeholder="N. prenotazione / note..."><div class="form-days">'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div><button class="btn-primary" onclick="addHotel()">Aggiungi</button></div>';
+if(!hotels.length)h+='<div class="empty">Nessun hotel</div>';
+else hotels.sort((a,b)=>a.day-b.day).forEach((ht,i)=>{const dd=DAYS[ht.day-1];
+const mu=ht.address?'https://maps.google.com/?q='+encodeURIComponent(ht.address):'';
+h+='<div class="hotel-card"><div class="hotel-day-tag" style="background:'+(dd?dd.color+'15':'#eee')+';color:'+(dd?dd.color:'#888')+'">G'+ht.day+' '+(dd?dd.date:'')+'</div><div class="hotel-name">'+ht.name+'</div>';
+if(ht.address)h+='<div class="hotel-row">\u{1F4CD} '+ht.address+'</div>';
+if(ht.phone)h+='<div class="hotel-row">\u{1F4DE} '+ht.phone+'</div>';
+if(ht.price)h+='<div class="hotel-row">\u{1F4B0} \u20AC'+ht.price+'/notte</div>';
+if(ht.confirm)h+='<div class="hotel-row">\u{1F4CB} '+ht.confirm+'</div>';
+h+='<div class="hotel-nav">';if(mu)h+='<a href="'+mu+'" target="_blank" class="nav-go">Naviga</a>';if(ht.phone)h+='<a href="tel:'+ht.phone.replace(/\s/g,'')+'" class="nav-call">Chiama</a>';h+='</div>';
+h+='<button class="hotel-del" onclick="delHotel('+i+')">\u2715</button></div>'});
+}
+
+if(adminSub==='budget'){
+h+='<div class="budget-grid"><div class="budget-card"><div class="budget-label">Carburante GPL</div><div class="budget-val">~185\u20AC</div><div class="budget-sub">~220L \u00B7 0,81\u20AC pompa</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Pedaggi</div><div class="budget-val">~147\u20AC</div><div class="budget-sub">A1+A24+A14+A22</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Hotel 9 notti</div><div class="budget-val">~1.295\u20AC</div><div class="budget-sub">115+100+180+130\u20AC/n</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Vitto</div><div class="budget-val">~950\u20AC</div><div class="budget-sub">~95\u20AC/giorno x2</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Extra</div><div class="budget-val">~294\u20AC</div><div class="budget-sub">Funivie, navette, canoa</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Auto</div><div class="budget-val">Ford Fiesta</div><div class="budget-sub">1.4 GPL</div></div></div>';
+h+='<div class="exp-total-card"><div class="exp-total-num">~2.872\u20AC</div><div class="exp-total-sub">Stima totale 2 persone</div><div class="exp-total-pp">~1.436\u20AC a testa</div></div>';
+}
+
+if(adminSub==='notes'){
+h+='<div style="font-size:10px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Note critiche</div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F68C}</div><div class="note-text"><strong>Braies (Ferragosto!):</strong> navetta da Monguelfo, pragser-wildsee.it, partenza 05:30</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F37D}</div><div class="note-text"><strong>Trabocco cena:</strong> prenotare settimane prima!</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F3E8}</div><div class="note-text"><strong>Canazei:</strong> prezzi alti. Alternativa fassa.com ~130\u20AC</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F697}</div><div class="note-text"><strong>G5 trasferimento:</strong> ~480km, A14+A22</div></div>';
+h+='<div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">Info utili</div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F6E3}</div><div class="note-text"><strong>E45 gratuita</strong> Orte\u2194Perugia</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F3AB}</div><div class="note-text"><strong>Guest Card</strong> Val di Fassa: funivie+bus gratis</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u26FD</div><div class="note-text"><strong>GPL:</strong> pieno prima di A14+A22</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F321}</div><div class="note-text"><strong>Temp:</strong> Abruzzo 15-28\u00B0 \u00B7 Dolomiti 10-22\u00B0 \u00B7 Perugia 20-35\u00B0</div></div>';
+h+='<div style="font-size:10px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">Note personali</div>';
+h+='<div class="form-box"><textarea class="diary-textarea" id="note-text" placeholder="Nota..." style="min-height:50px"></textarea><button class="btn-primary" onclick="addNote()">Aggiungi</button></div>';
+notes.forEach((n,i)=>{h+='<div class="note-card" style="position:relative"><div class="note-icon">\u{1F4CC}</div><div class="note-text">'+n.text+'<div style="font-size:8px;color:#B0A48E;margin-top:2px">'+new Date(n.ts).toLocaleDateString('it-IT',{day:'numeric',month:'short'})+'</div></div><button class="hotel-del" onclick="delNote('+i+')">\u2715</button></div>'});
+}
+
+if(adminSub==='precheck'){
+h+='<div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Checklist pre-partenza</div>';
+const pDone=PRECHECKS.filter((_,i)=>prechecks[i]).length;
+h+='<div style="font-size:12px;color:#8B7355;margin-bottom:12px">'+pDone+'/'+PRECHECKS.length+' completate</div>';
+PRECHECKS.forEach((p,i)=>{const ck=!!prechecks[i];
+const cols={critical:'#C0392B',hotel:'#2D6A4F',auto:'#E67E22',attivita:'#8E44AD',prep:'#0984E3'};
+h+='<div class="precheck-item" style="border-left:3px solid '+(cols[p.cat]||'#888')+'30"><div class="chk '+(ck?'on':'')+'" style="--c:'+(cols[p.cat]||'#888')+'" onclick="prechecks['+i+']=!prechecks['+i+'];savePrc();render()">'+(ck?'\u2713':'')+'</div><div class="precheck-text '+(ck?'done':'')+'">'+p.text+'</div></div>'});
+}
+
+h+='</div>'}
+
+// TRIP SUMMARY (after trip ends)
+if(fin&&tab==="checklist"){
+const totExp=expenses.reduce((a,e)=>a+e.amount,0);
+h+='<div style="margin-top:20px;padding-top:16px;border-top:.5px solid #E8E2D4">';
+h+='<div style="text-align:center;font-family:\'Playfair Display\',serif;font-size:18px;color:#2D6A4F;margin-bottom:14px">Riepilogo viaggio</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+h+='<div class="summary-card"><div class="summary-big">'+done+'/'+tot+'</div><div class="summary-label">Tappe completate</div></div>';
+h+='<div class="summary-card"><div class="summary-big">'+photos.length+'</div><div class="summary-label">Foto scattate</div></div>';
+h+='<div class="summary-card"><div class="summary-big">'+diary.length+'</div><div class="summary-label">Note diario</div></div>';
+if(totExp>0)h+='<div class="summary-card"><div class="summary-big">\u20AC'+totExp.toFixed(0)+'</div><div class="summary-label">Speso totale</div></div>';
+h+='</div></div>'}
+
+// FAB
+if(isAdmin)h+='<button class="fab fab-admin" onclick="logout()">\u{1F513}</button>';
+else h+='<button class="fab fab-login" onclick="openLogin()">\u{1F511}</button>';
 
 document.getElementById("app").innerHTML=h;
-if(tab==="map")setTimeout(()=>{initMap();updateMapMarker()},50);
+if(tab==="map")setTimeout(()=>{initMap();updateMarker();if(livePos&&!weather)fetchWeather(livePos.lat,livePos.lng);else if(!weather){const ns2=nextStop();if(ns2&&ns2.lat)fetchWeather(ns2.lat,ns2.lng)}},50);
 }
 
-function switchTab(t){tab=t;openDay=null;openStop=null;render();window.scrollTo(0,0)}
-function toggleDay(di){openDay=openDay===di?null:di;openStop=null;render()}
-function toggleStop(key){openStop=openStop===key?null:key;render()}
-function toggleCheck(di,si){if(!isAdmin)return;const k=di+"-"+si;checks[k]=!checks[k];if(!checks[k])delete checks[k];saveChecks();render()}
-function checkPin(val){if(val.length===4){if(val===ADMIN_PIN){isAdmin=true;showLoginPopup=false;pinError="";saveAdmin();render();initFirebase()}else{pinError="PIN errato";render();setTimeout(()=>{const el=document.getElementById('pin-input');if(el){el.value='';el.focus()}},100)}}}
-function openLogin(){showLoginPopup=true;pinError="";render();setTimeout(()=>{const el=document.getElementById('pin-input');if(el)el.focus()},100)}
-function closeLogin(){showLoginPopup=false;pinError="";render()}
-function logout(){isAdmin=false;showLoginPopup=false;stopTracking();saveAdmin();tab="map";render()}
+// ACTIONS
+function sw(t){tab=t;openDay=null;openStop=null;render();window.scrollTo(0,0)}
+function togDay(i){openDay=openDay===i?null:i;openStop=null;render()}
+function togStop(k){openStop=openStop===k?null:k;render()}
+function togChk(d,s){if(!isAdmin)return;const k=d+"-"+s;checks[k]=!checks[k];if(!checks[k])delete checks[k];saveChk();render()}
+function tryPin(v){if(v.length===4){if(v===PIN){isAdmin=true;showLogin=false;pinErr="";saveAdm();render();initFB()}else{pinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-input');if(e){e.value='';e.focus()}},100)}}}
+function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-input');if(e)e.focus()},100)}
+function closeLogin(){showLogin=false;pinErr="";render()}
+function logout(){isAdmin=false;showLogin=false;stopGPS();saveAdm();tab="map";render()}
 function setExpCat(c){expCat=c;render()}
-function setExpDay(d){expDay=d;render()}
-function setExpFilter(f){expFilter=f;render()}
-function addExpense(){const de=document.getElementById("exp-desc"),ae=document.getElementById("exp-amount"),amt=parseFloat(ae.value);if(!amt||amt<=0){ae.focus();return}expenses.push({desc:de.value.trim()||CATS.find(c=>c.id===expCat).name,amount:amt,cat:expCat,day:expDay,ts:Date.now()});saveExpenses();expCat="food";expDay=0;render()}
-function deleteExpense(i){expenses.splice(i,1);saveExpenses();render()}
-function clearExpenses(){if(confirm("Cancellare tutte le spese?")){expenses=[];saveExpenses();render()}}
+function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}expenses.push({desc:d.value.trim()||CATS.find(c=>c.id===expCat).name,amount:v,cat:expCat,day:expDay,ts:Date.now()});saveExp();expCat="food";expDay=0;render()}
+function delExp(i){expenses.splice(i,1);saveExp();render()}
+function addHotel(){const n=document.getElementById('h-name').value.trim();if(!n)return;hotels.push({name:n,address:document.getElementById('h-addr').value.trim(),phone:document.getElementById('h-phone').value.trim(),price:parseFloat(document.getElementById('h-price').value)||0,confirm:document.getElementById('h-conf').value.trim(),day:expDay||1,ts:Date.now()});saveHtl();expDay=0;render()}
+function delHotel(i){hotels.splice(i,1);saveHtl();render()}
+function addNote(){const t=document.getElementById('note-text').value.trim();if(!t)return;notes.push({text:t,ts:Date.now()});saveNts();render()}
+function delNote(i){notes.splice(i,1);saveNts();render()}
+function addDiary(){const t=document.getElementById('diary-text').value.trim();if(!t)return;diary.push({text:t,day:expDay||1,ts:Date.now()});saveDry();expDay=0;render()}
+function delDiary(i){diary.splice(i,1);saveDry();render()}
 
-// Gallery functions
-function setGalFilter(f){galFilter=f;render()}
-function pickPhoto(){document.getElementById('photo-gallery').click()}
-function openLightbox(idx){lightboxIdx=idx;render()}
-function closeLightbox(){lightboxIdx=-1;render()}
-function navLightbox(dir){
-  lightboxIdx+=dir;
-  if(lightboxIdx<0)lightboxIdx=photos.length-1;
-  if(lightboxIdx>=photos.length)lightboxIdx=0;
-  render();
-}
+function prepPhoto(f){if(!f)return;pendingFile=f;pendingCaption="";pendingDay=1;for(let i=DAYS.length-1;i>=0;i--)for(let j=DAYS[i].stops.length-1;j>=0;j--)if(checks[i+"-"+j]){pendingDay=DAYS[i].day;i=-1;break}
+const r=new FileReader();r.onload=e=>{pendingPreview=e.target.result;render()};r.readAsDataURL(f)}
+function cancelPhoto(){pendingFile=null;pendingPreview=null;render()}
+async function confirmPhoto(){if(!pendingFile||uploading)return;const c=document.getElementById('photo-caption');if(c)pendingCaption=c.value;uploading=true;render();
+try{const rs=await resizeImg(pendingFile,1200);const fd=new FormData();fd.append('image',rs);
+const r=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{'Authorization':'Client-ID '+IMGUR_CID},body:fd});
+const d=await r.json();if(d.success){const p={id:'p'+Date.now(),url:d.data.link,thumb:d.data.link.replace(/(\.[a-z]+)$/i,'m$1'),day:pendingDay,caption:pendingCaption.trim(),ts:Date.now()};
+if(fbOk)await db.child('photos/'+p.id).set(p);photos.unshift(p)}}catch(e){alert('Errore: '+e.message)}
+uploading=false;pendingFile=null;pendingPreview=null;render()}
+function resizeImg(f,mx){return new Promise(r=>{const rd=new FileReader();rd.onload=e=>{const i=new Image();i.onload=()=>{let w=i.width,h=i.height;if(w>mx||h>mx){if(w>h){h=Math.round(h*mx/w);w=mx}else{w=Math.round(w*mx/h);h=mx}}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);c.toBlob(r,'image/jpeg',.82)};i.src=e.target.result};rd.readAsDataURL(f)})}
+function delPhoto(id){if(!confirm('Eliminare?'))return;if(fbOk)db.child('photos/'+id).remove();photos=photos.filter(p=>p.id!==id);render()}
 
-function guessDay(){
-  for(let di=DAYS.length-1;di>=0;di--)
-    for(let si=DAYS[di].stops.length-1;si>=0;si--)
-      if(checks[di+"-"+si])return DAYS[di].day;
-  return 1;
-}
+// INIT
+loadAll();render();initFB();
+// Countdown timer
+setInterval(()=>{const cd=countdownText();if(cd&&!cd.live){const el=document.querySelector('.countdown');if(el)render()}},60000);
 
-function preparePhoto(file){
-  if(!file)return;
-  pendingFile=file;
-  pendingCaption="";
-  pendingDay=guessDay();
-  const reader=new FileReader();
-  reader.onload=function(e){pendingPreview=e.target.result;render()};
-  reader.readAsDataURL(file);
-}
-
-function cancelPending(){
-  pendingFile=null;pendingPreview=null;pendingCaption="";pendingDay=0;
-  render();
-}
-
-async function confirmUpload(){
-  if(!pendingFile||uploading)return;
-  // Grab caption from input before render wipes it
-  const capEl=document.getElementById('photo-caption');
-  if(capEl)pendingCaption=capEl.value;
-  uploading=true;render();
-  try{
-    const resized=await resizeImage(pendingFile,1200);
-    const fd=new FormData();
-    fd.append('image',resized);
-    const resp=await fetch('https://api.imgur.com/3/image',{
-      method:'POST',
-      headers:{'Authorization':'Client-ID '+IMGUR_CLIENT_ID},
-      body:fd
-    });
-    const data=await resp.json();
-    if(data.success){
-      const photo={
-        id:'p'+Date.now(),
-        url:data.data.link,
-        thumb:data.data.link.replace(/(\.\w+)$/,'m$1'),
-        day:pendingDay||guessDay(),
-        caption:pendingCaption.trim(),
-        ts:Date.now()
-      };
-      if(firebaseReady)await dbRef.child('photos/'+photo.id).set(photo);
-      photos.unshift(photo);
-    }else{alert('Errore upload: '+JSON.stringify(data.data))}
-  }catch(e){alert('Errore: '+e.message)}
-  uploading=false;
-  pendingFile=null;pendingPreview=null;pendingCaption="";pendingDay=0;
-  render();
-}
-
-function resizeImage(file,maxSize){
-  return new Promise((resolve)=>{
-    const reader=new FileReader();
-    reader.onload=function(e){
-      const img=new Image();
-      img.onload=function(){
-        let w=img.width,h=img.height;
-        if(w>maxSize||h>maxSize){
-          if(w>h){h=Math.round(h*maxSize/w);w=maxSize}
-          else{w=Math.round(w*maxSize/h);h=maxSize}
-        }
-        const canvas=document.createElement('canvas');
-        canvas.width=w;canvas.height=h;
-        canvas.getContext('2d').drawImage(img,0,0,w,h);
-        canvas.toBlob(resolve,'image/jpeg',0.82);
-      };
-      img.src=e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function deletePhoto(id){
-  if(!confirm('Eliminare questa foto?'))return;
-  if(firebaseReady)dbRef.child('photos/'+id).remove();
-  photos=photos.filter(p=>p.id!==id);
-  if(lightboxIdx>=photos.length)lightboxIdx=-1;
-  render();
-}
-
-loadLocal();
-render();
-initFirebase();
+// Service Worker for offline
+if('serviceWorker' in navigator){
+const sw=URL.createObjectURL(new Blob([`
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch',e=>{
+if(e.request.url.includes('api.open-meteo')||e.request.url.includes('api.imgur')||e.request.url.includes('firebase'))return;
+e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+if(res.ok){const c=res.clone();caches.open('trip-v1').then(cache=>cache.put(e.request,c))}return res}).catch(()=>caches.match(e.request))))});
+`],{type:'application/javascript'}));
+navigator.serviceWorker.register(sw).catch(()=>{});}
 </script>
 </body>
 </html>
