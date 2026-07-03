@@ -241,86 +241,92 @@ body{font-family:'DM Sans',system-ui,sans-serif;color:#3C3226;min-height:100dvh;
 .summary-label{font-size:12px;color:#8B7355;margin-top:3px}
 .empty{text-align:center;padding:36px 20px;color:#B0A48E;font-size:13px}
 
-/* ===== DESKTOP LAYOUT (≥768px) ===== */
-@media(min-width:768px){
-  html{background:#EEE9DF}
-  body{background:#EEE9DF}
+/* ===== DESKTOP LAYOUT (≥900px) ===== */
+@media(min-width:900px){
+  html,body{background:#F5F2EB}
 
-  /* Full-width container */
+  /* Full-width container — usa tutta la larghezza dello schermo */
   #layout{
-    max-width:1200px;
-    margin:0 auto;
+    max-width:100%;
+    width:100%;
+    margin:0;
+    padding:20px;
     display:grid;
-    grid-template-columns:320px 1fr;
-    grid-template-rows:auto 1fr;
-    gap:0;
+    grid-template-columns:360px minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1fr);
+    gap:20px;
     min-height:100vh;
+    box-sizing:border-box;
   }
 
-  /* Hero spans left column */
+  /* Hero: sidebar sticky a sinistra */
   .hero{
     grid-column:1;
     grid-row:1/3;
-    border-radius:0 0 0 0;
-    padding:36px 28px 52px;
+    padding:40px 32px;
     position:sticky;
-    top:0;
-    height:100vh;
+    top:20px;
+    max-height:calc(100vh - 40px);
     overflow-y:auto;
     display:flex;
     flex-direction:column;
-    justify-content:flex-start;
-    border-radius:0 20px 20px 0;
+    border-radius:20px;
+    align-self:start;
   }
   .hero::after{display:none}
-  .hero h1{font-size:32px;margin-bottom:5px}
-  .hero .tag{font-size:11px;margin-bottom:8px}
-  .hero .names{font-size:15px}
-  .hero .sub{font-size:13px;margin:6px 0 20px}
-  .countdown{margin-bottom:18px}
-  .countdown-num{font-size:28px}
-  .stats-ring{width:56px;height:56px}
-  .stats-ring-text{font-size:14px}
-  .pbar{height:6px;margin-top:14px}
-  .day-dots{margin-top:8px}
-  .day-dot{width:7px;height:7px}
+  .hero h1{font-size:34px;margin-bottom:6px;line-height:1.1}
+  .hero .tag{font-size:11px;margin-bottom:10px}
+  .hero .names{font-size:16px}
+  .hero .sub{font-size:13px;margin:8px 0 24px}
+  .countdown{margin-bottom:20px;padding:14px 20px}
+  .countdown-num{font-size:30px}
+  .countdown-label{font-size:11px}
+  .stats{gap:16px}
+  .stats-ring{width:60px;height:60px}
+  .stats-ring-text{font-size:15px}
+  .pbar{height:6px;margin-top:16px}
+  .day-dots{margin-top:10px}
+  .day-dot{width:8px;height:8px}
+  .live-badge{font-size:12px;padding:6px 16px}
 
-  /* Right column: tabs + content */
+  /* Tabs sticky sopra il contenuto */
   .tabs{
     grid-column:2;
     grid-row:1;
     position:sticky;
-    top:0;
+    top:20px;
     z-index:100;
     background:#fff;
-    border-bottom:.5px solid #E8E2D4;
-    border-radius:16px 16px 0 0;
-    padding:0 8px;
+    border:.5px solid #E8E2D4;
+    border-radius:16px;
+    padding:0 12px;
     overflow-x:visible;
-    box-shadow:0 1px 0 #E8E2D4;
+    box-shadow:0 1px 3px rgba(0,0,0,.03);
   }
   .tab{
-    font-size:13px;
-    padding:16px 8px;
-    min-width:70px;
+    font-size:14px;
+    padding:18px 12px;
+    min-width:90px;
+    font-weight:600;
   }
 
-  /* Main content area */
+  /* Content area — riempie tutto lo spazio disponibile */
   #content-area{
     grid-column:2;
     grid-row:2;
-    background:#F5F2EB;
-    border-radius:0 0 16px 16px;
-    min-height:calc(100vh - 55px);
-    overflow-y:auto;
+    background:#fff;
+    border:.5px solid #E8E2D4;
+    border-radius:16px;
+    min-height:400px;
+    overflow:hidden;
   }
 
-  .content{padding:24px 28px 60px}
+  .content{padding:28px 32px 60px}
 
-  /* Map desktop */
-  #map-container{height:420px;min-height:420px;border-radius:12px;margin:20px 20px 0;width:calc(100% - 40px)}
-  #map{border-radius:12px}
-  .map-info{padding:16px 20px}
+  /* Map desktop — occupa tutta la larghezza del content */
+  #map-container{height:520px;min-height:520px;border-radius:0;margin:0;width:100%}
+  #map{border-radius:0}
+  .map-info{padding:20px 28px 28px}
 
   /* Cards desktop */
   .card-head{padding:18px 20px}
@@ -383,6 +389,11 @@ body{font-family:'DM Sans',system-ui,sans-serif;color:#3C3226;min-height:100dvh;
   /* Info boxes */
   .info-val{font-size:13px}
   .info-label{font-size:10px}
+}
+
+/* ===== ULTRA-WIDE (≥1800px) — limita larghezza per leggibilità ===== */
+@media(min-width:1800px){
+  #layout{max-width:1800px;margin:0 auto}
 }
 
 /* Leaflet / misc */
