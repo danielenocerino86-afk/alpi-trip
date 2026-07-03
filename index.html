@@ -416,7 +416,7 @@ const FB={apiKey:"AIzaSyAzBhxPJyyQNum773cBgBfZmV_FVECoOzY",authDomain:"viaggio20
 let fbOk=false,db=null;
 try{firebase.initializeApp(FB);db=firebase.database().ref('trip');fbOk=true}catch(e){}
 
-const DAYS=[
+const DEFAULT_DAYS=[
 {day:1,title:"Napoli \u2192 Sulmona \u00B7 Tirino",region:"Abruzzo",km:"~190",drive:"~2,5h",color:"#2D6A4F",emoji:"\u{1F3D4}",date:"Sab 9 ago",
 timeline:[{t:"08:00",n:"Partenza Napoli"},{t:"10:30",n:"Arrivo Sulmona"},{t:"11:00",n:"Centro storico"},{t:"13:00",n:"Pranzo"},{t:"15:00",n:"Fiume Tirino"},{t:"18:00",n:"Rientro hotel"}],
 stops:[
@@ -486,8 +486,10 @@ stops:[
 food:"Porchetta umbra da viaggio",sleep:"Casa \u2014 Napoli!"}
 ];
 
-const ALL_STOPS=[];
-DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>ALL_STOPS.push({...s,di,si,dayColor:d.color,dayNum:d.day})));
+let DAYS=JSON.parse(JSON.stringify(DEFAULT_DAYS));
+
+function getAllStops(){const arr=[];DAYS.forEach((d,di)=>d.stops.forEach((s,si)=>arr.push({...s,di,si,dayColor:d.color,dayNum:d.day})));return arr}
+function getRouteLine(){const line=[[40.85,14.27]];DAYS.forEach(d=>d.stops.forEach(s=>{if(s.lat&&s.lng)line.push([s.lat,s.lng])}));line.push([40.85,14.27]);return line}
 
 const ROUTES=[
 {label:"Napoli \u2192 Sulmona",sub:"G1: A1+A25",icon:"\u{1F697}",color:"#2D6A4F",url:"https://www.google.com/maps/dir/Napoli/Sulmona+AQ"},
@@ -499,8 +501,6 @@ const ROUTES=[
 {label:"Perugia \u2192 Napoli",sub:"G10: E45+A1",icon:"\u{1F3E0}",color:"#D35400",url:"https://www.google.com/maps/dir/Perugia/Napoli"}];
 
 const CATS=[{id:"fuel",name:"Carburante",emoji:"\u26FD",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"\u{1F6E3}",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"\u{1F3E8}",color:"#2D6A4F"},{id:"food",name:"Cibo",emoji:"\u{1F37D}",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"\u{1F3AB}",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"\u{1F4E6}",color:"#8B7355"}];
-
-const ROUTE_LINE=[[40.85,14.27],[42.05,13.93],[42.44,13.56],[41.90,13.88],[41.94,13.89],[42.31,14.45],[46.48,11.77],[46.46,11.87],[46.51,11.76],[46.57,11.67],[46.69,12.09],[43.11,12.39],[40.85,14.27]];
 
 const PRECHECKS=[
 {text:"Prenotare navetta Lago di Braies (pragser-wildsee.it)",cat:"critical"},
@@ -520,7 +520,7 @@ const PRECHECKS=[
 ];
 
 // STATE
-let isAdmin=false,showLogin=false,pinErr="",tab="map",adminSub="expenses",openDay=null,openStop=null;
+let isAdmin=false,showLogin=false,pinErr="",tab="map",adminSub="expenses",openDay=null,openStop=null,editingStop=null;
 let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={};
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
@@ -529,7 +529,10 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
+function loadDays(){try{const s=localStorage.getItem(LS("days"));DAYS=s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_DAYS))}catch(e){DAYS=JSON.parse(JSON.stringify(DEFAULT_DAYS))}}
+function saveDays(){save("days",DAYS);if(fbOk)db.child('days').set(DAYS)}
 function loadAll(){
+loadDays();
 try{checks=JSON.parse(localStorage.getItem(LS("chk")))||{}}catch(e){checks={}}
 try{expenses=JSON.parse(localStorage.getItem(LS("exp")))||[]}catch(e){expenses=[]}
 try{hotels=JSON.parse(localStorage.getItem(LS("htl")))||[]}catch(e){hotels=[]}
@@ -551,6 +554,7 @@ function saveAdm(){try{localStorage.setItem(LS("adm"),isAdmin?"1":"0")}catch(e){
 function initFB(){
 if(!fbOk)return;
 db.child('position').on('value',s=>{const v=s.val();if(v){livePos={lat:v.lat,lng:v.lng};lastUpdate=v.ts;updateMarker();if(tab!=="map")render()}});
+db.child('days').on('value',s=>{const v=s.val();if(v&&!isAdmin){DAYS=v;render()}});
 db.child('checks').on('value',s=>{const v=s.val();if(v&&!isAdmin){checks=v;render()}});
 db.child('diary').on('value',s=>{const v=s.val();if(v&&!isAdmin){diary=Array.isArray(v)?v:Object.values(v);render()}});
 db.child('photos').on('value',s=>{const v=s.val();if(v){photos=Object.values(v).sort((a,b)=>b.ts-a.ts)}else{photos=[]}if(tab==="gallery")render()});
@@ -568,10 +572,11 @@ const el=document.getElementById('map');if(!el)return;
 leafletMap=L.map(el,{zoomControl:false,attributionControl:false}).setView([43.5,13],6);
 L.control.zoom({position:'topright'}).addTo(leafletMap);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:19}).addTo(leafletMap);
-L.polyline(ROUTE_LINE,{color:'#2D6A4F',weight:3,opacity:.35,dashArray:'8,8'}).addTo(leafletMap);
-ALL_STOPS.forEach(s=>{if(!s.lat)return;const d=!!checks[s.di+"-"+s.si];const ic=L.divIcon({className:'custom-marker',html:'<div class="marker-pin" style="background:'+(d?s.dayColor:s.dayColor+'50')+';border-color:'+(d?'#fff':s.dayColor)+';color:#fff">'+(d?'\u2713':s.dayNum)+'</div>',iconSize:[28,28],iconAnchor:[14,14]});
+const rl=getRouteLine();
+L.polyline(rl,{color:'#2D6A4F',weight:3,opacity:.35,dashArray:'8,8'}).addTo(leafletMap);
+getAllStops().forEach(s=>{if(!s.lat)return;const d=!!checks[s.di+"-"+s.si];const ic=L.divIcon({className:'custom-marker',html:'<div class="marker-pin" style="background:'+(d?s.dayColor:s.dayColor+'50')+';border-color:'+(d?'#fff':s.dayColor)+';color:#fff">'+(d?'\u2713':s.dayNum)+'</div>',iconSize:[28,28],iconAnchor:[14,14]});
 L.marker([s.lat,s.lng],{icon:ic}).addTo(leafletMap).bindPopup('<b>'+s.name+'</b><br><a href="'+s.map+'" target="_blank" style="font-size:12px">Apri in Maps</a>')});
-leafletMap.fitBounds(L.polyline(ROUTE_LINE).getBounds().pad(.1));
+leafletMap.fitBounds(L.polyline(rl).getBounds().pad(.1));
 setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},200);
 }
 function updateMarker(){if(!leafletMap||!livePos)return;if(!posMarker){posMarker=L.marker([livePos.lat,livePos.lng],{icon:L.divIcon({className:'custom-marker',html:'<div class="marker-you"></div>',iconSize:[16,16],iconAnchor:[8,8]}),zIndexOffset:1000}).addTo(leafletMap)}else posMarker.setLatLng([livePos.lat,livePos.lng])}
@@ -759,8 +764,8 @@ h+='</div>'}
 if(tab==="private"&&isAdmin){
 h+='<div class="content">';
 h+='<div class="sub-tabs">';
-['expenses','hotels','budget','notes','precheck'].forEach(s=>{
-const labels={expenses:'Spese',hotels:'Hotel',budget:'Budget',notes:'Note',precheck:'Pre-partenza'};
+['expenses','stops','hotels','budget','notes','precheck'].forEach(s=>{
+const labels={expenses:'Spese',stops:'Tappe',hotels:'Hotel',budget:'Budget',notes:'Note',precheck:'Pre-partenza'};
 h+='<button class="sub-tab '+(adminSub===s?'act':'')+'" onclick="adminSub=\''+s+'\';render()">'+labels[s]+'</button>'});
 h+='</div>';
 
@@ -777,6 +782,62 @@ const fl=expenses.filter(e=>expFilter==='all'?true:typeof expFilter==='number'?e
 if(fl.length)fl.forEach(e=>{const c=CATS.find(x=>x.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
 h+='<div class="exp-item"><div>'+c.emoji+'</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(e.desc||c.name)+'</div><div class="exp-item-meta">'+(e.day>0?'G'+e.day:'Gen')+' \u00B7 '+c.name+'</div></div><div class="exp-item-amount">\u20AC'+e.amount.toFixed(2)+'</div><button class="exp-item-del" onclick="delExp('+ri+')">\u2715</button></div>'});
 else h+='<div class="empty">Nessuna spesa</div>';
+}
+
+if(adminSub==='stops'){
+const totStops=DAYS.reduce((a,d)=>a+d.stops.length,0);
+h+='<div class="exp-total-card"><div class="exp-total-num">'+totStops+'</div><div class="exp-total-sub">Tappe in '+DAYS.length+' giorni</div></div>';
+DAYS.forEach((day,di)=>{
+const isO=openDay===di;
+h+='<div class="card" style="border-left:3px solid '+day.color+'">';
+h+='<div class="card-head" onclick="togDay('+di+')">';
+h+='<div class="card-emoji" style="background:'+day.color+'15">'+day.emoji+'</div>';
+h+='<div class="card-info"><div><span class="card-tag" style="color:'+day.color+'">G'+day.day+'</span><span class="card-date">'+day.date+'</span></div><div class="card-title">'+day.title+'</div><div class="card-km">'+day.stops.length+' tappe</div></div>';
+h+='<div class="card-arrow '+(isO?'open':'')+'">\u25BE</div></div>';
+if(isO){
+h+='<div class="card-body">';
+day.stops.forEach((s,si)=>{
+const isEd=editingStop===di+'-'+si;
+if(isEd){
+h+='<div class="stop" style="padding:12px;background:#fff;border:2px solid '+day.color+'">';
+h+='<input class="form-input" id="ed-name-'+di+'-'+si+'" value="'+esc(s.name)+'" placeholder="Nome tappa" style="margin-bottom:8px">';
+h+='<textarea class="diary-textarea" id="ed-desc-'+di+'-'+si+'" placeholder="Descrizione" style="min-height:60px;margin-bottom:8px">'+esc(s.desc||'')+'</textarea>';
+h+='<input class="form-input" id="ed-tip-'+di+'-'+si+'" value="'+esc(s.tip||'')+'" placeholder="Suggerimento (opzionale)" style="margin-bottom:8px">';
+h+='<div class="form-row" style="margin-bottom:8px"><input class="form-input" id="ed-lat-'+di+'-'+si+'" value="'+(s.lat||'')+'" placeholder="Latitudine" type="number" step="any"><input class="form-input" id="ed-lng-'+di+'-'+si+'" value="'+(s.lng||'')+'" placeholder="Longitudine" type="number" step="any"></div>';
+h+='<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-bottom:10px;color:#854F0B"><input type="checkbox" id="ed-warn-'+di+'-'+si+'" '+(s.warn?'checked':'')+'>Contrassegna come avviso (giallo)</label>';
+h+='<div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelEditStop()">Annulla</button><button class="btn-primary" style="flex:1" onclick="saveEditStop('+di+','+si+')">Salva</button></div>';
+h+='</div>';
+}else{
+h+='<div class="stop" style="margin-bottom:6px"><div class="stop-row">';
+h+='<div style="width:24px;height:24px;border-radius:6px;background:'+day.color+'20;color:'+day.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+(si+1)+'</div>';
+h+='<div style="flex:1;min-width:0"><div class="stop-name">'+s.name+'</div>';
+if(s.desc)h+='<div class="stop-preview">'+s.desc.slice(0,55)+'...</div>';
+h+='</div>';
+h+='<button style="width:32px;height:32px;border-radius:8px;border:.5px solid #E8E2D4;background:#fff;cursor:pointer;font-size:13px;flex-shrink:0" onclick="editStop('+di+','+si+')" title="Modifica">\u270F\uFE0F</button>';
+h+='<button class="exp-item-del" onclick="delStop('+di+','+si+')" title="Elimina">\u2715</button>';
+h+='</div></div>';
+}
+});
+const isAdding=editingStop==='new-'+di;
+if(isAdding){
+h+='<div class="stop" style="padding:12px;background:#fff;border:2px dashed '+day.color+';margin-top:8px">';
+h+='<div style="font-size:11px;font-weight:700;color:'+day.color+';margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Nuova tappa a G'+day.day+'</div>';
+h+='<input class="form-input" id="ne-name-'+di+'" placeholder="Nome tappa" style="margin-bottom:8px">';
+h+='<textarea class="diary-textarea" id="ne-desc-'+di+'" placeholder="Descrizione" style="min-height:60px;margin-bottom:8px"></textarea>';
+h+='<input class="form-input" id="ne-tip-'+di+'" placeholder="Suggerimento (opzionale)" style="margin-bottom:8px">';
+h+='<div class="form-row" style="margin-bottom:8px"><input class="form-input" id="ne-lat-'+di+'" placeholder="Latitudine" type="number" step="any"><input class="form-input" id="ne-lng-'+di+'" placeholder="Longitudine" type="number" step="any"></div>';
+h+='<label style="font-size:12px;display:flex;gap:6px;align-items:center;margin-bottom:10px;color:#854F0B"><input type="checkbox" id="ne-warn-'+di+'">Contrassegna come avviso (giallo)</label>';
+h+='<div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelEditStop()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addStop('+di+')">Aggiungi tappa</button></div>';
+h+='</div>';
+}else{
+h+='<button class="btn-secondary" style="width:100%;margin-top:8px;border-color:'+day.color+'40;color:'+day.color+'" onclick="startAddStop('+di+')">+ Aggiungi tappa a G'+day.day+'</button>';
+}
+h+='</div>';
+}
+h+='</div>';
+});
+h+='<div style="margin-top:18px;padding:14px;background:#FEF0F0;border:.5px solid #F5C6C6;border-radius:11px;font-size:12px;color:#6B3A2A;line-height:1.6"><strong>\u26A0\uFE0F Attenzione:</strong> le modifiche alle tappe sono permanenti e visibili a tutti (Firebase). Le tappe eliminate perdono anche il loro stato "completato" e le foto associate.</div>';
+h+='<button class="btn-secondary" style="width:100%;margin-top:10px;color:#C0392B;border-color:#F5C6C6" onclick="resetDays()">\u21BA Ripristina tappe originali</button>';
 }
 
 if(adminSub==='hotels'){
@@ -859,6 +920,58 @@ function addNote(){const t=document.getElementById('note-text').value.trim();if(
 function delNote(i){notes.splice(i,1);saveNts();render()}
 function addDiary(){const t=document.getElementById('diary-text').value.trim();if(!t)return;diary.push({text:t,day:expDay||1,ts:Date.now()});saveDry();expDay=0;render()}
 function delDiary(i){diary.splice(i,1);saveDry();render()}
+
+// TAPPE
+function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function editStop(di,si){editingStop=di+'-'+si;render()}
+function cancelEditStop(){editingStop=null;render()}
+function saveEditStop(di,si){
+const name=document.getElementById('ed-name-'+di+'-'+si).value.trim();
+if(!name){alert('Il nome \u00E8 obbligatorio');return}
+const desc=document.getElementById('ed-desc-'+di+'-'+si).value.trim();
+const tip=document.getElementById('ed-tip-'+di+'-'+si).value.trim();
+const latV=document.getElementById('ed-lat-'+di+'-'+si).value,lngV=document.getElementById('ed-lng-'+di+'-'+si).value;
+const warn=document.getElementById('ed-warn-'+di+'-'+si).checked;
+const s=DAYS[di].stops[si];
+s.name=name;s.desc=desc;s.tip=tip;s.warn=warn;
+if(latV)s.lat=parseFloat(latV);else delete s.lat;
+if(lngV)s.lng=parseFloat(lngV);else delete s.lng;
+s.map='https://maps.google.com/?q='+encodeURIComponent(name);
+editingStop=null;saveDays();render();
+}
+function startAddStop(di){editingStop='new-'+di;openDay=di;render();setTimeout(()=>{const el=document.getElementById('ne-name-'+di);if(el)el.focus()},100)}
+function addStop(di){
+const name=document.getElementById('ne-name-'+di).value.trim();
+if(!name){alert('Il nome \u00E8 obbligatorio');return}
+const desc=document.getElementById('ne-desc-'+di).value.trim();
+const tip=document.getElementById('ne-tip-'+di).value.trim();
+const latV=document.getElementById('ne-lat-'+di).value,lngV=document.getElementById('ne-lng-'+di).value;
+const warn=document.getElementById('ne-warn-'+di).checked;
+const stop={name,desc,tip,warn,map:'https://maps.google.com/?q='+encodeURIComponent(name)};
+if(latV)stop.lat=parseFloat(latV);
+if(lngV)stop.lng=parseFloat(lngV);
+DAYS[di].stops.push(stop);
+editingStop=null;saveDays();render();
+}
+function delStop(di,si){
+const s=DAYS[di].stops[si];
+if(!confirm('Eliminare la tappa "'+s.name+'"?'))return;
+DAYS[di].stops.splice(si,1);
+const nc={};
+Object.keys(checks).forEach(k=>{
+const p=k.split('-'),d=parseInt(p[0]),ss=parseInt(p[1]);
+if(d===di){if(ss<si)nc[k]=checks[k];else if(ss>si)nc[d+'-'+(ss-1)]=checks[k]}
+else nc[k]=checks[k];
+});
+checks=nc;
+editingStop=null;saveDays();saveChk();render();
+}
+function resetDays(){
+if(!confirm('Ripristinare le tappe originali? Perderai tutte le modifiche.'))return;
+DAYS=JSON.parse(JSON.stringify(DEFAULT_DAYS));
+checks={};editingStop=null;
+saveDays();saveChk();render();
+}
 function prepPhoto(f){if(!f)return;pendingFile=f;pendingCaption="";pendingDay=1;for(let i=DAYS.length-1;i>=0;i--)for(let j=DAYS[i].stops.length-1;j>=0;j--)if(checks[i+"-"+j]){pendingDay=DAYS[i].day;i=-1;break}
 const r=new FileReader();r.onload=e=>{pendingPreview=e.target.result;render()};r.readAsDataURL(f)}
 function cancelPhoto(){pendingFile=null;pendingPreview=null;render()}
