@@ -224,6 +224,28 @@ body{font-family:'DM Sans',system-ui,sans-serif;color:#3C3226;min-height:100dvh;
 .fab{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));right:16px;width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.14);z-index:20;font-size:16px}
 .fab-admin{background:#2D6A4F;color:#fff}
 .fab-login{background:#fff;color:#8B7355;border:.5px solid #E8E2D4}
+.fab-sos{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:16px;right:auto;background:#C0392B;color:#fff;border:2px solid #fff;font-size:12px;font-weight:700;box-shadow:0 4px 16px rgba(192,57,43,.4)}
+.sos-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
+.sos-modal{background:#fff;border-radius:18px;padding:24px 20px;max-width:400px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.sos-title{font-size:15px;font-weight:700;color:#C0392B;text-align:center;margin-bottom:16px;letter-spacing:1.5px}
+.sos-close{position:absolute;top:14px;right:16px;font-size:20px;color:#8B7355;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.sos-btn{display:block;padding:14px;margin-bottom:8px;border-radius:10px;text-align:center;font-weight:700;font-size:14px;text-decoration:none;border:none;cursor:pointer;width:100%;transition:transform .1s}
+.sos-btn:active{transform:scale(.97)}
+.sos-btn-red{background:#C0392B;color:#fff}
+.sos-btn-orange{background:#E67E22;color:#fff}
+.sos-btn-blue{background:#0984E3;color:#fff}
+.sos-btn-green{background:#25D366;color:#fff}
+.theme-toggle{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.9);border:none;border-radius:50%;font-size:16px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+body.dark{background:#1a1a1e;color:#e0e0e0}
+body.dark .card,body.dark .exp-item,body.dark .hotel-card,body.dark .form-box,body.dark .precheck-item,body.dark .note-card,body.dark .sos-modal,body.dark .playlist-widget,body.dark .weather,body.dark .exp-total-card,body.dark .empty{background:#252529;border-color:#3a3a40;color:#e0e0e0}
+body.dark input,body.dark textarea,body.dark .form-input{background:#1a1a1e;color:#e0e0e0;border-color:#3a3a40}
+body.dark .hero{background:linear-gradient(135deg,#1a3a2a 0%,#2D6A4F 100%)}
+body.dark .tab{background:#252529;color:#a0a0a0}
+body.dark .tab.active{background:#2D6A4F;color:#fff}
+body.dark .exp-item-name,body.dark .hotel-name{color:#e0e0e0}
+body.dark .exp-item-meta,body.dark .hotel-row{color:#a0a0a0}
+.playlist-widget{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:10px;margin-top:8px}
+.playlist-widget iframe{width:100%;border:none;border-radius:8px;display:block}
 
 /* Login popup */
 .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -499,10 +521,10 @@ const CATS=[{id:"fuel",name:"Carburante",emoji:"\u26FD",color:"#E67E22"},{id:"to
 const PRECHECKS=[
 {text:"\u2705 Hotel & Spa Villa dei Mosaici Spello (17-21 ago) \u2014 PRENOTATO 673,92\u20AC",cat:"hotel"},
 {text:"\u2705 B&B La Dimora Sulmona (14-17 ago) \u2014 PRENOTATO 364\u20AC",cat:"hotel"},
-{text:"Prenotare cena al trabocco (Dom 16 ago) \u2014 Punta Torre +39 393 928 7350",cat:"critical"},
-{text:"Prenotare cena Ferragosto Sulmona (Sab 15 ago sera)",cat:"critical"},
-{text:"Prenotare cantina Sagrantino Montefalco (Gio 20 ago)",cat:"critical"},
-{text:"Canoa Fiume Tirino \u2014 prenotare (Ven 14 ago pom)",cat:"attivita"},
+{text:"Prenotare cena al trabocco (Dom 16 ago) \u2014 Punta Torre +39 393 928 7350",cat:"critical",deadline:"2026-08-05"},
+{text:"Prenotare cena Ferragosto Sulmona (Sab 15 ago sera)",cat:"critical",deadline:"2026-08-05"},
+{text:"Prenotare cantina Sagrantino Montefalco (Gio 20 ago)",cat:"critical",deadline:"2026-08-10"},
+{text:"Canoa Fiume Tirino \u2014 prenotare (Ven 14 ago pom)",cat:"attivita",deadline:"2026-08-07"},
 {text:"Verificare orari Cascata Marmore su cascatadellemarmore.info (Mer 19 ago)",cat:"attivita"},
 {text:"Controllare pressione gomme e livelli auto",cat:"auto"},
 {text:"Fare il pieno GPL prima della partenza",cat:"auto"},
@@ -511,17 +533,93 @@ const PRECHECKS=[
 {text:"Costume da bagno (Tirino canoa + Trabocchi mare + Menotre)",cat:"prep"},
 ];
 
+
+const DEFAULT_HOTELS=[
+{name:"La Dimora B&B",address:"Sulmona centro storico, AQ",phone:"",price:121,confirm:"Prenotato Booking \u00B7 364\u20AC per 3 notti (14-17 ago)",day:1,ts:1720000000000},
+{name:"Hotel & Spa Villa dei Mosaici",address:"Via Giacomo Brodolini 4, 06038 Spello PG",phone:"",price:168,confirm:"Prenotato Booking \u00B7 673,92\u20AC per 4 notti (17-21 ago) \u00B7 Free parking richiesto",day:4,ts:1720000001000}
+];
+const DEFAULT_EXPENSES=[
+{desc:"La Dimora B&B Sulmona (3 notti)",amount:364,cat:"hotel",day:1,paidBy:"cassa",ts:1720000000000},
+{desc:"Hotel Villa dei Mosaici Spello (4 notti)",amount:673.92,cat:"hotel",day:4,paidBy:"cassa",ts:1720000001000}
+];
+
+const DEFAULT_CONTACTS=[
+{cat:"emergenza",name:"Emergenze",phone:"112",note:"Numero unico emergenze",ts:1720000000000},
+{cat:"emergenza",name:"Emergenza sanitaria",phone:"118",note:"",ts:1720000000001},
+{cat:"emergenza",name:"ACI Soccorso stradale",phone:"803116",note:"Assistenza auto",ts:1720000000002},
+{cat:"hotel",name:"La Dimora B&B Sulmona",phone:"",note:"14-17 ago \u00B7 364\u20AC prenotato",ts:1720000000003},
+{cat:"hotel",name:"Hotel Villa dei Mosaici Spello",phone:"",note:"17-21 ago \u00B7 673,92\u20AC prenotato \u00B7 Via Brodolini 4",ts:1720000000004},
+{cat:"attivita",name:"Trabocco Punta Torre",phone:"+393939287350",note:"Cena Dom 16 ago \u2014 CHIAMARE per prenotare",ts:1720000000005},
+{cat:"attivita",name:"Trabocco Pesce Palombo",phone:"+393405966329",note:"Alternativa cena trabocco",ts:1720000000006},
+{cat:"attivita",name:"Trabocco Turchino",phone:"+393200576403",note:"Alternativa economica trabocco",ts:1720000000007},
+{cat:"info",name:"Autostrade Info Traffico",phone:"800269269",note:"Info percorsi e traffico",ts:1720000000008}
+];
+
+const DEFAULT_PARKINGS=[];
+
+const DEFAULT_PACKING=[
+{item:"Patente + carta identit\u00E0",cat:"documenti",qty:1,checked:false,ts:1720000010001},
+{item:"Tessera sanitaria",cat:"documenti",qty:2,checked:false,ts:1720000010002},
+{item:"Voucher hotel stampati",cat:"documenti",qty:1,checked:false,ts:1720000010003},
+{item:"Bancomat/carta credito",cat:"documenti",qty:2,checked:false,ts:1720000010004},
+{item:"Contanti (~200\u20AC)",cat:"documenti",qty:1,checked:false,ts:1720000010005},
+{item:"T-shirt",cat:"abbigliamento",qty:8,checked:false,ts:1720000010006},
+{item:"Pantaloni corti/leggeri",cat:"abbigliamento",qty:3,checked:false,ts:1720000010007},
+{item:"Pantaloni lunghi",cat:"abbigliamento",qty:2,checked:false,ts:1720000010008},
+{item:"Felpa leggera (trabocco sera)",cat:"abbigliamento",qty:1,checked:false,ts:1720000010009},
+{item:"Camicia/vestito per cene fuori",cat:"abbigliamento",qty:2,checked:false,ts:1720000010010},
+{item:"Biancheria intima + calzini",cat:"abbigliamento",qty:8,checked:false,ts:1720000010011},
+{item:"Pigiama",cat:"abbigliamento",qty:1,checked:false,ts:1720000010012},
+{item:"Scarpe camminata comode",cat:"abbigliamento",qty:1,checked:false,ts:1720000010013},
+{item:"Sandali/ciabatte",cat:"abbigliamento",qty:1,checked:false,ts:1720000010014},
+{item:"Costume da bagno (Tirino, Menotre, mare)",cat:"abbigliamento",qty:2,checked:false,ts:1720000010015},
+{item:"Cappellino sole",cat:"abbigliamento",qty:2,checked:false,ts:1720000010016},
+{item:"Telo mare",cat:"abbigliamento",qty:2,checked:false,ts:1720000010017},
+{item:"Occhiali da sole",cat:"abbigliamento",qty:2,checked:false,ts:1720000010018},
+{item:"Caricabatterie telefono",cat:"elettronica",qty:2,checked:false,ts:1720000010019},
+{item:"Powerbank",cat:"elettronica",qty:1,checked:false,ts:1720000010020},
+{item:"Cavi USB (Type-C/lightning)",cat:"elettronica",qty:2,checked:false,ts:1720000010021},
+{item:"Adattatore auto GPL (opz)",cat:"elettronica",qty:1,checked:false,ts:1720000010022},
+{item:"Macchina fotografica (opz)",cat:"elettronica",qty:1,checked:false,ts:1720000010023},
+{item:"Dentifricio + spazzolino",cat:"toiletry",qty:2,checked:false,ts:1720000010024},
+{item:"Bagnoschiuma + shampoo",cat:"toiletry",qty:1,checked:false,ts:1720000010025},
+{item:"Deodorante",cat:"toiletry",qty:2,checked:false,ts:1720000010026},
+{item:"Crema solare 30+ SPF",cat:"toiletry",qty:1,checked:false,ts:1720000010027},
+{item:"Doposole",cat:"toiletry",qty:1,checked:false,ts:1720000010028},
+{item:"Repellente zanzare",cat:"toiletry",qty:1,checked:false,ts:1720000010029},
+{item:"Kit primo soccorso",cat:"emergenza",qty:1,checked:false,ts:1720000010030},
+{item:"Cerotti + disinfettante",cat:"emergenza",qty:1,checked:false,ts:1720000010031},
+{item:"Farmaci base (Tachipirina, Immodium)",cat:"emergenza",qty:1,checked:false,ts:1720000010032},
+{item:"Triangolo + giubbotto emergenza auto",cat:"emergenza",qty:1,checked:false,ts:1720000010033}
+];
+
+const DEFAULT_MEDICINES=[];
+
+const DEFAULT_FOODS=[
+{name:"Confetti di Sulmona (Pelino)",place:"Sulmona",rating:0,price:0,day:1,tags:["da_provare"],note:"Fabbrica storica dal 1783",ts:1720000020001},
+{name:"Arrosticini",place:"Sulmona/dintorni",rating:0,price:0,day:1,tags:["da_provare"],note:"Specialit\u00E0 abruzzese",ts:1720000020002},
+{name:"Maccheroni alla chitarra",place:"Sulmona",rating:0,price:0,day:1,tags:["da_provare"],note:"Con sugo di castrato",ts:1720000020003},
+{name:"Polenta rognosa",place:"Scanno",rating:0,price:0,day:2,tags:["da_provare"],note:"Ferragosto Abruzzo",ts:1720000020004},
+{name:"Brodetto di pesce",place:"Costa Trabocchi",rating:0,price:0,day:3,tags:["da_provare"],note:"Al trabocco",ts:1720000020005},
+{name:"Torta al testo",place:"Umbria",rating:0,price:0,day:4,tags:["da_provare"],note:"Pane sottile umbro",ts:1720000020006},
+{name:"Strangozzi al tartufo",place:"Spello/Bevagna",rating:0,price:0,day:5,tags:["da_provare"],note:"Pasta umbra tipica",ts:1720000020007},
+{name:"Sagrantino di Montefalco DOCG",place:"Montefalco",rating:0,price:0,day:7,tags:["da_provare"],note:"Vino rosso strutturato",ts:1720000020008},
+{name:"Porchetta umbra",place:"Perugia",rating:0,price:0,day:8,tags:["da_provare"],note:"Pranzo ultimo giorno",ts:1720000020009}
+];
+
 // STATE
 let isAdmin=false,showLogin=false,pinErr="",tab="map",adminSub="expenses",openDay=null,openStop=null,editingStop=null;
-let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={};
+let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={},contacts=[],parkings=[],packing=[],medicines=[],foods=[],kmLog=[];
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
+let expPaidBy="cassa",contactCat="attivita",savingParking=false;
+let packCat="abbigliamento",foodCat="da_provare",foodRating=0,kmMode="idle",sosOpen=false,darkMode=false,playlistId="";
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
 let livePos=null,lastUpdate=null,gpsWatchId=null,isTracking=false;
 let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v5-umbria";
+const DAYS_VERSION="v8-full";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -547,7 +645,23 @@ try{hotels=JSON.parse(localStorage.getItem(LS("htl")))||[]}catch(e){hotels=[]}
 try{notes=JSON.parse(localStorage.getItem(LS("nts")))||[]}catch(e){notes=[]}
 try{diary=JSON.parse(localStorage.getItem(LS("dry")))||[]}catch(e){diary=[]}
 try{prechecks=JSON.parse(localStorage.getItem(LS("prc")))||{}}catch(e){prechecks={}}
+try{contacts=JSON.parse(localStorage.getItem(LS("cts")))||[]}catch(e){contacts=[]}
+try{parkings=JSON.parse(localStorage.getItem(LS("prk")))||[]}catch(e){parkings=[]}
+try{packing=JSON.parse(localStorage.getItem(LS("pkg")))||[]}catch(e){packing=[]}
+try{medicines=JSON.parse(localStorage.getItem(LS("med")))||[]}catch(e){medicines=[]}
+try{foods=JSON.parse(localStorage.getItem(LS("food")))||[]}catch(e){foods=[]}
+try{kmLog=JSON.parse(localStorage.getItem(LS("km")))||[]}catch(e){kmLog=[]}
+try{darkMode=localStorage.getItem(LS("thm"))==="1"}catch(e){darkMode=false}
+try{playlistId=localStorage.getItem(LS("pll"))||""}catch(e){playlistId=""}
 try{if(localStorage.getItem(LS("adm"))==="1")isAdmin=true}catch(e){}
+// Se appena fatto migration a nuova versione, popolo default se vuoti
+if(_daysNeedFbSync){
+if(!hotels.length){hotels=JSON.parse(JSON.stringify(DEFAULT_HOTELS));save("htl",hotels)}
+if(!expenses.length){expenses=JSON.parse(JSON.stringify(DEFAULT_EXPENSES));save("exp",expenses)}
+if(!contacts.length){contacts=JSON.parse(JSON.stringify(DEFAULT_CONTACTS));save("cts",contacts)}
+if(!packing.length){packing=JSON.parse(JSON.stringify(DEFAULT_PACKING));save("pkg",packing)}
+if(!foods.length){foods=JSON.parse(JSON.stringify(DEFAULT_FOODS));save("food",foods)}
+}
 }
 function save(k,v){try{localStorage.setItem(LS(k),JSON.stringify(v))}catch(e){}}
 function saveChk(){save("chk",checks);if(fbOk)db.child('checks').set(checks)}
@@ -556,6 +670,14 @@ function saveHtl(){save("htl",hotels)}
 function saveNts(){save("nts",notes)}
 function saveDry(){save("dry",diary);if(fbOk)db.child('diary').set(diary)}
 function savePrc(){save("prc",prechecks)}
+function saveCts(){save("cts",contacts);if(fbOk)db.child('contacts').set(contacts)}
+function savePrk(){save("prk",parkings);if(fbOk)db.child('parkings').set(parkings)}
+function savePkg(){save("pkg",packing)}
+function saveMed(){save("med",medicines)}
+function saveFood(){save("food",foods);if(fbOk)db.child('foods').set(foods)}
+function saveKm(){save("km",kmLog);if(fbOk)db.child('kmlog').set(kmLog)}
+function saveTheme(){localStorage.setItem(LS("thm"),darkMode?"1":"0")}
+function savePlaylist(){localStorage.setItem(LS("pll"),playlistId)}
 function saveAdm(){try{localStorage.setItem(LS("adm"),isAdmin?"1":"0")}catch(e){}}
 
 // FIREBASE
@@ -567,6 +689,10 @@ db.child('days').on('value',s=>{const v=s.val();if(v&&!isAdmin){if(_daysNeedFbSy
 db.child('checks').on('value',s=>{const v=s.val();if(v&&!isAdmin){checks=v;render()}});
 db.child('diary').on('value',s=>{const v=s.val();if(v&&!isAdmin){diary=Array.isArray(v)?v:Object.values(v);render()}});
 db.child('photos').on('value',s=>{const v=s.val();if(v){photos=Object.values(v).sort((a,b)=>b.ts-a.ts)}else{photos=[]}if(tab==="gallery")render()});
+db.child('contacts').on('value',s=>{const v=s.val();if(v&&!isAdmin){contacts=Array.isArray(v)?v:Object.values(v);render()}});
+db.child('parkings').on('value',s=>{const v=s.val();if(v){parkings=Array.isArray(v)?v:Object.values(v);if(tab==="private"&&adminSub==="parking")render()}});
+db.child('foods').on('value',s=>{const v=s.val();if(v){foods=Array.isArray(v)?v:Object.values(v);if(tab==="private"&&adminSub==="food")render()}});
+db.child('kmlog').on('value',s=>{const v=s.val();if(v){kmLog=Array.isArray(v)?v:Object.values(v);if(tab==="private"&&adminSub==="kmtrack")render()}});
 }
 
 // GPS
@@ -585,6 +711,8 @@ const rl=getRouteLine();
 L.polyline(rl,{color:'#2D6A4F',weight:3,opacity:.35,dashArray:'8,8'}).addTo(leafletMap);
 getAllStops().forEach(s=>{if(!s.lat)return;const d=!!checks[s.di+"-"+s.si];const ic=L.divIcon({className:'custom-marker',html:'<div class="marker-pin" style="background:'+(d?s.dayColor:s.dayColor+'50')+';border-color:'+(d?'#fff':s.dayColor)+';color:#fff">'+(d?'\u2713':s.dayNum)+'</div>',iconSize:[28,28],iconAnchor:[14,14]});
 L.marker([s.lat,s.lng],{icon:ic}).addTo(leafletMap).bindPopup('<b>'+s.name+'</b><br><a href="'+s.map+'" target="_blank" style="font-size:12px">Apri in Maps</a>')});
+// Pin parcheggi salvati (blu)
+if(parkings&&parkings.length&&leafletMap){parkings.forEach(p=>{if(p.lat&&p.lng)L.circleMarker([p.lat,p.lng],{radius:7,fillColor:"#0984E3",color:"#fff",weight:2,opacity:1,fillOpacity:.9}).bindPopup('<b>\u{1F17F} '+p.name+'</b><br>'+(p.note||'')).addTo(leafletMap)});}
 leafletMap.fitBounds(L.polyline(rl).getBounds().pad(.1));
 setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},200);
 }
@@ -593,8 +721,12 @@ function centerMe(){if(leafletMap&&livePos)leafletMap.setView([livePos.lat,liveP
 
 // WEATHER
 async function fetchWeather(lat,lng){
-try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current=temperature_2m,weather_code&timezone=Europe/Rome');
-const d=await r.json();if(d.current){weather={temp:Math.round(d.current.temperature_2m),code:d.current.weather_code};render()}}catch(e){}}
+try{const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe/Rome&forecast_days=7');
+const d=await r.json();
+if(d.current){
+weather={temp:Math.round(d.current.temperature_2m),code:d.current.weather_code,daily:d.daily?d.daily.time.map((t,i)=>({date:t,max:Math.round(d.daily.temperature_2m_max[i]),min:Math.round(d.daily.temperature_2m_min[i]),code:d.daily.weather_code[i]})):[]};
+render();
+}}catch(e){}}
 function weatherIcon(c){if(c<=1)return'\u2600\uFE0F';if(c<=3)return'\u26C5';if(c<=48)return'\u{1F32B}\uFE0F';if(c<=67)return'\u{1F327}\uFE0F';if(c<=77)return'\u2744\uFE0F';return'\u26C8\uFE0F'}
 function weatherDesc(c){if(c<=1)return'Sereno';if(c<=3)return'Parzialmente nuvoloso';if(c<=48)return'Nuvoloso';if(c<=67)return'Pioggia';if(c<=77)return'Neve';return'Temporale'}
 
@@ -669,7 +801,33 @@ if(ns&&ns.lat){const d=distKm(livePos.lat,livePos.lng,ns.lat,ns.lng);
 h+='<div class="map-next"><div style="font-size:22px">'+DAYS[ns.di].emoji+'</div><div><div style="font-size:11px;color:#2D6A4F;font-weight:600">PROSSIMA TAPPA</div><div style="font-size:15px;font-weight:600">'+ns.name+'</div><div style="font-size:12px;color:#8B7355">~'+(d<1?(d*1000).toFixed(0)+'m':d.toFixed(1)+'km')+'</div></div></div>'}
 h+='<button class="btn-secondary" style="width:100%;margin-top:10px" onclick="centerMe()">Centra su di noi</button>';
 }else{h+='<div class="map-status"><div class="map-status-dot" style="background:#C4B99A"></div><div><div class="map-status-title">In attesa della posizione...</div><div class="map-status-sub">'+(isAdmin?'Attiva il GPS':'Si aggiorner\u00E0 quando Daniele e Angela condividono')+'</div></div></div>'}
-if(weather)h+='<div class="weather"><div class="weather-icon">'+weatherIcon(weather.code)+'</div><div><div class="weather-temp">'+weather.temp+'\u00B0C</div><div class="weather-desc">'+weatherDesc(weather.code)+'</div></div></div>';
+if(weather){
+h+='<div class="weather"><div class="weather-icon">'+weatherIcon(weather.code)+'</div><div><div class="weather-temp">'+weather.temp+'\u00B0C</div><div class="weather-desc">'+weatherDesc(weather.code)+'</div></div></div>';
+if(weather.daily&&weather.daily.length>1){
+h+='<div style="background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:12px;margin-top:8px">';
+h+='<div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Previsioni 7 giorni</div>';
+h+='<div style="display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch">';
+weather.daily.forEach((d,i)=>{
+const date=new Date(d.date);
+const dayName=i===0?'Oggi':date.toLocaleDateString('it-IT',{weekday:'short'});
+const dayNum=date.getDate();
+h+='<div style="min-width:52px;text-align:center;padding:8px 4px;background:#FAFAF6;border-radius:8px;flex-shrink:0">';
+h+='<div style="font-size:9px;color:#8B7355;font-weight:700">'+dayName.toUpperCase()+'</div>';
+h+='<div style="font-size:10px;color:#B0A48E">'+dayNum+'</div>';
+h+='<div style="font-size:18px;margin:2px 0">'+weatherIcon(d.code)+'</div>';
+h+='<div style="font-size:11px;font-weight:700;color:#3C3226">'+d.max+'\u00B0</div>';
+h+='<div style="font-size:9px;color:#8B7355">'+d.min+'\u00B0</div>';
+h+='</div>';
+});
+h+='</div></div>';
+}
+// Playlist widget
+if(playlistId){
+h+='<div class="playlist-widget"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px">\u{1F3B5} Playlist viaggio</div><button style="background:none;border:none;color:#B0A48E;cursor:pointer;font-size:11px" onclick="clearPlaylist()">Rimuovi</button></div><iframe src="https://open.spotify.com/embed/playlist/'+playlistId+'?utm_source=generator&theme=0" height="152" allow="encrypted-media"></iframe></div>';
+}else if(isAdmin){
+h+='<div class="playlist-widget" style="text-align:center"><div style="font-size:11px;color:#8B7355;margin-bottom:8px">\u{1F3B5} Aggiungi una playlist Spotify per il viaggio</div><button class="btn-secondary" style="font-size:12px" onclick="setPlaylist()">+ Imposta playlist</button></div>';
+}
+}
 h+='</div>'}
 
 // CHECKLIST TAB
@@ -773,8 +931,8 @@ h+='</div>'}
 if(tab==="private"&&isAdmin){
 h+='<div class="content">';
 h+='<div class="sub-tabs">';
-['expenses','stops','hotels','budget','notes','precheck'].forEach(s=>{
-const labels={expenses:'Spese',stops:'Tappe',hotels:'Hotel',budget:'Budget',notes:'Note',precheck:'Pre-partenza'};
+['expenses','budget','stops','hotels','contacts','parking','kmtrack','food','packing','medicine','timeline','notes','precheck'].forEach(s=>{
+const labels={expenses:'Spese',budget:'Budget',stops:'Tappe',hotels:'Hotel',contacts:'Contatti',parking:'Parcheggi',kmtrack:'Km',food:'Food',packing:'Valigia',medicine:'Farmaci',timeline:'Timeline',notes:'Note',precheck:'Pre-partenza'};
 h+='<button class="sub-tab '+(adminSub===s?'act':'')+'" onclick="adminSub=\''+s+'\';render()">'+labels[s]+'</button>'});
 h+='</div>';
 
@@ -782,14 +940,42 @@ if(adminSub==='expenses'){
 const tot=expenses.reduce((a,e)=>a+e.amount,0);
 const ct={};CATS.forEach(c=>ct[c.id]=0);expenses.forEach(e=>ct[e.cat]=(ct[e.cat]||0)+e.amount);
 h+='<div class="exp-total-card"><div class="exp-total-num">\u20AC '+tot.toFixed(2)+'</div><div class="exp-total-sub">Spesa reale</div><div class="exp-total-pp">\u20AC '+(tot/2).toFixed(2)+' a testa</div></div>';
+// Split Daniele/Angela
+const paidD=expenses.filter(e=>e.paidBy==='daniele').reduce((a,e)=>a+e.amount,0);
+const paidA=expenses.filter(e=>e.paidBy==='angela').reduce((a,e)=>a+e.amount,0);
+const paidC=expenses.filter(e=>!e.paidBy||e.paidBy==='cassa').reduce((a,e)=>a+e.amount,0);
+if(paidD>0||paidA>0){
+const share=tot/2;
+const dOwe=share-paidD-paidC/2;
+const aOwe=share-paidA-paidC/2;
+h+='<div style="background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:14px;margin-bottom:12px">';
+h+='<div style="font-size:11px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">\u{1F4B8} Split spese</div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">';
+h+='<div style="text-align:center;padding:8px;background:#EBF5FF;border-radius:8px"><div style="font-size:10px;color:#0984E3;font-weight:700">DANIELE</div><div style="font-size:15px;font-weight:700;color:#3C3226">\u20AC'+paidD.toFixed(2)+'</div></div>';
+h+='<div style="text-align:center;padding:8px;background:#FEF0F0;border-radius:8px"><div style="font-size:10px;color:#C0392B;font-weight:700">ANGELA</div><div style="font-size:15px;font-weight:700;color:#3C3226">\u20AC'+paidA.toFixed(2)+'</div></div>';
+h+='<div style="text-align:center;padding:8px;background:#E8F5E9;border-radius:8px"><div style="font-size:10px;color:#2D6A4F;font-weight:700">CASSA</div><div style="font-size:15px;font-weight:700;color:#3C3226">\u20AC'+paidC.toFixed(2)+'</div></div>';
+h+='</div>';
+if(Math.abs(dOwe)>0.5){
+if(dOwe>0){h+='<div style="text-align:center;font-size:13px;color:#C0392B;font-weight:600;padding:8px;background:#FEF0F0;border-radius:8px">Daniele deve \u20AC'+dOwe.toFixed(2)+' ad Angela</div>'}
+else{h+='<div style="text-align:center;font-size:13px;color:#0984E3;font-weight:600;padding:8px;background:#EBF5FF;border-radius:8px">Angela deve \u20AC'+(-dOwe).toFixed(2)+' a Daniele</div>'}
+}else{
+h+='<div style="text-align:center;font-size:12px;color:#2D6A4F;padding:8px">\u2705 Conti pari</div>';
+}
+h+='</div>';
+}
 h+='<div class="exp-cats-grid">';CATS.forEach(c=>{if(ct[c.id]>0)h+='<div class="exp-cat-card"><div class="exp-cat-icon">'+c.emoji+'</div><div><div class="exp-cat-name">'+c.name+'</div><div class="exp-cat-val">\u20AC'+ct[c.id].toFixed(0)+'</div></div></div>'});h+='</div>';
 h+='<div class="form-box"><div class="form-label">+ Aggiungi</div><div class="form-row"><input class="form-input" id="exp-desc" placeholder="Descrizione..."><input class="form-input" id="exp-amt" type="number" inputmode="decimal" placeholder="\u20AC" step=".01" style="max-width:90px"></div>';
 h+='<div class="form-cats">'+CATS.map(c=>'<button class="form-cat '+(expCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="expCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
 h+='<div class="form-days"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
+h+='<div style="font-size:9px;font-weight:700;color:#8B7355;letter-spacing:1px;margin:8px 0 4px">PAGATO DA</div>';
+h+='<div style="display:flex;gap:6px;margin-bottom:10px">';
+['cassa','daniele','angela'].forEach(p=>{const labels={cassa:'\u{1F4B0} Cassa comune',daniele:'\u{1F464} Daniele',angela:'\u{1F464} Angela'};const cols={cassa:'#2D6A4F',daniele:'#0984E3',angela:'#C0392B'};h+='<button class="form-cat '+(expPaidBy===p?'act':'')+'" style="--c:'+cols[p]+';flex:1;font-size:10px" onclick="expPaidBy=\''+p+'\';render()">'+labels[p]+'</button>'});
+h+='</div>';
 h+='<button class="btn-primary" onclick="addExp()">Aggiungi</button></div>';
 const fl=expenses.filter(e=>expFilter==='all'?true:typeof expFilter==='number'?e.day===expFilter:e.cat===expFilter).sort((a,b)=>b.ts-a.ts);
 if(fl.length)fl.forEach(e=>{const c=CATS.find(x=>x.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
-h+='<div class="exp-item"><div>'+c.emoji+'</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(e.desc||c.name)+'</div><div class="exp-item-meta">'+(e.day>0?'G'+e.day:'Gen')+' \u00B7 '+c.name+'</div></div><div class="exp-item-amount">\u20AC'+e.amount.toFixed(2)+'</div><button class="exp-item-del" onclick="delExp('+ri+')">\u2715</button></div>'});
+const pb=e.paidBy||'cassa';const pbIcon={cassa:'\u{1F4B0}',daniele:'D',angela:'A'}[pb];const pbCol={cassa:'#2D6A4F',daniele:'#0984E3',angela:'#C0392B'}[pb];
+h+='<div class="exp-item"><div>'+c.emoji+'</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(e.desc||c.name)+'</div><div class="exp-item-meta">'+(e.day>0?'G'+e.day:'Gen')+' \u00B7 '+c.name+' \u00B7 <span style="color:'+pbCol+';font-weight:700">'+pbIcon+'</span></div></div><div class="exp-item-amount">\u20AC'+e.amount.toFixed(2)+'</div><button class="exp-item-del" onclick="delExp('+ri+')">\u2715</button></div>'});
 else h+='<div class="empty">Nessuna spesa</div>';
 }
 
@@ -825,6 +1011,12 @@ h+='</div>';
 h+='<button style="width:32px;height:32px;border-radius:8px;border:.5px solid #E8E2D4;background:#fff;cursor:pointer;font-size:13px;flex-shrink:0" onclick="editStop('+di+','+si+')" title="Modifica">\u270F\uFE0F</button>';
 h+='<button class="exp-item-del" onclick="delStop('+di+','+si+')" title="Elimina">\u2715</button>';
 h+='</div></div>';
+}
+// Playlist widget
+if(playlistId){
+h+='<div class="playlist-widget"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px">\u{1F3B5} Playlist viaggio</div><button style="background:none;border:none;color:#B0A48E;cursor:pointer;font-size:11px" onclick="clearPlaylist()">Rimuovi</button></div><iframe src="https://open.spotify.com/embed/playlist/'+playlistId+'?utm_source=generator&theme=0" height="152" allow="encrypted-media"></iframe></div>';
+}else if(isAdmin){
+h+='<div class="playlist-widget" style="text-align:center"><div style="font-size:11px;color:#8B7355;margin-bottom:8px">\u{1F3B5} Aggiungi una playlist Spotify per il viaggio</div><button class="btn-secondary" style="font-size:12px" onclick="setPlaylist()">+ Imposta playlist</button></div>';
 }
 });
 const isAdding=editingStop==='new-'+di;
@@ -863,6 +1055,51 @@ h+='<div class="hotel-nav">';if(mu)h+='<a href="'+mu+'" target="_blank" class="n
 h+='<button class="hotel-del" onclick="delHotel('+i+')">\u2715</button></div>'});
 }
 
+if(adminSub==='contacts'){
+const cats=[{id:"emergenza",name:"Emergenze",color:"#C0392B",emoji:"\u{1F6A8}"},{id:"hotel",name:"Hotel",color:"#2D6A4F",emoji:"\u{1F3E8}"},{id:"attivita",name:"Attivit\u00E0",color:"#8E44AD",emoji:"\u{1F3AF}"},{id:"info",name:"Info",color:"#0984E3",emoji:"\u2139\uFE0F"},{id:"altro",name:"Altro",color:"#8B7355",emoji:"\u{1F4CC}"}];
+h+='<div class="form-box"><div class="form-label">+ Aggiungi contatto</div><input class="form-input" id="ct-name" placeholder="Nome contatto..." style="margin-bottom:8px"><input class="form-input" id="ct-phone" type="tel" placeholder="Numero telefono..." style="margin-bottom:8px"><input class="form-input" id="ct-note" placeholder="Note (opzionale)..." style="margin-bottom:10px">';
+h+='<div class="form-cats">'+cats.map(c=>'<button class="form-cat '+(contactCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="contactCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
+h+='<button class="btn-primary" onclick="addContact()">Aggiungi</button></div>';
+cats.forEach(cat=>{
+const list=contacts.filter(c=>c.cat===cat.id);
+if(list.length===0)return;
+h+='<div style="font-size:11px;font-weight:700;color:'+cat.color+';text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">'+cat.emoji+' '+cat.name+'</div>';
+list.sort((a,b)=>a.ts-b.ts).forEach(ct=>{
+const ri=contacts.indexOf(ct);
+h+='<div class="hotel-card" style="padding:12px"><div class="hotel-name" style="font-size:14px">'+ct.name+'</div>';
+if(ct.phone)h+='<div class="hotel-row">\u{1F4DE} <a href="tel:'+ct.phone.replace(/\s/g,'')+'" style="color:#0984E3;text-decoration:none">'+ct.phone+'</a></div>';
+if(ct.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+ct.note+'</div>';
+if(ct.phone)h+='<div class="hotel-nav"><a href="tel:'+ct.phone.replace(/\s/g,'')+'" class="nav-call">\u{1F4DE} Chiama</a></div>';
+h+='<button class="hotel-del" onclick="delContact('+ri+')">\u2715</button></div>';
+});
+});
+}
+
+if(adminSub==='parking'){
+h+='<div class="form-box"><div class="form-label">\u{1F17F} Parcheggi salvati</div>';
+h+='<button class="btn-primary" style="margin-bottom:8px" onclick="saveCurrentParking()">\u{1F4CD} Salva posizione GPS corrente</button>';
+h+='<div style="font-size:10px;color:#8B7355;text-align:center;margin-bottom:10px">Oppure inserisci manualmente:</div>';
+h+='<input class="form-input" id="pk-name" placeholder="Nome parcheggio (es. Sulmona Piazza Tresca)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="pk-note" placeholder="Note (piano, posto auto, ecc.)" style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="pk-lat" placeholder="Latitudine" type="number" step="any"><input class="form-input" id="pk-lng" placeholder="Longitudine" type="number" step="any"></div>';
+h+='<button class="btn-secondary" style="width:100%;margin-top:8px" onclick="addParkingManual()">Aggiungi manualmente</button>';
+h+='</div>';
+if(!parkings.length){
+h+='<div class="empty">Nessun parcheggio salvato ancora.<br>Usa il bottone GPS quando parcheggi.</div>';
+}else{
+parkings.sort((a,b)=>b.ts-a.ts).forEach(p=>{
+const ri=parkings.indexOf(p);
+const mapUrl='https://maps.google.com/?q='+p.lat+','+p.lng;
+h+='<div class="hotel-card" style="padding:12px"><div class="hotel-name" style="font-size:14px">\u{1F17F} '+p.name+'</div>';
+h+='<div class="hotel-row">\u{1F4CD} '+p.lat.toFixed(6)+', '+p.lng.toFixed(6)+'</div>';
+if(p.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+p.note+'</div>';
+h+='<div class="hotel-row" style="font-size:10px;color:#B0A48E">Salvato: '+new Date(p.ts).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div>';
+h+='<div class="hotel-nav"><a href="'+mapUrl+'" target="_blank" class="nav-go">\u{1F5FA}\uFE0F Naviga</a></div>';
+h+='<button class="hotel-del" onclick="delParking('+ri+')">\u2715</button></div>';
+});
+}
+}
+
 if(adminSub==='budget'){
 h+='<div class="budget-grid"><div class="budget-card"><div class="budget-label">Carburante GPL</div><div class="budget-val">~155\u20AC</div><div class="budget-sub">~180L \u00B7 0,85\u20AC pompa</div></div>';
 h+='<div class="budget-card"><div class="budget-label">Pedaggi</div><div class="budget-val">~120\u20AC</div><div class="budget-sub">A1+A25+A1</div></div>';
@@ -872,6 +1109,135 @@ h+='<div class="budget-card"><div class="budget-label">Attivit\u00E0</div><div c
 h+='<div class="budget-card"><div class="budget-label">Extra</div><div class="budget-val">~200\u20AC</div><div class="budget-sub">Aperitivi, gelati, souvenir</div></div></div>';
 h+='<div class="exp-total-card"><div class="exp-total-num">~2.640\u20AC</div><div class="exp-total-sub">Stima totale 2 persone</div><div class="exp-total-pp">~1.320\u20AC a testa</div></div>';
 }
+if(adminSub==='kmtrack'){
+const totKm=kmLog.reduce((a,l)=>a+(l.km||0),0);
+const totLt=totKm*0.095;
+const totCost=totLt*0.85;
+h+='<div class="exp-total-card"><div class="exp-total-num">'+totKm.toFixed(0)+' km</div><div class="exp-total-sub">Percorsi \u00B7 ~'+totLt.toFixed(1)+' L GPL \u00B7 ~\u20AC'+totCost.toFixed(2)+'</div></div>';
+h+='<div class="form-box"><div class="form-label">+ Registra tratta</div>';
+h+='<input class="form-input" id="km-from" placeholder="Da (es. Sulmona)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="km-to" placeholder="A (es. Fiume Tirino)" style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="km-val" type="number" inputmode="decimal" placeholder="Km percorsi" step="1"><input class="form-input" id="km-note" placeholder="Note (opz)"></div>';
+h+='<div class="form-days" style="margin-top:8px"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
+h+='<button class="btn-primary" style="margin-top:10px" onclick="addKm()">Aggiungi tratta</button>';
+h+='</div>';
+if(!kmLog.length){h+='<div class="empty">Nessuna tratta registrata.<br>Aggiungi la prima!</div>'}
+else{
+const byDay={};kmLog.forEach(k=>{const d=k.day||0;if(!byDay[d])byDay[d]=[];byDay[d].push(k)});
+Object.keys(byDay).sort((a,b)=>a-b).forEach(dnum=>{
+const day=dnum>0?DAYS[dnum-1]:null;
+h+='<div style="font-size:11px;font-weight:700;color:'+(day?day.color:'#8B7355')+';text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">'+(day?'G'+day.day+' \u00B7 '+day.date:'Generico')+'</div>';
+byDay[dnum].sort((a,b)=>a.ts-b.ts).forEach(k=>{
+const ri=kmLog.indexOf(k);
+h+='<div class="exp-item" style="border-left:3px solid '+(day?day.color:'#8B7355')+'40"><div>\u{1F697}</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(k.from||'')+' \u2192 '+(k.to||'')+'</div><div class="exp-item-meta">'+(k.note||'')+'</div></div><div class="exp-item-amount">'+k.km+' km</div><button class="exp-item-del" onclick="delKm('+ri+')">\u2715</button></div>';
+});
+});
+}
+}
+
+if(adminSub==='food'){
+const bytag={da_provare:foods.filter(f=>(f.tags||[]).includes('da_provare')&&f.rating===0),provato:foods.filter(f=>f.rating>0),top:foods.filter(f=>f.rating>=4)};
+h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px">';
+h+='<div style="text-align:center;padding:10px;background:#FEF9E7;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#C9A227">'+bytag.da_provare.length+'</div><div style="font-size:9px;color:#8B7355;font-weight:700">DA PROVARE</div></div>';
+h+='<div style="text-align:center;padding:10px;background:#E8F5E9;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#2D6A4F">'+bytag.provato.length+'</div><div style="font-size:9px;color:#8B7355;font-weight:700">PROVATI</div></div>';
+h+='<div style="text-align:center;padding:10px;background:#FDF2E9;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#E67E22">'+bytag.top.length+'</div><div style="font-size:9px;color:#8B7355;font-weight:700">TOP \u2605\u2605\u2605\u2605+</div></div>';
+h+='</div>';
+h+='<div class="form-box"><div class="form-label">+ Aggiungi piatto/vino</div>';
+h+='<input class="form-input" id="fd-name" placeholder="Nome piatto/vino..." style="margin-bottom:8px">';
+h+='<input class="form-input" id="fd-place" placeholder="Dove (ristorante/luogo)..." style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="fd-price" type="number" inputmode="decimal" placeholder="\u20AC" step=".01"><div style="display:flex;gap:4px;align-items:center">';
+for(let s=1;s<=5;s++){h+='<span style="cursor:pointer;font-size:22px;color:'+(foodRating>=s?'#F39C12':'#DDD')+'" onclick="foodRating='+(foodRating===s?0:s)+';render()">\u2605</span>'}
+h+='</div></div>';
+h+='<input class="form-input" id="fd-note" placeholder="Note (opz)..." style="margin-top:8px;margin-bottom:8px">';
+h+='<div class="form-days"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
+h+='<button class="btn-primary" style="margin-top:10px" onclick="addFood()">Aggiungi</button>';
+h+='</div>';
+if(bytag.top.length){
+h+='<div style="font-size:11px;font-weight:700;color:#E67E22;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">\u{1F3C6} Top del viaggio</div>';
+bytag.top.sort((a,b)=>b.rating-a.rating).forEach(f=>{h+=renderFoodItem(f)});
+}
+if(bytag.provato.filter(f=>f.rating<4).length){
+h+='<div style="font-size:11px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">\u{1F374} Provati</div>';
+bytag.provato.filter(f=>f.rating<4).forEach(f=>{h+=renderFoodItem(f)});
+}
+if(bytag.da_provare.length){
+h+='<div style="font-size:11px;font-weight:700;color:#C9A227;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">\u{1F4CB} Da provare</div>';
+bytag.da_provare.forEach(f=>{h+=renderFoodItem(f)});
+}
+}
+
+if(adminSub==='packing'){
+const cats=[{id:"documenti",name:"Documenti",color:"#C0392B",emoji:"\u{1F4CB}"},{id:"abbigliamento",name:"Abbigliamento",color:"#0984E3",emoji:"\u{1F455}"},{id:"toiletry",name:"Igiene",color:"#8E44AD",emoji:"\u{1F9F4}"},{id:"elettronica",name:"Elettronica",color:"#2D6A4F",emoji:"\u{1F50C}"},{id:"emergenza",name:"Emergenza",color:"#E67E22",emoji:"\u{1F691}"}];
+const done=packing.filter(p=>p.checked).length;
+const perc=packing.length?Math.round(done*100/packing.length):0;
+h+='<div class="exp-total-card"><div class="exp-total-num">'+done+'/'+packing.length+'</div><div class="exp-total-sub">Preparate \u00B7 '+perc+'%</div><div class="exp-total-pp" style="background:rgba(255,255,255,.15);height:6px;border-radius:3px;overflow:hidden;margin-top:6px"><div style="background:#fff;height:100%;width:'+perc+'%"></div></div></div>';
+h+='<div class="form-box"><div class="form-label">+ Aggiungi voce</div>';
+h+='<input class="form-input" id="pk-item" placeholder="Item (es. Occhiali riserva)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="pk-qty" type="number" placeholder="Quantit\u00E0" value="1" style="max-width:100px;margin-bottom:8px">';
+h+='<div class="form-cats">'+cats.map(c=>'<button class="form-cat '+(packCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="packCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
+h+='<button class="btn-primary" style="margin-top:10px" onclick="addPack()">Aggiungi</button>';
+h+='</div>';
+cats.forEach(cat=>{
+const list=packing.filter(p=>p.cat===cat.id);
+if(list.length===0)return;
+const doneCat=list.filter(p=>p.checked).length;
+h+='<div style="font-size:11px;font-weight:700;color:'+cat.color+';text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">'+cat.emoji+' '+cat.name+' <span style="color:#B0A48E;font-weight:400">('+doneCat+'/'+list.length+')</span></div>';
+list.sort((a,b)=>a.ts-b.ts).forEach(p=>{
+const ri=packing.indexOf(p);
+h+='<div class="precheck-item" style="border-left:3px solid '+cat.color+'30"><div class="chk '+(p.checked?'on':'')+'" style="--c:'+cat.color+'" onclick="togglePack('+ri+')">'+(p.checked?'\u2713':'')+'</div><div class="precheck-text '+(p.checked?'done':'')+'">'+p.item+(p.qty>1?' <span style="color:#B0A48E;font-size:11px">x'+p.qty+'</span>':'')+'</div><button class="exp-item-del" onclick="delPack('+ri+')">\u2715</button></div>';
+});
+});
+h+='<button class="btn-secondary" style="width:100%;margin-top:14px" onclick="resetPacking()">\u21BA Reset tutti (per prossimo viaggio)</button>';
+}
+
+if(adminSub==='medicine'){
+h+='<div style="background:#FEF9E7;border-left:3px solid #F39C12;border-radius:6px;padding:10px;font-size:11px;color:#8B7355;margin-bottom:12px">\u{1F48A} <b>Kit farmaci base</b> \u2014 Tachipirina, Nurofen, Immodium, Enterogermina, cerotti, disinfettante. Sempre in auto.</div>';
+h+='<div class="form-box"><div class="form-label">+ Aggiungi farmaco</div>';
+h+='<input class="form-input" id="md-name" placeholder="Nome farmaco (es. Tachipirina)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-dose" placeholder="Dose (es. 1 cp da 500mg)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-time" placeholder="Quando (es. mattina + sera)" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-note" placeholder="Note (opz)" style="margin-bottom:10px">';
+h+='<button class="btn-primary" onclick="addMed()">Aggiungi</button>';
+h+='</div>';
+if(!medicines.length){h+='<div class="empty">Nessun farmaco specifico.<br>Il kit base \u00E8 gi\u00E0 nella packing list.</div>'}
+else{
+medicines.sort((a,b)=>a.ts-b.ts).forEach((m,i)=>{
+h+='<div class="hotel-card" style="padding:12px"><div class="hotel-name" style="font-size:14px">\u{1F48A} '+m.name+'</div>';
+if(m.dose)h+='<div class="hotel-row">Dose: '+m.dose+'</div>';
+if(m.time)h+='<div class="hotel-row">Quando: '+m.time+'</div>';
+if(m.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+m.note+'</div>';
+h+='<button class="hotel-del" onclick="delMed('+i+')">\u2715</button></div>';
+});
+}
+}
+
+if(adminSub==='timeline'){
+h+='<div style="background:#F5F2EB;border-radius:12px;padding:14px;margin-bottom:12px;font-size:12px;color:#8B7355;text-align:center">\u{1F4D6} <b>Timeline auto-generata</b><br>Aggregazione automatica di tutto ci\u00F2 che \u00E8 successo ogni giorno del viaggio</div>';
+DAYS.forEach((d,di)=>{
+const dnum=di+1;
+const dayExp=expenses.filter(e=>e.day===dnum);
+const dayTot=dayExp.reduce((a,e)=>a+e.amount,0);
+const dayKm=kmLog.filter(k=>k.day===dnum).reduce((a,k)=>a+(k.km||0),0);
+const dayDiary=diary.filter(dr=>dr.day===dnum);
+const dayFoods=foods.filter(f=>f.day===dnum&&f.rating>0);
+const dayPhotos=photos.filter(p=>p.day===dnum);
+const doneStops=(d.stops||[]).filter((s,si)=>checks[dnum+'-'+si]).length;
+const totalStops=(d.stops||[]).length;
+h+='<div style="background:#fff;border-radius:14px;border:.5px solid #E8E2D4;padding:14px;margin-bottom:10px;border-left:4px solid '+d.color+'">';
+h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="font-size:20px">'+d.emoji+'</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:'+d.color+'">G'+d.day+' \u00B7 '+d.title+'</div><div style="font-size:10px;color:#8B7355">'+d.date+' \u00B7 '+d.region+'</div></div></div>';
+h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px">';
+h+='<div style="padding:6px;background:#FAFAF6;border-radius:6px">\u{1F4CD} Tappe: <b>'+doneStops+'/'+totalStops+'</b></div>';
+h+='<div style="padding:6px;background:#FAFAF6;border-radius:6px">\u{1F697} Km: <b>'+dayKm+'</b></div>';
+h+='<div style="padding:6px;background:#FAFAF6;border-radius:6px">\u{1F4B6} Speso: <b>\u20AC'+dayTot.toFixed(2)+'</b></div>';
+h+='<div style="padding:6px;background:#FAFAF6;border-radius:6px">\u{1F4F8} Foto: <b>'+dayPhotos.length+'</b></div>';
+h+='</div>';
+if(dayFoods.length){h+='<div style="margin-top:8px;font-size:11px;color:#8B7355"><b>\u{1F374} Mangiato:</b> '+dayFoods.map(f=>f.name+(f.rating?' ('+'\u2605'.repeat(f.rating)+')':'')).join(', ')+'</div>'}
+if(dayDiary.length){h+='<div style="margin-top:8px;padding:8px;background:#F5F2EB;border-radius:8px;font-size:11px;font-style:italic;color:#6B5D4D">\u{1F4DD} "'+dayDiary[0].text.substring(0,120)+(dayDiary[0].text.length>120?'\u2026':'')+'"</div>'}
+h+='</div>';
+});
+h+='<button class="btn-primary" style="width:100%;margin-top:14px" onclick="exportTimeline()">\u{1F4E4} Esporta timeline come testo</button>';
+}
+
 if(adminSub==='notes'){
 h+='<div style="font-size:11px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Note critiche</div>';
 h+='<div class="note-card note-warn"><div class="note-icon">\u2705</div><div class="note-text"><strong>Alloggi prenotati:</strong> Sulmona La Dimora (364\u20AC) + Spello Villa dei Mosaici (673,92\u20AC) = 1.037,92\u20AC</div></div>';
@@ -897,7 +1263,18 @@ const pDone=PRECHECKS.filter((_,i)=>prechecks[i]).length;
 h+='<div style="font-size:13px;color:#8B7355;margin-bottom:14px">'+pDone+'/'+PRECHECKS.length+' completate</div>';
 PRECHECKS.forEach((p,i)=>{const ck=!!prechecks[i];
 const cols={critical:'#C0392B',hotel:'#2D6A4F',auto:'#E67E22',attivita:'#8E44AD',prep:'#0984E3'};
-h+='<div class="precheck-item" style="border-left:3px solid '+(cols[p.cat]||'#888')+'30"><div class="chk '+(ck?'on':'')+'" style="--c:'+(cols[p.cat]||'#888')+'" onclick="prechecks['+i+']=!prechecks['+i+'];savePrc();render()">'+(ck?'\u2713':'')+'</div><div class="precheck-text '+(ck?'done':'')+'">'+p.text+'</div></div>'});
+let deadlineHtml='';
+if(p.deadline&&!ck){
+const days=Math.ceil((new Date(p.deadline)-new Date())/86400000);
+let col='#2D6A4F',lbl='';
+if(days<0){col='#C0392B';lbl='SCADUTO'}
+else if(days===0){col='#C0392B';lbl='OGGI!'}
+else if(days<=3){col='#C0392B';lbl=days+' g'}
+else if(days<=7){col='#E67E22';lbl=days+' g'}
+else{col='#2D6A4F';lbl=days+' g'}
+deadlineHtml='<div style="font-size:10px;font-weight:700;color:'+col+';padding:2px 8px;border-radius:8px;background:'+col+'15;flex-shrink:0">'+lbl+'</div>';
+}
+h+='<div class="precheck-item" style="border-left:3px solid '+(cols[p.cat]||'#888')+'30"><div class="chk '+(ck?'on':'')+'" style="--c:'+(cols[p.cat]||'#888')+'" onclick="prechecks['+i+']=!prechecks['+i+'];savePrc();render()">'+(ck?'\u2713':'')+'</div><div class="precheck-text '+(ck?'done':'')+'">'+p.text+'</div>'+deadlineHtml+'</div>'});
 }
 
 h+='</div>'}
@@ -908,6 +1285,20 @@ h+='</div></div>';
 // FAB
 if(isAdmin)h+='<button class="fab fab-admin" onclick="logout()">\u{1F513}</button>';
 else h+='<button class="fab fab-login" onclick="openLogin()">\u{1F511}</button>';
+// SOS FAB (sempre visibile)
+h+='<button class="fab fab-sos" onclick="toggleSos()" title="Emergenza">\u{1F198}</button>';
+if(sosOpen){
+h+='<div class="sos-modal-overlay" onclick="toggleSos()"><div class="sos-modal" onclick="event.stopPropagation()">';
+h+='<div class="sos-close" onclick="toggleSos()">\u2715</div>';
+h+='<div class="sos-title">\u{1F6A8} EMERGENZE</div>';
+h+='<a href="tel:112" class="sos-btn sos-btn-red">\u{1F4DE} 112 \u00B7 Emergenze</a>';
+h+='<a href="tel:118" class="sos-btn sos-btn-red">\u{1F691} 118 \u00B7 Sanitario</a>';
+h+='<a href="tel:803116" class="sos-btn sos-btn-orange">\u{1F527} 803 116 \u00B7 ACI</a>';
+h+='<button class="sos-btn sos-btn-blue" onclick="findNearby(\'ospedale\')">\u{1F3E5} Ospedale pi\u00F9 vicino</button>';
+h+='<button class="sos-btn sos-btn-blue" onclick="findNearby(\'farmacia\')">\u{1F48A} Farmacia pi\u00F9 vicina</button>';
+h+='<button class="sos-btn sos-btn-green" onclick="shareLocation()">\u{1F4CD} Condividi posizione WhatsApp</button>';
+h+='</div></div>';
+}
 
 document.getElementById("app").innerHTML=h;
 if(tab==="map")setTimeout(()=>{initMap();updateMarker();if(livePos&&!weather)fetchWeather(livePos.lat,livePos.lng);else if(!weather){const ns2=nextStop();if(ns2&&ns2.lat)fetchWeather(ns2.lat,ns2.lng)}},50);
@@ -923,7 +1314,7 @@ function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=d
 function closeLogin(){showLogin=false;pinErr="";render()}
 function logout(){isAdmin=false;showLogin=false;stopGPS();saveAdm();tab="map";render()}
 function setExpCat(c){expCat=c;render()}
-function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}expenses.push({desc:d.value.trim()||CATS.find(c=>c.id===expCat).name,amount:v,cat:expCat,day:expDay,ts:Date.now()});saveExp();expCat="food";expDay=0;render()}
+function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}expenses.push({desc:d.value.trim()||CATS.find(c=>c.id===expCat).name,amount:v,cat:expCat,day:expDay,paidBy:expPaidBy,ts:Date.now()});saveExp();expCat="food";expDay=0;expPaidBy="cassa";render()}
 function delExp(i){expenses.splice(i,1);saveExp();render()}
 function addHotel(){const n=document.getElementById('h-name').value.trim();if(!n)return;hotels.push({name:n,address:document.getElementById('h-addr').value.trim(),phone:document.getElementById('h-phone').value.trim(),price:parseFloat(document.getElementById('h-price').value)||0,confirm:document.getElementById('h-conf').value.trim(),day:expDay||1,ts:Date.now()});saveHtl();expDay=0;render()}
 function delHotel(i){hotels.splice(i,1);saveHtl();render()}
@@ -983,6 +1374,195 @@ DAYS=JSON.parse(JSON.stringify(DEFAULT_DAYS));
 checks={};editingStop=null;
 saveDays();saveChk();render();
 }
+
+// CONTATTI
+function addContact(){
+const n=document.getElementById('ct-name').value.trim();
+if(!n){alert('Nome obbligatorio');return}
+const p=document.getElementById('ct-phone').value.trim();
+const nt=document.getElementById('ct-note').value.trim();
+contacts.push({name:n,phone:p,note:nt,cat:contactCat,ts:Date.now()});
+saveCts();contactCat="attivita";render();
+}
+function delContact(i){
+if(!confirm('Eliminare il contatto?'))return;
+contacts.splice(i,1);saveCts();render();
+}
+
+// PARCHEGGI
+function saveCurrentParking(){
+if(!navigator.geolocation){alert('GPS non disponibile');return}
+savingParking=true;render();
+navigator.geolocation.getCurrentPosition(pos=>{
+const name=prompt('Nome parcheggio (es. Sulmona Piazza Tresca):');
+if(!name){savingParking=false;render();return}
+const note=prompt('Note (opzionale, es. piano -1, posto 25):')||'';
+parkings.push({name:name.trim(),lat:pos.coords.latitude,lng:pos.coords.longitude,note:note.trim(),ts:Date.now()});
+savingParking=false;savePrk();render();
+},e=>{alert('Errore GPS: '+e.message);savingParking=false;render()},{enableHighAccuracy:true,timeout:15000});
+}
+function addParkingManual(){
+const n=document.getElementById('pk-name').value.trim();
+const lat=parseFloat(document.getElementById('pk-lat').value);
+const lng=parseFloat(document.getElementById('pk-lng').value);
+if(!n){alert('Nome obbligatorio');return}
+if(isNaN(lat)||isNaN(lng)){alert('Coordinate obbligatorie (usa Google Maps: click destro > coordinate)');return}
+const note=document.getElementById('pk-note').value.trim();
+parkings.push({name:n,lat:lat,lng:lng,note:note,ts:Date.now()});
+savePrk();render();
+}
+function delParking(i){
+if(!confirm('Eliminare il parcheggio?'))return;
+parkings.splice(i,1);savePrk();render();
+}
+
+// KM TRACKER
+function addKm(){
+const f=document.getElementById('km-from').value.trim();
+const t=document.getElementById('km-to').value.trim();
+const k=parseInt(document.getElementById('km-val').value);
+const n=document.getElementById('km-note').value.trim();
+if(!f||!t){alert('Da e A obbligatori');return}
+if(!k||k<=0){alert('Km obbligatori');return}
+kmLog.push({from:f,to:t,km:k,note:n,day:expDay,ts:Date.now()});
+saveKm();render();
+}
+function delKm(i){
+if(!confirm('Eliminare la tratta?'))return;
+kmLog.splice(i,1);saveKm();render();
+}
+
+// FOOD DIARY
+function renderFoodItem(f){
+const ri=foods.indexOf(f);
+const day=f.day>0&&DAYS[f.day-1]?DAYS[f.day-1]:null;
+let s='<div class="hotel-card" style="padding:12px'+(day?';border-left:3px solid '+day.color+'40':'')+'"><div class="hotel-name" style="font-size:14px">\u{1F374} '+f.name+'</div>';
+if(f.place)s+='<div class="hotel-row">\u{1F4CD} '+f.place+'</div>';
+if(f.rating){s+='<div class="hotel-row">';for(let i=1;i<=5;i++)s+='<span style="color:'+(i<=f.rating?'#F39C12':'#DDD')+'">\u2605</span>';s+='</div>'}
+if(f.price>0)s+='<div class="hotel-row">\u20AC'+f.price.toFixed(2)+'</div>';
+if(f.note)s+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+f.note+'</div>';
+if(day)s+='<div class="hotel-row" style="font-size:10px;color:#B0A48E">G'+day.day+' \u00B7 '+day.date+'</div>';
+if(!f.rating)s+='<div class="hotel-nav"><button onclick="rateFood('+ri+')" class="nav-call">\u2B50 Valuta ora</button></div>';
+s+='<button class="hotel-del" onclick="delFood('+ri+')">\u2715</button></div>';
+return s;
+}
+function addFood(){
+const n=document.getElementById('fd-name').value.trim();
+if(!n){alert('Nome obbligatorio');return}
+const p=document.getElementById('fd-place').value.trim();
+const pr=parseFloat(document.getElementById('fd-price').value)||0;
+const nt=document.getElementById('fd-note').value.trim();
+foods.push({name:n,place:p,rating:foodRating,price:pr,day:expDay,tags:foodRating?['provato']:['da_provare'],note:nt,ts:Date.now()});
+saveFood();foodRating=0;render();
+}
+function delFood(i){
+if(!confirm('Eliminare?'))return;
+foods.splice(i,1);saveFood();render();
+}
+function rateFood(i){
+const r=prompt('Valuta da 1 a 5 stelle:');
+const n=parseInt(r);
+if(!n||n<1||n>5)return;
+foods[i].rating=n;
+foods[i].tags=['provato'];
+if(n>=4&&!foods[i].tags.includes('top'))foods[i].tags.push('top');
+saveFood();render();
+}
+
+// PACKING LIST
+function addPack(){
+const it=document.getElementById('pk-item').value.trim();
+if(!it){alert('Item obbligatorio');return}
+const q=parseInt(document.getElementById('pk-qty').value)||1;
+packing.push({item:it,cat:packCat,qty:q,checked:false,ts:Date.now()});
+savePkg();render();
+}
+function togglePack(i){
+packing[i].checked=!packing[i].checked;
+savePkg();render();
+}
+function delPack(i){
+if(!confirm('Eliminare?'))return;
+packing.splice(i,1);savePkg();render();
+}
+function resetPacking(){
+if(!confirm('Resettare TUTTI i check? (per riutilizzare la lista al prossimo viaggio)'))return;
+packing.forEach(p=>p.checked=false);
+savePkg();render();
+}
+
+// MEDICINES
+function addMed(){
+const n=document.getElementById('md-name').value.trim();
+if(!n){alert('Nome obbligatorio');return}
+const d=document.getElementById('md-dose').value.trim();
+const t=document.getElementById('md-time').value.trim();
+const nt=document.getElementById('md-note').value.trim();
+medicines.push({name:n,dose:d,time:t,note:nt,ts:Date.now()});
+saveMed();render();
+}
+function delMed(i){
+if(!confirm('Eliminare?'))return;
+medicines.splice(i,1);saveMed();render();
+}
+
+// TIMELINE EXPORT
+function exportTimeline(){
+let txt='VIAGGIO DANIELE & ANGELA \u00B7 14-21 AGO 2026\n=====================================\n\n';
+DAYS.forEach((d,di)=>{
+const dnum=di+1;
+const dayExp=expenses.filter(e=>e.day===dnum);
+const dayTot=dayExp.reduce((a,e)=>a+e.amount,0);
+const dayKm=kmLog.filter(k=>k.day===dnum).reduce((a,k)=>a+(k.km||0),0);
+const dayDiary=diary.filter(dr=>dr.day===dnum);
+const dayFoods=foods.filter(f=>f.day===dnum&&f.rating>0);
+const doneStops=(d.stops||[]).filter((s,si)=>checks[dnum+'-'+si]).length;
+txt+='G'+d.day+' \u00B7 '+d.date+' \u00B7 '+d.title+'\n';
+txt+='Regione: '+d.region+'\n';
+txt+='Tappe fatte: '+doneStops+'/'+(d.stops||[]).length+'\n';
+txt+='Km percorsi: '+dayKm+'\n';
+txt+='Speso: \u20AC'+dayTot.toFixed(2)+'\n';
+if(dayFoods.length)txt+='Mangiato: '+dayFoods.map(f=>f.name).join(', ')+'\n';
+if(dayDiary.length)txt+='Diario: "'+dayDiary[0].text+'"\n';
+txt+='\n';
+});
+const totKm=kmLog.reduce((a,k)=>a+(k.km||0),0);
+const totExp=expenses.reduce((a,e)=>a+e.amount,0);
+txt+='=====================================\nTOTALI:\nKm totali: '+totKm+'\nSpesa totale: \u20AC'+totExp.toFixed(2)+'\nFoto scattate: '+photos.length+'\n';
+if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>alert('Timeline copiata negli appunti!'))}
+else{prompt('Copia questo testo:',txt)}
+}
+
+// SOS emergenza
+function toggleSos(){sosOpen=!sosOpen;render()}
+function shareLocation(){
+if(!navigator.geolocation){alert('GPS non disponibile');return}
+navigator.geolocation.getCurrentPosition(pos=>{
+const url='https://maps.google.com/?q='+pos.coords.latitude+','+pos.coords.longitude;
+const msg=encodeURIComponent('La mia posizione: '+url);
+window.open('https://wa.me/?text='+msg,'_blank');
+},e=>alert('Errore GPS: '+e.message));
+}
+function findNearby(what){
+if(!navigator.geolocation){alert('GPS non disponibile');return}
+navigator.geolocation.getCurrentPosition(pos=>{
+window.open('https://www.google.com/maps/search/'+what+'/@'+pos.coords.latitude+','+pos.coords.longitude+',14z','_blank');
+},e=>alert('Errore GPS: '+e.message));
+}
+
+// DARK MODE
+function toggleTheme(){darkMode=!darkMode;saveTheme();document.body.classList.toggle('dark',darkMode);render()}
+
+// PLAYLIST
+function setPlaylist(){
+const url=prompt('Incolla URL playlist Spotify (o solo ID):');
+if(!url)return;
+const match=url.match(/playlist\/([a-zA-Z0-9]+)/);
+playlistId=match?match[1]:url.trim();
+savePlaylist();render();
+}
+function clearPlaylist(){playlistId="";savePlaylist();render()}
+
 function prepPhoto(f){if(!f)return;pendingFile=f;pendingCaption="";pendingDay=1;for(let i=DAYS.length-1;i>=0;i--)for(let j=DAYS[i].stops.length-1;j>=0;j--)if(checks[i+"-"+j]){pendingDay=DAYS[i].day;i=-1;break}
 const r=new FileReader();r.onload=e=>{pendingPreview=e.target.result;render()};r.readAsDataURL(f)}
 function cancelPhoto(){pendingFile=null;pendingPreview=null;render()}
@@ -1000,7 +1580,7 @@ let _lastDesk=window.innerWidth>=768;
 window.addEventListener('resize',()=>{const d=window.innerWidth>=768;if(d!==_lastDesk){_lastDesk=d;render();if(tab==="map")setTimeout(()=>{if(leafletMap)leafletMap.invalidateSize()},300)}});
 
 // INIT
-loadAll();render();initFB();
+loadAll();if(darkMode)document.body.classList.add("dark");render();initFB();
 setInterval(()=>{const cd=countdownText();if(cd&&!cd.live){const el=document.querySelector('.countdown');if(el)render()}},60000);
 
 // Service Worker
@@ -1009,9 +1589,15 @@ const sw=URL.createObjectURL(new Blob([`
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',e=>{
-if(e.request.url.includes('api.open-meteo')||e.request.url.includes('api.imgur')||e.request.url.includes('firebase'))return;
+const url=e.request.url;
+if(url.includes('api.open-meteo')||url.includes('api.imgur')||url.includes('firebase'))return;
+if(url.includes('tile.openstreetmap')||url.includes('cartocdn')||url.includes('cdnjs')||url.includes('googleapis')){
 e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-if(res.ok){const c=res.clone();caches.open('trip-v1').then(cache=>cache.put(e.request,c))}return res}).catch(()=>caches.match(e.request))))});
+if(res&&res.status===200){const c=res.clone();caches.open('map-cache-v1').then(cache=>cache.put(e.request,c))}return res}).catch(()=>caches.match(e.request))));
+return;
+}
+e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+if(res.ok){const c=res.clone();caches.open('trip-v2').then(cache=>cache.put(e.request,c))}return res}).catch(()=>caches.match(e.request))))});
 `],{type:'application/javascript'}));
 navigator.serviceWorker.register(sw).catch(()=>{});}
 </script>
