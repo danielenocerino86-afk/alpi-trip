@@ -778,21 +778,23 @@ body.dark .dash-section-title{color:#52B788}
    ================================================ */
 
 :root {
-  /* Palette */
-  --bg: #FAFAF7;
+  /* Palette warm-light */
+  --bg: #FAF7F0;
   --surface: #FFFFFF;
-  --surface-2: #F5F2EB;
-  --text: #1A1A1A;
-  --text-2: #6E6659;
-  --text-3: #A8A196;
-  --border: #EBE7DF;
-  --border-strong: #D8D2C6;
-  --accent: #8B2635;
-  --accent-soft: #F0DFDF;
-  --success: #4A6D3F;
-  --success-soft: #E4EBDC;
+  --surface-2: #F5EEE0;
+  --surface-3: #EFE5D0;
+  --text: #3A342C;
+  --text-2: #857B69;
+  --text-3: #B0A48C;
+  --border: #EDE4D0;
+  --border-strong: #D9CDB2;
+  --accent: #A64858;
+  --accent-soft: #F5E5E5;
+  --accent-strong: #8B2635;
+  --success: #6B8E5F;
+  --success-soft: #E8EFDF;
   --warning: #C08A3F;
-  --warning-soft: #F5EBD5;
+  --warning-soft: #F7EFD8;
   --danger: #B8394A;
 
   /* Typography */
@@ -820,20 +822,21 @@ body.dark .dash-section-title{color:#52B788}
 }
 
 body.dark {
-  --bg: #0F0F0D;
-  --surface: #1B1B18;
-  --surface-2: #26251F;
-  --text: #F5F2EB;
-  --text-2: #A8A196;
-  --text-3: #6E6659;
-  --border: #2E2C25;
-  --border-strong: #3F3D33;
-  --accent: #C77E88;
-  --accent-soft: #3A1A20;
-  --success: #8FAF7F;
-  --success-soft: #1F2E1A;
+  --bg: #201C15;
+  --surface: #2C2820;
+  --surface-2: #37322A;
+  --surface-3: #423D33;
+  --text: #F5EEE0;
+  --text-2: #B0A48C;
+  --text-3: #857B69;
+  --border: #3E3830;
+  --border-strong: #504A3E;
+  --accent: #D69AA3;
+  --accent-soft: #4A2830;
+  --success: #A5C296;
+  --success-soft: #2A3823;
   --warning: #D9AC6E;
-  --warning-soft: #2E2416;
+  --warning-soft: #3A2E18;
   --shadow-sm: 0 1px 2px rgba(0,0,0,.15);
   --shadow-md: 0 1px 3px rgba(0,0,0,.2), 0 4px 12px rgba(0,0,0,.1);
 }
@@ -983,7 +986,7 @@ button, input, textarea, select {
 }
 
 .stats-ring circle:first-child { stroke: var(--border) !important; }
-.stats-ring circle:nth-child(2) { stroke: var(--text) !important; }
+.stats-ring circle:nth-child(2) { stroke: var(--success) !important; }
 
 .stats-ring-text {
   font-family: var(--font-display) !important;
@@ -1013,7 +1016,7 @@ button, input, textarea, select {
 }
 
 .pbar-fill {
-  background: var(--text) !important;
+  background: var(--success) !important;
   border-radius: 1px !important;
 }
 
@@ -1031,7 +1034,7 @@ button, input, textarea, select {
 }
 
 .live-badge {
-  background: var(--text) !important;
+  background: var(--success) !important;
   color: var(--bg) !important;
   border-radius: 100px !important;
   padding: 4px 10px !important;
@@ -1068,8 +1071,8 @@ button, input, textarea, select {
 }
 
 .tab.active {
-  color: var(--text) !important;
-  border-bottom-color: var(--text) !important;
+  color: var(--accent-strong) !important;
+  border-bottom-color: var(--accent-strong) !important;
   font-weight: 500 !important;
 }
 
@@ -1171,7 +1174,7 @@ button, input, textarea, select {
 }
 
 .dash-progress-fill {
-  background: var(--text) !important;
+  background: var(--success) !important;
   border-radius: 1px !important;
 }
 
@@ -1352,14 +1355,14 @@ button, input, textarea, select {
 }
 
 .sub-pill.active {
-  background: var(--text) !important;
+  background: var(--accent-strong) !important;
   color: var(--bg) !important;
-  border-color: var(--text) !important;
+  border-color: var(--accent-strong) !important;
 }
 
 /* Export button */
 .export-mega {
-  background: var(--text) !important;
+  background: var(--accent-strong) !important;
   color: var(--bg) !important;
   border-radius: 100px !important;
   font-family: var(--font-body) !important;
@@ -1409,13 +1412,23 @@ button, input, textarea, select {
 
 /* Total card */
 .exp-total-card {
-  background: var(--text) !important;
-  color: var(--bg) !important;
-  border: none !important;
+  background: var(--surface-2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
   border-radius: var(--r-lg) !important;
   padding: var(--sp-5) !important;
   margin-bottom: var(--sp-3) !important;
   text-align: left !important;
+  position: relative;
+}
+
+.exp-total-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: var(--sp-4); bottom: var(--sp-4);
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
 }
 
 .exp-total-num {
@@ -1424,25 +1437,28 @@ button, input, textarea, select {
   font-weight: 400 !important;
   letter-spacing: -2px !important;
   line-height: 1 !important;
+  color: var(--text) !important;
   font-variation-settings: 'opsz' 144;
 }
 
 .exp-total-sub {
   font-family: var(--font-body) !important;
-  font-size: 12px !important;
-  opacity: 0.7 !important;
-  margin-top: var(--sp-1) !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  font-weight: 400 !important;
+  font-size: 11px !important;
+  color: var(--text-2) !important;
+  opacity: 1 !important;
+  margin-top: var(--sp-2) !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
 }
 
 .exp-total-pp {
   font-family: var(--font-body) !important;
   font-size: 13px !important;
-  opacity: 0.9 !important;
-  margin-top: var(--sp-2) !important;
-  font-weight: 400 !important;
+  color: var(--text-2) !important;
+  opacity: 1 !important;
+  margin-top: var(--sp-3) !important;
+  font-weight: 500 !important;
 }
 
 /* ================================================ */
@@ -1507,9 +1523,10 @@ button, input, textarea, select {
 }
 
 .form-cat.act {
-  background: var(--text) !important;
+  background: var(--c) !important;
   color: var(--bg) !important;
-  border-color: var(--text) !important;
+  border-color: var(--c) !important;
+  opacity: 0.9;
 }
 
 .form-day {
@@ -1524,13 +1541,13 @@ button, input, textarea, select {
 }
 
 .form-day.act {
-  background: var(--text) !important;
+  background: var(--accent-strong) !important;
   color: var(--bg) !important;
 }
 
 /* Buttons */
 .btn-primary {
-  background: var(--text) !important;
+  background: var(--accent-strong) !important;
   color: var(--bg) !important;
   border: none !important;
   border-radius: 100px !important;
@@ -1624,8 +1641,8 @@ button, input, textarea, select {
 }
 
 .chk.on {
-  background: var(--text) !important;
-  border-color: var(--text) !important;
+  background: var(--success) !important;
+  border-color: var(--success) !important;
   color: var(--bg) !important;
 }
 
@@ -1690,7 +1707,7 @@ button, input, textarea, select {
 }
 
 .fab-admin {
-  background: var(--text) !important;
+  background: var(--success) !important;
   color: var(--bg) !important;
   border: none !important;
 }
@@ -2235,7 +2252,7 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v14-notimeline";
+const DAYS_VERSION="v15-warm-light";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
