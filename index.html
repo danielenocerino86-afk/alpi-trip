@@ -246,6 +246,10 @@ body.dark .exp-item-name,body.dark .hotel-name{color:#e0e0e0}
 body.dark .exp-item-meta,body.dark .hotel-row{color:#a0a0a0}
 .playlist-widget{background:#fff;border:.5px solid #E8E2D4;border-radius:12px;padding:10px;margin-top:8px}
 .playlist-widget iframe{width:100%;border:none;border-radius:8px;display:block}
+.exp-item-edit,.hotel-edit{background:transparent;border:none;color:#8B7355;cursor:pointer;font-size:14px;padding:4px 6px;opacity:.7;transition:opacity .2s}
+.exp-item-edit:hover,.hotel-edit:hover{opacity:1}
+.hotel-edit{position:absolute;top:12px;right:44px}
+.edit-mode-banner{background:linear-gradient(135deg,#E67E22 0%,#F39C12 100%);color:#fff;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase}
 
 /* Login popup */
 .pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -613,13 +617,14 @@ let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={},con
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
 let expPaidBy="cassa",contactCat="attivita",savingParking=false;
 let packCat="abbigliamento",foodCat="da_provare",foodRating=0,kmMode="idle",sosOpen=false,darkMode=false,playlistId="";
+let editingExp=-1,editingHotel=-1,editingCt=-1,editingPk=-1,editingKm=-1,editingFd=-1,editingPack=-1,editingMed=-1;
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
 let livePos=null,lastUpdate=null,gpsWatchId=null,isTracking=false;
 let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v8-full";
+const DAYS_VERSION="v9-edit";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -964,14 +969,19 @@ h+='<div style="text-align:center;font-size:12px;color:#2D6A4F;padding:8px">\u27
 h+='</div>';
 }
 h+='<div class="exp-cats-grid">';CATS.forEach(c=>{if(ct[c.id]>0)h+='<div class="exp-cat-card"><div class="exp-cat-icon">'+c.emoji+'</div><div><div class="exp-cat-name">'+c.name+'</div><div class="exp-cat-val">\u20AC'+ct[c.id].toFixed(0)+'</div></div></div>'});h+='</div>';
-h+='<div class="form-box"><div class="form-label">+ Aggiungi</div><div class="form-row"><input class="form-input" id="exp-desc" placeholder="Descrizione..."><input class="form-input" id="exp-amt" type="number" inputmode="decimal" placeholder="\u20AC" step=".01" style="max-width:90px"></div>';
+const isEditExp=editingExp>=0;
+const editExpVal=isEditExp?expenses[editingExp]:null;
+if(isEditExp)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica spesa</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditExp?'Modifica spesa':'+ Aggiungi')+'</div><div class="form-row"><input class="form-input" id="exp-desc" placeholder="Descrizione..." value="'+(editExpVal?(editExpVal.desc||'').replace(/"/g,'&quot;'):'')+'"><input class="form-input" id="exp-amt" type="number" inputmode="decimal" placeholder="\u20AC" step=".01" style="max-width:90px" value="'+(editExpVal?editExpVal.amount:'')+'"></div>';
 h+='<div class="form-cats">'+CATS.map(c=>'<button class="form-cat '+(expCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="expCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
 h+='<div class="form-days"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
 h+='<div style="font-size:9px;font-weight:700;color:#8B7355;letter-spacing:1px;margin:8px 0 4px">PAGATO DA</div>';
 h+='<div style="display:flex;gap:6px;margin-bottom:10px">';
 ['cassa','daniele','angela'].forEach(p=>{const labels={cassa:'\u{1F4B0} Cassa comune',daniele:'\u{1F464} Daniele',angela:'\u{1F464} Angela'};const cols={cassa:'#2D6A4F',daniele:'#0984E3',angela:'#C0392B'};h+='<button class="form-cat '+(expPaidBy===p?'act':'')+'" style="--c:'+cols[p]+';flex:1;font-size:10px" onclick="expPaidBy=\''+p+'\';render()">'+labels[p]+'</button>'});
 h+='</div>';
-h+='<button class="btn-primary" onclick="addExp()">Aggiungi</button></div>';
+if(isEditExp){h+='<div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelEditExp()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addExp()">Salva modifica</button></div>'}
+else{h+='<button class="btn-primary" onclick="addExp()">Aggiungi</button>'}
+h+='</div>';
 const fl=expenses.filter(e=>expFilter==='all'?true:typeof expFilter==='number'?e.day===expFilter:e.cat===expFilter).sort((a,b)=>b.ts-a.ts);
 if(fl.length)fl.forEach(e=>{const c=CATS.find(x=>x.id===e.cat)||CATS[5];const ri=expenses.indexOf(e);
 const pb=e.paidBy||'cassa';const pbIcon={cassa:'\u{1F4B0}',daniele:'D',angela:'A'}[pb];const pbCol={cassa:'#2D6A4F',daniele:'#0984E3',angela:'#C0392B'}[pb];
@@ -1042,7 +1052,12 @@ h+='<button class="btn-secondary" style="width:100%;margin-top:10px;color:#C0392
 }
 
 if(adminSub==='hotels'){
-h+='<div class="form-box"><div class="form-label">+ Aggiungi hotel</div><input class="form-input" id="h-name" placeholder="Nome hotel..."><input class="form-input" id="h-addr" placeholder="Indirizzo..."><div class="form-row"><input class="form-input" id="h-phone" type="tel" placeholder="Telefono..."><input class="form-input" id="h-price" type="number" placeholder="\u20AC/notte" style="max-width:100px"></div><input class="form-input" id="h-conf" placeholder="N. prenotazione / note..."><div class="form-days">'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div><button class="btn-primary" onclick="addHotel()">Aggiungi</button></div>';
+const isEditHtl=editingHotel>=0;const editHtlVal=isEditHtl?hotels[editingHotel]:null;
+if(isEditHtl)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica hotel</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditHtl?'Modifica hotel':'+ Aggiungi hotel')+'</div><input class="form-input" id="h-name" placeholder="Nome hotel..." value="'+(editHtlVal?(editHtlVal.name||'').replace(/"/g,'&quot;'):'')+'"><input class="form-input" id="h-addr" placeholder="Indirizzo..." value="'+(editHtlVal?(editHtlVal.address||'').replace(/"/g,'&quot;'):'')+'"><div class="form-row"><input class="form-input" id="h-phone" type="tel" placeholder="Telefono..." value="'+(editHtlVal?(editHtlVal.phone||''):'')+'"><input class="form-input" id="h-price" type="number" placeholder="\u20AC/notte" style="max-width:100px" value="'+(editHtlVal?(editHtlVal.price||''):'')+'"></div><input class="form-input" id="h-conf" placeholder="N. prenotazione / note..." value="'+(editHtlVal?(editHtlVal.confirm||'').replace(/"/g,'&quot;'):'')+'"><div class="form-days">'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
+if(isEditHtl)h+='<div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelEditHtl()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addHotel()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" onclick="addHotel()">Aggiungi</button>';
+h+='</div>';
 if(!hotels.length)h+='<div class="empty">Nessun hotel</div>';
 else hotels.sort((a,b)=>a.day-b.day).forEach((ht,i)=>{const dd=DAYS[ht.day-1];
 const mu=ht.address?'https://maps.google.com/?q='+encodeURIComponent(ht.address):'';
@@ -1052,14 +1067,18 @@ if(ht.phone)h+='<div class="hotel-row">\u{1F4DE} '+ht.phone+'</div>';
 if(ht.price)h+='<div class="hotel-row">\u{1F4B0} \u20AC'+ht.price+'/notte</div>';
 if(ht.confirm)h+='<div class="hotel-row">\u{1F4CB} '+ht.confirm+'</div>';
 h+='<div class="hotel-nav">';if(mu)h+='<a href="'+mu+'" target="_blank" class="nav-go">Naviga</a>';if(ht.phone)h+='<a href="tel:'+ht.phone.replace(/\s/g,'')+'" class="nav-call">Chiama</a>';h+='</div>';
-h+='<button class="hotel-del" onclick="delHotel('+i+')">\u2715</button></div>'});
+h+='<button class="hotel-edit" onclick="startEditHtl('+i+')">\u270F\uFE0F</button><button class="hotel-del" onclick="delHotel('+i+')">\u2715</button></div>'});
 }
 
 if(adminSub==='contacts'){
 const cats=[{id:"emergenza",name:"Emergenze",color:"#C0392B",emoji:"\u{1F6A8}"},{id:"hotel",name:"Hotel",color:"#2D6A4F",emoji:"\u{1F3E8}"},{id:"attivita",name:"Attivit\u00E0",color:"#8E44AD",emoji:"\u{1F3AF}"},{id:"info",name:"Info",color:"#0984E3",emoji:"\u2139\uFE0F"},{id:"altro",name:"Altro",color:"#8B7355",emoji:"\u{1F4CC}"}];
-h+='<div class="form-box"><div class="form-label">+ Aggiungi contatto</div><input class="form-input" id="ct-name" placeholder="Nome contatto..." style="margin-bottom:8px"><input class="form-input" id="ct-phone" type="tel" placeholder="Numero telefono..." style="margin-bottom:8px"><input class="form-input" id="ct-note" placeholder="Note (opzionale)..." style="margin-bottom:10px">';
+const isEditCt=editingCt>=0;const editCtVal=isEditCt?contacts[editingCt]:null;
+if(isEditCt)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica contatto</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditCt?'Modifica contatto':'+ Aggiungi contatto')+'</div><input class="form-input" id="ct-name" placeholder="Nome contatto..." value="'+(editCtVal?(editCtVal.name||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px"><input class="form-input" id="ct-phone" type="tel" placeholder="Numero telefono..." value="'+(editCtVal?(editCtVal.phone||''):'')+'" style="margin-bottom:8px"><input class="form-input" id="ct-note" placeholder="Note (opzionale)..." value="'+(editCtVal?(editCtVal.note||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:10px">';
 h+='<div class="form-cats">'+cats.map(c=>'<button class="form-cat '+(contactCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="contactCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
-h+='<button class="btn-primary" onclick="addContact()">Aggiungi</button></div>';
+if(isEditCt)h+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-secondary" onclick="cancelEditCt()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addContact()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" onclick="addContact()">Aggiungi</button>';
+h+='</div>';
 cats.forEach(cat=>{
 const list=contacts.filter(c=>c.cat===cat.id);
 if(list.length===0)return;
@@ -1070,19 +1089,22 @@ h+='<div class="hotel-card" style="padding:12px"><div class="hotel-name" style="
 if(ct.phone)h+='<div class="hotel-row">\u{1F4DE} <a href="tel:'+ct.phone.replace(/\s/g,'')+'" style="color:#0984E3;text-decoration:none">'+ct.phone+'</a></div>';
 if(ct.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+ct.note+'</div>';
 if(ct.phone)h+='<div class="hotel-nav"><a href="tel:'+ct.phone.replace(/\s/g,'')+'" class="nav-call">\u{1F4DE} Chiama</a></div>';
-h+='<button class="hotel-del" onclick="delContact('+ri+')">\u2715</button></div>';
+h+='<button class="hotel-edit" onclick="startEditCt('+ri+')">\u270F\uFE0F</button><button class="hotel-del" onclick="delContact('+ri+')">\u2715</button></div>';
 });
 });
 }
 
 if(adminSub==='parking'){
-h+='<div class="form-box"><div class="form-label">\u{1F17F} Parcheggi salvati</div>';
-h+='<button class="btn-primary" style="margin-bottom:8px" onclick="saveCurrentParking()">\u{1F4CD} Salva posizione GPS corrente</button>';
-h+='<div style="font-size:10px;color:#8B7355;text-align:center;margin-bottom:10px">Oppure inserisci manualmente:</div>';
-h+='<input class="form-input" id="pk-name" placeholder="Nome parcheggio (es. Sulmona Piazza Tresca)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="pk-note" placeholder="Note (piano, posto auto, ecc.)" style="margin-bottom:8px">';
-h+='<div class="form-row"><input class="form-input" id="pk-lat" placeholder="Latitudine" type="number" step="any"><input class="form-input" id="pk-lng" placeholder="Longitudine" type="number" step="any"></div>';
-h+='<button class="btn-secondary" style="width:100%;margin-top:8px" onclick="addParkingManual()">Aggiungi manualmente</button>';
+const isEditPk=editingPk>=0;const editPkVal=isEditPk?parkings[editingPk]:null;
+if(isEditPk)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica parcheggio</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditPk?'Modifica parcheggio':'\u{1F17F} Parcheggi salvati')+'</div>';
+if(!isEditPk){h+='<button class="btn-primary" style="margin-bottom:8px" onclick="saveCurrentParking()">\u{1F4CD} Salva posizione GPS corrente</button>';
+h+='<div style="font-size:10px;color:#8B7355;text-align:center;margin-bottom:10px">Oppure inserisci manualmente:</div>'}
+h+='<input class="form-input" id="pk-name" placeholder="Nome parcheggio" value="'+(editPkVal?(editPkVal.name||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="pk-note" placeholder="Note (piano, posto auto, ecc.)" value="'+(editPkVal?(editPkVal.note||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="pk-lat" placeholder="Latitudine" type="number" step="any" value="'+(editPkVal?editPkVal.lat:'')+'"><input class="form-input" id="pk-lng" placeholder="Longitudine" type="number" step="any" value="'+(editPkVal?editPkVal.lng:'')+'"></div>';
+if(isEditPk)h+='<div style="display:flex;gap:8px;margin-top:8px"><button class="btn-secondary" onclick="cancelEditPk()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addParkingManual()">Salva modifica</button></div>';
+else h+='<button class="btn-secondary" style="width:100%;margin-top:8px" onclick="addParkingManual()">Aggiungi manualmente</button>';
 h+='</div>';
 if(!parkings.length){
 h+='<div class="empty">Nessun parcheggio salvato ancora.<br>Usa il bottone GPS quando parcheggi.</div>';
@@ -1095,7 +1117,7 @@ h+='<div class="hotel-row">\u{1F4CD} '+p.lat.toFixed(6)+', '+p.lng.toFixed(6)+'<
 if(p.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+p.note+'</div>';
 h+='<div class="hotel-row" style="font-size:10px;color:#B0A48E">Salvato: '+new Date(p.ts).toLocaleString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div>';
 h+='<div class="hotel-nav"><a href="'+mapUrl+'" target="_blank" class="nav-go">\u{1F5FA}\uFE0F Naviga</a></div>';
-h+='<button class="hotel-del" onclick="delParking('+ri+')">\u2715</button></div>';
+h+='<button class="hotel-edit" onclick="startEditPk('+ri+')">\u270F\uFE0F</button><button class="hotel-del" onclick="delParking('+ri+')">\u2715</button></div>';
 });
 }
 }
@@ -1114,12 +1136,15 @@ const totKm=kmLog.reduce((a,l)=>a+(l.km||0),0);
 const totLt=totKm*0.095;
 const totCost=totLt*0.85;
 h+='<div class="exp-total-card"><div class="exp-total-num">'+totKm.toFixed(0)+' km</div><div class="exp-total-sub">Percorsi \u00B7 ~'+totLt.toFixed(1)+' L GPL \u00B7 ~\u20AC'+totCost.toFixed(2)+'</div></div>';
-h+='<div class="form-box"><div class="form-label">+ Registra tratta</div>';
-h+='<input class="form-input" id="km-from" placeholder="Da (es. Sulmona)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="km-to" placeholder="A (es. Fiume Tirino)" style="margin-bottom:8px">';
-h+='<div class="form-row"><input class="form-input" id="km-val" type="number" inputmode="decimal" placeholder="Km percorsi" step="1"><input class="form-input" id="km-note" placeholder="Note (opz)"></div>';
+const isEditKm=editingKm>=0;const editKmVal=isEditKm?kmLog[editingKm]:null;
+if(isEditKm)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica tratta</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditKm?'Modifica tratta':'+ Registra tratta')+'</div>';
+h+='<input class="form-input" id="km-from" placeholder="Da (es. Sulmona)" value="'+(editKmVal?(editKmVal.from||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="km-to" placeholder="A (es. Fiume Tirino)" value="'+(editKmVal?(editKmVal.to||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="km-val" type="number" inputmode="decimal" placeholder="Km percorsi" step="1" value="'+(editKmVal?editKmVal.km:'')+'"><input class="form-input" id="km-note" placeholder="Note (opz)" value="'+(editKmVal?(editKmVal.note||'').replace(/"/g,'&quot;'):'')+'"></div>';
 h+='<div class="form-days" style="margin-top:8px"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
-h+='<button class="btn-primary" style="margin-top:10px" onclick="addKm()">Aggiungi tratta</button>';
+if(isEditKm)h+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-secondary" onclick="cancelEditKm()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addKm()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" style="margin-top:10px" onclick="addKm()">Aggiungi tratta</button>';
 h+='</div>';
 if(!kmLog.length){h+='<div class="empty">Nessuna tratta registrata.<br>Aggiungi la prima!</div>'}
 else{
@@ -1129,7 +1154,7 @@ const day=dnum>0?DAYS[dnum-1]:null;
 h+='<div style="font-size:11px;font-weight:700;color:'+(day?day.color:'#8B7355')+';text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">'+(day?'G'+day.day+' \u00B7 '+day.date:'Generico')+'</div>';
 byDay[dnum].sort((a,b)=>a.ts-b.ts).forEach(k=>{
 const ri=kmLog.indexOf(k);
-h+='<div class="exp-item" style="border-left:3px solid '+(day?day.color:'#8B7355')+'40"><div>\u{1F697}</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(k.from||'')+' \u2192 '+(k.to||'')+'</div><div class="exp-item-meta">'+(k.note||'')+'</div></div><div class="exp-item-amount">'+k.km+' km</div><button class="exp-item-del" onclick="delKm('+ri+')">\u2715</button></div>';
+h+='<div class="exp-item" style="border-left:3px solid '+(day?day.color:'#8B7355')+'40"><div>\u{1F697}</div><div style="flex:1;min-width:0"><div class="exp-item-name">'+(k.from||'')+' \u2192 '+(k.to||'')+'</div><div class="exp-item-meta">'+(k.note||'')+'</div></div><div class="exp-item-amount">'+k.km+' km</div><button class="exp-item-edit" onclick="startEditKm('+ri+')">\u270F\uFE0F</button><button class="exp-item-del" onclick="delKm('+ri+')">\u2715</button></div>';
 });
 });
 }
@@ -1142,15 +1167,18 @@ h+='<div style="text-align:center;padding:10px;background:#FEF9E7;border-radius:
 h+='<div style="text-align:center;padding:10px;background:#E8F5E9;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#2D6A4F">'+bytag.provato.length+'</div><div style="font-size:9px;color:#8B7355;font-weight:700">PROVATI</div></div>';
 h+='<div style="text-align:center;padding:10px;background:#FDF2E9;border-radius:10px"><div style="font-size:22px;font-weight:700;color:#E67E22">'+bytag.top.length+'</div><div style="font-size:9px;color:#8B7355;font-weight:700">TOP \u2605\u2605\u2605\u2605+</div></div>';
 h+='</div>';
-h+='<div class="form-box"><div class="form-label">+ Aggiungi piatto/vino</div>';
-h+='<input class="form-input" id="fd-name" placeholder="Nome piatto/vino..." style="margin-bottom:8px">';
-h+='<input class="form-input" id="fd-place" placeholder="Dove (ristorante/luogo)..." style="margin-bottom:8px">';
-h+='<div class="form-row"><input class="form-input" id="fd-price" type="number" inputmode="decimal" placeholder="\u20AC" step=".01"><div style="display:flex;gap:4px;align-items:center">';
+const isEditFd=editingFd>=0;const editFdVal=isEditFd?foods[editingFd]:null;
+if(isEditFd)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica piatto</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditFd?'Modifica piatto/vino':'+ Aggiungi piatto/vino')+'</div>';
+h+='<input class="form-input" id="fd-name" placeholder="Nome piatto/vino..." value="'+(editFdVal?(editFdVal.name||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="fd-place" placeholder="Dove..." value="'+(editFdVal?(editFdVal.place||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<div class="form-row"><input class="form-input" id="fd-price" type="number" inputmode="decimal" placeholder="\u20AC" step=".01" value="'+(editFdVal&&editFdVal.price>0?editFdVal.price:'')+'"><div style="display:flex;gap:4px;align-items:center">';
 for(let s=1;s<=5;s++){h+='<span style="cursor:pointer;font-size:22px;color:'+(foodRating>=s?'#F39C12':'#DDD')+'" onclick="foodRating='+(foodRating===s?0:s)+';render()">\u2605</span>'}
 h+='</div></div>';
-h+='<input class="form-input" id="fd-note" placeholder="Note (opz)..." style="margin-top:8px;margin-bottom:8px">';
+h+='<input class="form-input" id="fd-note" placeholder="Note (opz)..." value="'+(editFdVal?(editFdVal.note||'').replace(/"/g,'&quot;'):'')+'" style="margin-top:8px;margin-bottom:8px">';
 h+='<div class="form-days"><button class="form-day '+(expDay===0?'act':'')+'" onclick="expDay=0;render()">Gen</button>'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div>';
-h+='<button class="btn-primary" style="margin-top:10px" onclick="addFood()">Aggiungi</button>';
+if(isEditFd)h+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-secondary" onclick="cancelEditFd()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addFood()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" style="margin-top:10px" onclick="addFood()">Aggiungi</button>';
 h+='</div>';
 if(bytag.top.length){
 h+='<div style="font-size:11px;font-weight:700;color:#E67E22;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">\u{1F3C6} Top del viaggio</div>';
@@ -1171,11 +1199,14 @@ const cats=[{id:"documenti",name:"Documenti",color:"#C0392B",emoji:"\u{1F4CB}"},
 const done=packing.filter(p=>p.checked).length;
 const perc=packing.length?Math.round(done*100/packing.length):0;
 h+='<div class="exp-total-card"><div class="exp-total-num">'+done+'/'+packing.length+'</div><div class="exp-total-sub">Preparate \u00B7 '+perc+'%</div><div class="exp-total-pp" style="background:rgba(255,255,255,.15);height:6px;border-radius:3px;overflow:hidden;margin-top:6px"><div style="background:#fff;height:100%;width:'+perc+'%"></div></div></div>';
-h+='<div class="form-box"><div class="form-label">+ Aggiungi voce</div>';
-h+='<input class="form-input" id="pk-item" placeholder="Item (es. Occhiali riserva)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="pk-qty" type="number" placeholder="Quantit\u00E0" value="1" style="max-width:100px;margin-bottom:8px">';
+const isEditPack=editingPack>=0;const editPackVal=isEditPack?packing[editingPack]:null;
+if(isEditPack)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica voce valigia</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditPack?'Modifica voce':'+ Aggiungi voce')+'</div>';
+h+='<input class="form-input" id="pk-item" placeholder="Item" value="'+(editPackVal?(editPackVal.item||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="pk-qty" type="number" placeholder="Quantit\u00E0" value="'+(editPackVal?editPackVal.qty:1)+'" style="max-width:100px;margin-bottom:8px">';
 h+='<div class="form-cats">'+cats.map(c=>'<button class="form-cat '+(packCat===c.id?'act':'')+'" style="--c:'+c.color+'" onclick="packCat=\''+c.id+'\';render()">'+c.emoji+' '+c.name+'</button>').join('')+'</div>';
-h+='<button class="btn-primary" style="margin-top:10px" onclick="addPack()">Aggiungi</button>';
+if(isEditPack)h+='<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-secondary" onclick="cancelEditPack()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addPack()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" style="margin-top:10px" onclick="addPack()">Aggiungi</button>';
 h+='</div>';
 cats.forEach(cat=>{
 const list=packing.filter(p=>p.cat===cat.id);
@@ -1184,7 +1215,7 @@ const doneCat=list.filter(p=>p.checked).length;
 h+='<div style="font-size:11px;font-weight:700;color:'+cat.color+';text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">'+cat.emoji+' '+cat.name+' <span style="color:#B0A48E;font-weight:400">('+doneCat+'/'+list.length+')</span></div>';
 list.sort((a,b)=>a.ts-b.ts).forEach(p=>{
 const ri=packing.indexOf(p);
-h+='<div class="precheck-item" style="border-left:3px solid '+cat.color+'30"><div class="chk '+(p.checked?'on':'')+'" style="--c:'+cat.color+'" onclick="togglePack('+ri+')">'+(p.checked?'\u2713':'')+'</div><div class="precheck-text '+(p.checked?'done':'')+'">'+p.item+(p.qty>1?' <span style="color:#B0A48E;font-size:11px">x'+p.qty+'</span>':'')+'</div><button class="exp-item-del" onclick="delPack('+ri+')">\u2715</button></div>';
+h+='<div class="precheck-item" style="border-left:3px solid '+cat.color+'30"><div class="chk '+(p.checked?'on':'')+'" style="--c:'+cat.color+'" onclick="togglePack('+ri+')">'+(p.checked?'\u2713':'')+'</div><div class="precheck-text '+(p.checked?'done':'')+'">'+p.item+(p.qty>1?' <span style="color:#B0A48E;font-size:11px">x'+p.qty+'</span>':'')+'</div><button class="exp-item-edit" onclick="startEditPack('+ri+')">\u270F\uFE0F</button><button class="exp-item-del" onclick="delPack('+ri+')">\u2715</button></div>';
 });
 });
 h+='<button class="btn-secondary" style="width:100%;margin-top:14px" onclick="resetPacking()">\u21BA Reset tutti (per prossimo viaggio)</button>';
@@ -1192,12 +1223,15 @@ h+='<button class="btn-secondary" style="width:100%;margin-top:14px" onclick="re
 
 if(adminSub==='medicine'){
 h+='<div style="background:#FEF9E7;border-left:3px solid #F39C12;border-radius:6px;padding:10px;font-size:11px;color:#8B7355;margin-bottom:12px">\u{1F48A} <b>Kit farmaci base</b> \u2014 Tachipirina, Nurofen, Immodium, Enterogermina, cerotti, disinfettante. Sempre in auto.</div>';
-h+='<div class="form-box"><div class="form-label">+ Aggiungi farmaco</div>';
-h+='<input class="form-input" id="md-name" placeholder="Nome farmaco (es. Tachipirina)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="md-dose" placeholder="Dose (es. 1 cp da 500mg)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="md-time" placeholder="Quando (es. mattina + sera)" style="margin-bottom:8px">';
-h+='<input class="form-input" id="md-note" placeholder="Note (opz)" style="margin-bottom:10px">';
-h+='<button class="btn-primary" onclick="addMed()">Aggiungi</button>';
+const isEditMed=editingMed>=0;const editMedVal=isEditMed?medicines[editingMed]:null;
+if(isEditMed)h+='<div class="edit-mode-banner">\u270F\uFE0F Modalit\u00E0 modifica farmaco</div>';
+h+='<div class="form-box"><div class="form-label">'+(isEditMed?'Modifica farmaco':'+ Aggiungi farmaco')+'</div>';
+h+='<input class="form-input" id="md-name" placeholder="Nome farmaco" value="'+(editMedVal?(editMedVal.name||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-dose" placeholder="Dose" value="'+(editMedVal?(editMedVal.dose||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-time" placeholder="Quando" value="'+(editMedVal?(editMedVal.time||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:8px">';
+h+='<input class="form-input" id="md-note" placeholder="Note (opz)" value="'+(editMedVal?(editMedVal.note||'').replace(/"/g,'&quot;'):'')+'" style="margin-bottom:10px">';
+if(isEditMed)h+='<div style="display:flex;gap:8px"><button class="btn-secondary" onclick="cancelEditMed()">Annulla</button><button class="btn-primary" style="flex:1" onclick="addMed()">Salva modifica</button></div>';
+else h+='<button class="btn-primary" onclick="addMed()">Aggiungi</button>';
 h+='</div>';
 if(!medicines.length){h+='<div class="empty">Nessun farmaco specifico.<br>Il kit base \u00E8 gi\u00E0 nella packing list.</div>'}
 else{
@@ -1206,7 +1240,7 @@ h+='<div class="hotel-card" style="padding:12px"><div class="hotel-name" style="
 if(m.dose)h+='<div class="hotel-row">Dose: '+m.dose+'</div>';
 if(m.time)h+='<div class="hotel-row">Quando: '+m.time+'</div>';
 if(m.note)h+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+m.note+'</div>';
-h+='<button class="hotel-del" onclick="delMed('+i+')">\u2715</button></div>';
+h+='<button class="hotel-edit" onclick="startEditMed('+i+')">\u270F\uFE0F</button><button class="hotel-del" onclick="delMed('+i+')">\u2715</button></div>';
 });
 }
 }
@@ -1314,9 +1348,27 @@ function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=d
 function closeLogin(){showLogin=false;pinErr="";render()}
 function logout(){isAdmin=false;showLogin=false;stopGPS();saveAdm();tab="map";render()}
 function setExpCat(c){expCat=c;render()}
-function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}expenses.push({desc:d.value.trim()||CATS.find(c=>c.id===expCat).name,amount:v,cat:expCat,day:expDay,paidBy:expPaidBy,ts:Date.now()});saveExp();expCat="food";expDay=0;expPaidBy="cassa";render()}
+function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}
+if(editingExp>=0){
+const e=expenses[editingExp];
+e.desc=d.value.trim()||CATS.find(c=>c.id===expCat).name;
+e.amount=v;e.cat=expCat;e.day=expDay;e.paidBy=expPaidBy;
+editingExp=-1;expCat="food";expDay=0;expPaidBy="cassa";
+}else{
+expenses.push({desc:d.value.trim()||CATS.find(c=>c.id===expCat).name,amount:v,cat:expCat,day:expDay,paidBy:expPaidBy,ts:Date.now()});
+expCat="food";expDay=0;expPaidBy="cassa";
+}
+saveExp();render()}
+function startEditExp(i){editingExp=i;const e=expenses[i];expCat=e.cat||"food";expDay=e.day||0;expPaidBy=e.paidBy||"cassa";render();setTimeout(()=>{const el=document.getElementById('exp-desc');if(el)el.focus()},50)}
+function cancelEditExp(){editingExp=-1;expCat="food";expDay=0;expPaidBy="cassa";render()}
 function delExp(i){expenses.splice(i,1);saveExp();render()}
-function addHotel(){const n=document.getElementById('h-name').value.trim();if(!n)return;hotels.push({name:n,address:document.getElementById('h-addr').value.trim(),phone:document.getElementById('h-phone').value.trim(),price:parseFloat(document.getElementById('h-price').value)||0,confirm:document.getElementById('h-conf').value.trim(),day:expDay||1,ts:Date.now()});saveHtl();expDay=0;render()}
+function addHotel(){const n=document.getElementById('h-name').value.trim();if(!n)return;
+const data={name:n,address:document.getElementById('h-addr').value.trim(),phone:document.getElementById('h-phone').value.trim(),price:parseFloat(document.getElementById('h-price').value)||0,confirm:document.getElementById('h-conf').value.trim(),day:expDay||1};
+if(editingHotel>=0){Object.assign(hotels[editingHotel],data);editingHotel=-1;}
+else{data.ts=Date.now();hotels.push(data);}
+saveHtl();expDay=0;render()}
+function startEditHtl(i){editingHotel=i;expDay=hotels[i].day||0;render();setTimeout(()=>{const el=document.getElementById('h-name');if(el)el.focus()},50)}
+function cancelEditHtl(){editingHotel=-1;expDay=0;render()}
 function delHotel(i){hotels.splice(i,1);saveHtl();render()}
 function addNote(){const t=document.getElementById('note-text').value.trim();if(!t)return;notes.push({text:t,ts:Date.now()});saveNts();render()}
 function delNote(i){notes.splice(i,1);saveNts();render()}
@@ -1381,9 +1433,12 @@ const n=document.getElementById('ct-name').value.trim();
 if(!n){alert('Nome obbligatorio');return}
 const p=document.getElementById('ct-phone').value.trim();
 const nt=document.getElementById('ct-note').value.trim();
-contacts.push({name:n,phone:p,note:nt,cat:contactCat,ts:Date.now()});
+if(editingCt>=0){Object.assign(contacts[editingCt],{name:n,phone:p,note:nt,cat:contactCat});editingCt=-1;}
+else{contacts.push({name:n,phone:p,note:nt,cat:contactCat,ts:Date.now()});}
 saveCts();contactCat="attivita";render();
 }
+function startEditCt(i){editingCt=i;contactCat=contacts[i].cat||"attivita";render();setTimeout(()=>{const el=document.getElementById('ct-name');if(el)el.focus()},50)}
+function cancelEditCt(){editingCt=-1;contactCat="attivita";render()}
 function delContact(i){
 if(!confirm('Eliminare il contatto?'))return;
 contacts.splice(i,1);saveCts();render();
@@ -1406,11 +1461,14 @@ const n=document.getElementById('pk-name').value.trim();
 const lat=parseFloat(document.getElementById('pk-lat').value);
 const lng=parseFloat(document.getElementById('pk-lng').value);
 if(!n){alert('Nome obbligatorio');return}
-if(isNaN(lat)||isNaN(lng)){alert('Coordinate obbligatorie (usa Google Maps: click destro > coordinate)');return}
+if(isNaN(lat)||isNaN(lng)){alert('Coordinate obbligatorie');return}
 const note=document.getElementById('pk-note').value.trim();
-parkings.push({name:n,lat:lat,lng:lng,note:note,ts:Date.now()});
+if(editingPk>=0){Object.assign(parkings[editingPk],{name:n,lat:lat,lng:lng,note:note});editingPk=-1;}
+else{parkings.push({name:n,lat:lat,lng:lng,note:note,ts:Date.now()});}
 savePrk();render();
 }
+function startEditPk(i){editingPk=i;render();setTimeout(()=>{const el=document.getElementById('pk-name');if(el)el.focus()},50)}
+function cancelEditPk(){editingPk=-1;render()}
 function delParking(i){
 if(!confirm('Eliminare il parcheggio?'))return;
 parkings.splice(i,1);savePrk();render();
@@ -1424,9 +1482,12 @@ const k=parseInt(document.getElementById('km-val').value);
 const n=document.getElementById('km-note').value.trim();
 if(!f||!t){alert('Da e A obbligatori');return}
 if(!k||k<=0){alert('Km obbligatori');return}
-kmLog.push({from:f,to:t,km:k,note:n,day:expDay,ts:Date.now()});
-saveKm();render();
+if(editingKm>=0){Object.assign(kmLog[editingKm],{from:f,to:t,km:k,note:n,day:expDay});editingKm=-1;}
+else{kmLog.push({from:f,to:t,km:k,note:n,day:expDay,ts:Date.now()});}
+expDay=0;saveKm();render();
 }
+function startEditKm(i){editingKm=i;expDay=kmLog[i].day||0;render();setTimeout(()=>{const el=document.getElementById('km-from');if(el)el.focus()},50)}
+function cancelEditKm(){editingKm=-1;expDay=0;render()}
 function delKm(i){
 if(!confirm('Eliminare la tratta?'))return;
 kmLog.splice(i,1);saveKm();render();
@@ -1443,7 +1504,7 @@ if(f.price>0)s+='<div class="hotel-row">\u20AC'+f.price.toFixed(2)+'</div>';
 if(f.note)s+='<div class="hotel-row" style="font-style:italic;color:#8B7355">'+f.note+'</div>';
 if(day)s+='<div class="hotel-row" style="font-size:10px;color:#B0A48E">G'+day.day+' \u00B7 '+day.date+'</div>';
 if(!f.rating)s+='<div class="hotel-nav"><button onclick="rateFood('+ri+')" class="nav-call">\u2B50 Valuta ora</button></div>';
-s+='<button class="hotel-del" onclick="delFood('+ri+')">\u2715</button></div>';
+s+='<button class="hotel-edit" onclick="startEditFd('+ri+')">\u270F\uFE0F</button><button class="hotel-del" onclick="delFood('+ri+')">\u2715</button></div>';
 return s;
 }
 function addFood(){
@@ -1452,9 +1513,18 @@ if(!n){alert('Nome obbligatorio');return}
 const p=document.getElementById('fd-place').value.trim();
 const pr=parseFloat(document.getElementById('fd-price').value)||0;
 const nt=document.getElementById('fd-note').value.trim();
+if(editingFd>=0){
+const f=foods[editingFd];
+Object.assign(f,{name:n,place:p,rating:foodRating,price:pr,day:expDay,note:nt});
+f.tags=foodRating?['provato'].concat(foodRating>=4?['top']:[]):['da_provare'];
+editingFd=-1;
+}else{
 foods.push({name:n,place:p,rating:foodRating,price:pr,day:expDay,tags:foodRating?['provato']:['da_provare'],note:nt,ts:Date.now()});
-saveFood();foodRating=0;render();
 }
+saveFood();foodRating=0;expDay=0;render();
+}
+function startEditFd(i){editingFd=i;const f=foods[i];foodRating=f.rating||0;expDay=f.day||0;render();setTimeout(()=>{const el=document.getElementById('fd-name');if(el)el.focus()},50)}
+function cancelEditFd(){editingFd=-1;foodRating=0;expDay=0;render()}
 function delFood(i){
 if(!confirm('Eliminare?'))return;
 foods.splice(i,1);saveFood();render();
@@ -1474,9 +1544,12 @@ function addPack(){
 const it=document.getElementById('pk-item').value.trim();
 if(!it){alert('Item obbligatorio');return}
 const q=parseInt(document.getElementById('pk-qty').value)||1;
-packing.push({item:it,cat:packCat,qty:q,checked:false,ts:Date.now()});
-savePkg();render();
+if(editingPack>=0){Object.assign(packing[editingPack],{item:it,cat:packCat,qty:q});editingPack=-1;}
+else{packing.push({item:it,cat:packCat,qty:q,checked:false,ts:Date.now()});}
+packCat="abbigliamento";savePkg();render();
 }
+function startEditPack(i){editingPack=i;packCat=packing[i].cat||"abbigliamento";render();setTimeout(()=>{const el=document.getElementById('pk-item');if(el)el.focus()},50)}
+function cancelEditPack(){editingPack=-1;packCat="abbigliamento";render()}
 function togglePack(i){
 packing[i].checked=!packing[i].checked;
 savePkg();render();
@@ -1498,9 +1571,12 @@ if(!n){alert('Nome obbligatorio');return}
 const d=document.getElementById('md-dose').value.trim();
 const t=document.getElementById('md-time').value.trim();
 const nt=document.getElementById('md-note').value.trim();
-medicines.push({name:n,dose:d,time:t,note:nt,ts:Date.now()});
+if(editingMed>=0){Object.assign(medicines[editingMed],{name:n,dose:d,time:t,note:nt});editingMed=-1;}
+else{medicines.push({name:n,dose:d,time:t,note:nt,ts:Date.now()});}
 saveMed();render();
 }
+function startEditMed(i){editingMed=i;render();setTimeout(()=>{const el=document.getElementById('md-name');if(el)el.focus()},50)}
+function cancelEditMed(){editingMed=-1;render()}
 function delMed(i){
 if(!confirm('Eliminare?'))return;
 medicines.splice(i,1);saveMed();render();
