@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="D&A Trip">
 <meta name="theme-color" content="#2D6A4F">
-<meta name="description" content="Segui il viaggio di Daniele e Angela: Abruzzo, Trentino e Umbria!">
-<meta property="og:title" content="Daniele & Angela — Abruzzo, Trentino & Umbria">
+<meta name="description" content="Segui il viaggio di Daniele e Angela: Abruzzo e Umbria!">
+<meta property="og:title" content="Daniele & Angela — Abruzzo & Umbria">
 <meta property="og:description" content="Segui il nostro road trip in tempo reale! 8 giorni, 14-21 agosto 2026.">
 <title>Daniele & Angela — Viaggio 2026</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x26F0;</text></svg>">
@@ -418,66 +418,65 @@ try{firebase.initializeApp(FB);db=firebase.database().ref('trip');fbOk=true}catc
 
 const DEFAULT_DAYS=[
 {day:1,title:"Napoli \u2192 Sulmona \u00B7 Tirino",region:"Abruzzo",km:"~190",drive:"~2,5h",color:"#2D6A4F",emoji:"\u{1F3D4}",date:"Ven 14 ago",
-timeline:[{t:"09:00",n:"Partenza Napoli"},{t:"11:30",n:"Arrivo Sulmona"},{t:"12:30",n:"Check-in"},{t:"13:30",n:"Pranzo"},{t:"15:00",n:"Fiume Tirino canoa"},{t:"18:30",n:"Aperitivo Sulmona"},{t:"20:30",n:"Cena"}],
+timeline:[{t:"09:00",n:"Partenza Napoli"},{t:"11:30",n:"Arrivo Sulmona"},{t:"12:30",n:"Check-in La Dimora"},{t:"13:30",n:"Pranzo"},{t:"15:00",n:"Fiume Tirino canoa"},{t:"18:30",n:"Aperitivo Sulmona"},{t:"20:30",n:"Cena"}],
 stops:[
-{name:"Sulmona",lat:42.0484,lng:13.9259,map:"https://maps.google.com/?q=Sulmona,+AQ",desc:"Citt\u00E0 natale di Ovidio, famosa per i confetti Pelino. Centro storico medievale con Piazza Garibaldi, l\u0027Acquedotto e Corso Ovidio. Base per 3 notti.",tip:"Confetti Pelino \u2014 fabbrica storica dal 1783"},
+{name:"Sulmona",lat:42.0484,lng:13.9259,map:"https://maps.google.com/?q=Sulmona,+AQ",desc:"Citt\u00E0 natale di Ovidio, famosa per i confetti Pelino. Centro storico medievale con Piazza Garibaldi, l\u0027Acquedotto e Corso Ovidio. Base per 3 notti \u2014 B&B La Dimora.",tip:"Confetti Pelino \u2014 fabbrica storica dal 1783"},
 {name:"Fiume Tirino",lat:42.1642,lng:13.7253,map:"https://maps.google.com/?q=Sorgenti+del+Tirino+Capestrano",desc:"Il fiume pi\u00F9 limpido d\u0027Italia! Acque cristalline color smeraldo. Canoa, kayak o rafting dolce tra le sorgenti.",tip:"Prenota canoa/kayak in anticipo!"}],
-food:"Confetti, arrosticini, maccheroni alla chitarra",sleep:"Sulmona 3 notti (3\u2605 ~100-140\u20AC/notte)"},
+food:"Confetti, arrosticini, maccheroni alla chitarra",sleep:"Sulmona 3 notti \u00B7 La Dimora B&B (364\u20AC totali)"},
 
 {day:2,title:"Ferragosto \u00B7 Scanno + laghi",region:"Abruzzo",km:"~90",drive:"~1,5h",color:"#1ABC9C",emoji:"\u{1F48E}",date:"Sab 15 ago (Ferragosto)",
-timeline:[{t:"09:00",n:"Partenza"},{t:"10:00",n:"Scanno borgo"},{t:"12:00",n:"Lago di Scanno"},{t:"13:30",n:"Pranzo"},{t:"15:30",n:"Gole del Sagittario"},{t:"17:30",n:"Lago S. Domenico"},{t:"19:00",n:"Tramonto"},{t:"20:30",n:"Cena Sulmona"}],
+timeline:[{t:"09:00",n:"Partenza"},{t:"10:00",n:"Scanno borgo"},{t:"12:00",n:"Lago di Scanno"},{t:"13:30",n:"Pranzo"},{t:"15:30",n:"Gole del Sagittario"},{t:"17:30",n:"Lago S. Domenico"},{t:"19:00",n:"Tramonto"},{t:"20:30",n:"Cena Ferragosto Sulmona"}],
 stops:[
-{name:"Scanno",lat:41.9047,lng:13.8810,map:"https://maps.google.com/?q=Scanno+AQ",desc:"Uno dei borghi pi\u00F9 belli d\u0027Italia. Vicoli in pietra, archi medievali, atmosfera senza tempo. Ferragosto tra i borghi interni \u00E8 pi\u00F9 gestibile della costa.",tip:"Visita al mattino \u2014 meno turisti"},
+{name:"Scanno",lat:41.9047,lng:13.8810,map:"https://maps.google.com/?q=Scanno+AQ",desc:"Uno dei borghi pi\u00F9 belli d\u0027Italia. Vicoli in pietra, archi medievali. Ferragosto tra i borghi interni \u00E8 pi\u00F9 gestibile della costa.",tip:"Visita al mattino \u2014 meno turisti"},
 {name:"Lago di Scanno",lat:41.9270,lng:13.8540,map:"https://maps.google.com/?q=Lago+di+Scanno",desc:"Lago a forma di cuore, visibile dal sentiero panoramico. 20 minuti a piedi dal parcheggio.",tip:"Sentiero dal parcheggio SP479"},
 {name:"Gole del Sagittario",lat:41.9610,lng:13.8640,map:"https://maps.google.com/?q=Gole+del+Sagittario",desc:"Riserva WWF. Canyon con cascatelle e vegetazione rigogliosa. Sentieri di varie difficolt\u00E0.",tip:"Scarpe comode!"},
 {name:"Lago di San Domenico",lat:41.9380,lng:13.8870,map:"https://maps.google.com/?q=Lago+San+Domenico+Villalago",desc:"Acqua turchese con l\u0027Eremo di San Domenico scavato nella roccia. Spettacolare al tramonto.",tip:"Arriva al tramonto \u2014 luce dorata"}],
 food:"Cena Ferragosto Sulmona (prenota!) \u00B7 polenta rognosa, formaggi",sleep:"Sulmona"},
 
 {day:3,title:"Costa dei Trabocchi",region:"Abruzzo",km:"~150",drive:"~2,5h",color:"#C0392B",emoji:"\u{1F30A}",date:"Dom 16 ago",
-timeline:[{t:"09:30",n:"Partenza"},{t:"11:00",n:"Arrivo costa"},{t:"12:00",n:"Spiaggia"},{t:"13:30",n:"Pranzo mare"},{t:"16:00",n:"San Vito relax"},{t:"18:00",n:"Passeggiata trabocchi"},{t:"20:30",n:"Cena al trabocco"}],
+timeline:[{t:"09:30",n:"Partenza"},{t:"11:00",n:"Arrivo costa"},{t:"12:00",n:"Spiaggia"},{t:"13:30",n:"Pranzo mare"},{t:"16:00",n:"San Vito relax"},{t:"18:00",n:"Passeggiata trabocchi"},{t:"20:00",n:"Cena al trabocco"}],
 stops:[
-{name:"Costa dei Trabocchi",lat:42.2550,lng:14.4000,map:"https://maps.google.com/?q=Costa+dei+Trabocchi",desc:"Antiche macchine da pesca su palafitte, oggi ristoranti sospesi sul mare. La domenica post-Ferragosto \u00E8 pi\u00F9 tranquilla del sabato.",tip:"\u26A0\uFE0F Prenota trabocco per cena \u2014 domenica sera pi\u00F9 gestibile del sabato",warn:true},
-{name:"San Vito Chietino",lat:42.3092,lng:14.4500,map:"https://maps.google.com/?q=San+Vito+Chietino",desc:"Borgo dove D\u0027Annunzio scrisse \u0027Il trionfo della morte\u0027. Trabocchi e spiagge cristalline nei dintorni.",tip:"Tramonto dai trabocchi \u00E8 spettacolare"}],
-food:"Cena al trabocco! Brodetto, vongole, frittura",sleep:"Sulmona (rientro sera)"},
+{name:"Costa dei Trabocchi",lat:42.2550,lng:14.4000,map:"https://maps.google.com/?q=Costa+dei+Trabocchi",desc:"Antiche macchine da pesca su palafitte, oggi ristoranti sospesi sul mare. La domenica post-Ferragosto \u00E8 pi\u00F9 tranquilla del sabato.",tip:"\u26A0\uFE0F Prenota trabocco per cena \u2014 Punta Torre o Pesce Palombo",warn:true},
+{name:"San Vito Chietino",lat:42.3092,lng:14.4500,map:"https://maps.google.com/?q=San+Vito+Chietino",desc:"Borgo dove D\u0027Annunzio scrisse. Trabocchi e spiagge cristalline nei dintorni. Trabocco Punta Torre sotto il paese.",tip:"Tramonto dai trabocchi \u00E8 spettacolare"}],
+food:"Cena al trabocco! Brodetto, vongole, frittura mista",sleep:"Sulmona (rientro sera ~1h30)"},
 
-{day:4,title:"Sulmona \u2192 Canazei",region:"Abruzzo \u2192 Trentino",km:"~480",drive:"~5h",color:"#8E44AD",emoji:"\u{1F697}",date:"Lun 17 ago",
-route:"https://www.google.com/maps/dir/Sulmona+AQ/Canazei+TN",routeLabel:"Sulmona \u2192 Canazei",
-timeline:[{t:"07:00",n:"Partenza Sulmona"},{t:"09:30",n:"Sosta A14"},{t:"12:30",n:"Pausa pranzo"},{t:"15:00",n:"Arrivo Canazei"},{t:"16:30",n:"Lago di Fedaia (opz)"},{t:"20:00",n:"Cena Canazei"}],
+{day:4,title:"Sulmona \u2192 Spello",region:"Abruzzo \u2192 Umbria",km:"~250",drive:"~3h",color:"#8E44AD",emoji:"\u{1F697}",date:"Lun 17 ago",
+route:"https://www.google.com/maps/dir/Sulmona+AQ/Spello+PG",routeLabel:"Sulmona \u2192 Spello",
+timeline:[{t:"09:00",n:"Colazione Sulmona"},{t:"10:00",n:"Check-out"},{t:"10:30",n:"Partenza"},{t:"13:00",n:"Pausa pranzo"},{t:"14:30",n:"Arrivo Spello"},{t:"15:00",n:"Check-in Villa dei Mosaici"},{t:"17:00",n:"Passeggiata borgo"},{t:"20:00",n:"Cena Spello"}],
 stops:[
-{name:"Canazei",lat:46.4767,lng:11.7703,map:"https://maps.google.com/?q=Canazei+TN",desc:"Cuore della Val di Fassa, base ideale per esplorare le Dolomiti. Post-Ferragosto = strade libere, prezzi normali, no MP obbligatoria.",tip:"Guest Card Val di Fassa spesso inclusa!"},
-{name:"Lago di Fedaia (opz)",lat:46.4571,lng:11.8687,map:"https://maps.google.com/?q=Lago+di+Fedaia",desc:"Ai piedi della Marmolada. Acqua turchese e ghiacciaio. Opzionale se arrivi tardi/stanco.",tip:"15 min da Canazei \u2014 salta se stanchi"}],
-food:"Canederli, speck, strudel, polenta",sleep:"Canazei 3 notti (~130-180\u20AC/notte post-Ferragosto)"},
+{name:"Spello",lat:42.9908,lng:12.6721,map:"https://maps.google.com/?q=Spello+PG",desc:"Borgo medievale in pietra rosa, tra i pi\u00F9 belli d\u0027Italia. Vicoli fioriti, mura romane, atmosfera raccolta. Base per 4 notti \u2014 Hotel & Spa Villa dei Mosaici.",tip:"Sera in Piazza della Repubblica"}],
+food:"Torta al testo, strangozzi, olio extravergine locale",sleep:"Spello 4 notti \u00B7 Hotel Villa dei Mosaici (673,92\u20AC totali)"},
 
-{day:5,title:"Alpe di Siusi",region:"Alto Adige",km:"~50",drive:"~1,5h",color:"#00B894",emoji:"\u{1F332}",date:"Mar 18 ago",
-route:"https://www.google.com/maps/dir/Canazei+TN/Ortisei+BZ/Canazei+TN",routeLabel:"Canazei \u2192 Ortisei \u2192 Alpe di Siusi",
-timeline:[{t:"09:30",n:"Partenza Canazei"},{t:"10:15",n:"Ortisei"},{t:"10:30",n:"Funivia"},{t:"11:00",n:"Alpe di Siusi"},{t:"13:00",n:"Pranzo in malga"},{t:"14:30",n:"Relax altopiano"},{t:"16:30",n:"Funivia ritorno"},{t:"17:00",n:"Gelato Ortisei"},{t:"20:00",n:"Cena Canazei"}],
+{day:5,title:"Rasiglia \u00B7 Menotre \u00B7 Clitunno",region:"Umbria",km:"~60",drive:"~1,5h",color:"#0984E3",emoji:"\u{1F4A7}",date:"Mar 18 ago",
+timeline:[{t:"09:30",n:"Colazione"},{t:"10:30",n:"Partenza"},{t:"11:00",n:"Rasiglia"},{t:"13:00",n:"Pranzo"},{t:"15:00",n:"Cascate Menotre"},{t:"17:30",n:"Fonti del Clitunno"},{t:"19:00",n:"Tramonto"},{t:"20:30",n:"Cena Spello"}],
 stops:[
-{name:"Ortisei",lat:46.5735,lng:11.6717,map:"https://maps.google.com/?q=Ortisei+BZ",desc:"Borgo ladino con sculture in legno, funivia per Alpe di Siusi. Punto di partenza per l\u0027altopiano.",tip:"Prenota funivia online il giorno prima"},
-{name:"Alpe di Siusi",lat:46.5468,lng:11.6483,map:"https://maps.google.com/?q=Alpe+di+Siusi",desc:"Il pi\u00F9 grande altopiano alpino d\u0027Europa (~57km\u00B2). Prati sconfinati a 1.800-2.000m con vista Sassolungo, Sassopiatto, Sciliar. Martedi post-Ferragosto = deserto, senza coda alle funivie.",tip:"Pranzo in una malga con vista \u2014 esperienza del viaggio"}],
-food:"Cajinc\u00ED ladini, Schlutzkrapfen, kaiserschmarrn",sleep:"Canazei"},
+{name:"Rasiglia",lat:42.9758,lng:12.8722,map:"https://maps.google.com/?q=Rasiglia+PG",desc:"La 'Piccola Venezia dell\u0027Umbria'. Borgo medievale attraversato da canali e ruscelli. Case in pietra, mulini, atmosfera unica.",tip:"Al mattino presto \u2014 riflessi magici"},
+{name:"Cascate del Menotre",lat:43.0088,lng:12.8092,map:"https://maps.google.com/?q=Cascate+del+Menotre+Pale",desc:"Cascate nel bosco vicino Pale. Sentiero dell\u0027Acqua collega pi\u00F9 salti. Passeggiata rinfrescante ideale in giornata calda.",tip:"Scarpe comode + costume se vuoi fare il bagno"},
+{name:"Fonti del Clitunno",lat:42.8347,lng:12.7594,map:"https://maps.google.com/?q=Fonti+del+Clitunno",desc:"Piccolo laghetto con acque cristalline color smeraldo, salici piangenti, cigni e trote. Luogo poetico cantato da Virgilio, Byron, Carducci.",tip:"Al tramonto \u2014 luce magica"}],
+food:"Pranzo tipico in trattoria umbra",sleep:"Spello"},
 
-{day:6,title:"Lago di Carezza \u00B7 relax",region:"Alto Adige",km:"~40",drive:"~1h",color:"#0984E3",emoji:"\u{1F4A7}",date:"Mer 19 ago",
-timeline:[{t:"09:30",n:"Colazione lenta"},{t:"10:30",n:"Partenza"},{t:"11:15",n:"Lago di Carezza"},{t:"12:00",n:"Giro lago 30 min"},{t:"13:00",n:"Pranzo Carezza"},{t:"15:00",n:"Rientro Canazei"},{t:"16:00",n:"Relax paese"},{t:"20:30",n:"Cena"}],
+{day:6,title:"Marmore \u00B7 Mole di Narni",region:"Umbria",km:"~170",drive:"~2,5h",color:"#00B894",emoji:"\u{1F30A}",date:"Mer 19 ago",
+timeline:[{t:"08:30",n:"Colazione"},{t:"09:00",n:"Partenza"},{t:"10:15",n:"Cascata Marmore"},{t:"12:30",n:"Pranzo"},{t:"14:30",n:"Mole di Narni"},{t:"17:30",n:"Narni sotterranea (opz)"},{t:"19:00",n:"Rientro Spello"},{t:"20:30",n:"Cena"}],
 stops:[
-{name:"Lago di Carezza",lat:46.4064,lng:11.5769,map:"https://maps.google.com/?q=Lago+di+Carezza",desc:"Piccolo lago turchese col riflesso del Latemar. Giro completo in 30 minuti, tutto in piano. Post-Ferragosto molto pi\u00F9 tranquillo.",tip:"Al mattino presto la luce sul Latemar \u00E8 magica"}],
-food:"Speck, canederli, birra artigianale",sleep:"Canazei"},
+{name:"Cascata delle Marmore",lat:42.5480,lng:12.7188,map:"https://maps.google.com/?q=Cascata+delle+Marmore",desc:"La pi\u00F9 famosa d\u0027Italia \u2014 165m in 3 salti. Aperture regolamentate (verificare orari!). Diversi belvedere e sentieri panoramici.",tip:"\u26A0\uFE0F Verifica orari apertura su cascatadellemarmore.info!",warn:true},
+{name:"Mole di Narni",lat:42.5163,lng:12.5223,map:"https://maps.google.com/?q=Mole+di+Narni",desc:"Serie di piccole cascate e mulini abbandonati lungo il fiume Nera. Ambiente selvaggio, meno turistico delle Marmore.",tip:"Scarponcini + attitudine escursionistica"}],
+food:"Trota di fiume, tartufo, umbricelli",sleep:"Spello"},
 
-{day:7,title:"Canazei \u2192 Perugia",region:"Trentino \u2192 Umbria",km:"~500",drive:"~5h",color:"#D4AC0D",emoji:"\u{1F3DB}\uFE0F",date:"Gio 20 ago",
-route:"https://www.google.com/maps/dir/Canazei+TN/Perugia",routeLabel:"Canazei \u2192 Perugia",
-timeline:[{t:"08:00",n:"Partenza Canazei"},{t:"11:00",n:"Sosta A22"},{t:"13:30",n:"Pranzo autogrill"},{t:"16:00",n:"Sosta E45"},{t:"19:00",n:"Arrivo Perugia"},{t:"20:30",n:"Cena centro storico"}],
+{day:7,title:"Spello \u00B7 Bevagna \u00B7 Montefalco",region:"Umbria",km:"~50",drive:"~1,5h",color:"#8B2635",emoji:"\u{1F377}",date:"Gio 20 ago",
+timeline:[{t:"09:30",n:"Colazione"},{t:"10:00",n:"Spello centro storico"},{t:"12:30",n:"Pranzo Bevagna"},{t:"15:00",n:"Bevagna borgo"},{t:"17:00",n:"Montefalco cantina"},{t:"19:30",n:"Degustazione Sagrantino"},{t:"21:00",n:"Cena Spello"}],
 stops:[
-{name:"Perugia",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Perugia",desc:"Arrivo sera. Centro medievale magico di notte. Notte di transito, cena in centro senza fretta.",tip:"E45 Orte\u2192Perugia gratuita! Parcheggia a Piazza Partigiani, scale mobili gratis"}],
-food:"Torta al testo, strangozzi al tartufo, Sagrantino",sleep:"Perugia 1 notte (~110-160\u20AC)"},
+{name:"Spello centro",lat:42.9908,lng:12.6721,map:"https://maps.google.com/?q=Spello+centro+storico",desc:"Mattinata dedicata a Spello: mura romane, Porta Consolare, Chiesa Santa Maria Maggiore (Cappella Baglioni del Pinturicchio), vicoli fioriti.",tip:"Ingresso Cappella Baglioni ~4\u20AC \u2014 vale la pena"},
+{name:"Bevagna",lat:42.9333,lng:12.6083,map:"https://maps.google.com/?q=Bevagna+PG",desc:"Borgo medievale con piazza centrale straordinaria (tre chiese romaniche + palazzo dei consoli). Meno turistico di Spello.",tip:"Aperitivo in piazza centrale"},
+{name:"Montefalco",lat:42.8917,lng:12.6503,map:"https://maps.google.com/?q=Montefalco+PG",desc:"'Ringhiera dell\u0027Umbria' \u2014 panorama a 360\u00B0 dalle mura. Zona del Sagrantino di Montefalco DOCG. Cantine visitabili.",tip:"\u26A0\uFE0F Prenota cantina Sagrantino in anticipo!",warn:true}],
+food:"Sagrantino di Montefalco, tartufo, cinghiale",sleep:"Spello"},
 
-{day:8,title:"Perugia \u2192 Napoli",region:"Umbria \u2192 Campania",km:"~430",drive:"~4,5h",color:"#9B59B6",emoji:"\u{1F3E0}",date:"Ven 21 ago",
-route:"https://www.google.com/maps/dir/Perugia/Assisi+PG/Napoli",routeLabel:"Perugia \u2192 (Assisi opz) \u2192 Napoli",
-timeline:[{t:"09:00",n:"Colazione"},{t:"10:00",n:"Corso Vannucci"},{t:"11:00",n:"Fontana Maggiore"},{t:"12:00",n:"Rocca Paolina"},{t:"13:00",n:"Pranzo Perugia"},{t:"15:00",n:"Check-out + partenza"},{t:"15:30",n:"Assisi (opz)"},{t:"17:30",n:"Ripresa autostrada"},{t:"21:30",n:"Arrivo Napoli"}],
+{day:8,title:"Perugia \u00B7 Orvieto \u2192 Napoli",region:"Umbria \u2192 Campania",km:"~430",drive:"~5h",color:"#D35400",emoji:"\u{1F3E0}",date:"Ven 21 ago",
+route:"https://www.google.com/maps/dir/Spello+PG/Perugia/Orvieto+TR/Napoli",routeLabel:"Spello \u2192 Perugia \u2192 Orvieto \u2192 Napoli",
+timeline:[{t:"09:00",n:"Colazione"},{t:"10:00",n:"Check-out Spello"},{t:"10:30",n:"Perugia"},{t:"13:00",n:"Pranzo Perugia"},{t:"14:30",n:"Partenza Orvieto"},{t:"15:45",n:"Orvieto"},{t:"17:30",n:"Ripartenza"},{t:"21:00",n:"Arrivo Napoli"}],
 stops:[
-{name:"Corso Vannucci",lat:43.1107,lng:12.3885,map:"https://maps.google.com/?q=Corso+Vannucci+Perugia",desc:"Salotto di Perugia. Palazzi, caff\u00E8 storici, vista sulla valle.",tip:"Caff\u00E8 Sandri \u2014 pasticceria dal 1860"},
-{name:"Fontana Maggiore",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Fontana+Maggiore+Perugia",desc:"Capolavoro del XIII secolo tra la Cattedrale e il Palazzo dei Priori.",tip:"Siediti ai gradini della cattedrale"},
-{name:"Rocca Paolina",lat:43.1067,lng:12.3892,map:"https://maps.google.com/?q=Rocca+Paolina+Perugia",desc:"Fortezza sotterranea. Scale mobili attraverso strade medievali sepolte \u2014 esperienza unica.",tip:"Entra da Piazza Partigiani \u2014 gratis!"},
-{name:"Assisi (opzionale)",lat:43.0707,lng:12.6135,map:"https://maps.google.com/?q=Assisi",desc:"25 km ad est di Perugia, quasi di strada verso Napoli (+30km, +20 min). Basilica di San Francesco imperdibile se hai tempo.",tip:"Parcheggia a Piazza Matteotti"}],
-food:"Ultimo pranzo umbro \u2014 porchetta o strangozzi",sleep:"Casa \u2014 Napoli!"}
+{name:"Perugia",lat:43.1107,lng:12.3908,map:"https://maps.google.com/?q=Perugia",desc:"Centro medievale su una collina. Corso Vannucci, Fontana Maggiore, Rocca Paolina sotterranea (scale mobili gratis attraverso strade medievali sepolte).",tip:"Parcheggia a Piazza Partigiani \u2014 scale mobili gratis"},
+{name:"Orvieto",lat:42.7186,lng:12.1109,map:"https://maps.google.com/?q=Orvieto+TR",desc:"Citt\u00E0 arroccata su sperone di tufo. Duomo tra i pi\u00F9 belli d\u0027Italia (facciata mosaica dorata) + Pozzo di San Patrizio (72m, doppie scale a chiocciola).",tip:"Sosta ~2h prima del rientro"}],
+food:"Ultimo pranzo umbro \u2014 torta al testo, porchetta, strangozzi",sleep:"Casa \u2014 Napoli!"}
 ];
 
 let DAYS=JSON.parse(JSON.stringify(DEFAULT_DAYS));
@@ -489,29 +488,27 @@ const ROUTES=[
 {label:"Napoli \u2192 Sulmona",sub:"G1: A1+A25",icon:"\u{1F697}",color:"#2D6A4F",url:"https://www.google.com/maps/dir/Napoli/Sulmona+AQ"},
 {label:"Scanno + laghi",sub:"G2: giro Abruzzo interno",icon:"\u{1F48E}",color:"#1ABC9C",url:"https://www.google.com/maps/dir/Sulmona+AQ/Scanno+AQ/Villalago+AQ/Sulmona+AQ"},
 {label:"Costa dei Trabocchi",sub:"G3: giornata mare",icon:"\u{1F30A}",color:"#C0392B",url:"https://www.google.com/maps/dir/Sulmona+AQ/San+Vito+Chietino/Sulmona+AQ"},
-{label:"Sulmona \u2192 Canazei",sub:"G4: A25+A14+A22",icon:"\u{1F697}",color:"#8E44AD",url:"https://www.google.com/maps/dir/Sulmona+AQ/Canazei+TN"},
-{label:"Alpe di Siusi",sub:"G5: via Ortisei",icon:"\u{1F332}",color:"#00B894",url:"https://www.google.com/maps/dir/Canazei+TN/Ortisei+BZ/Alpe+di+Siusi/Canazei+TN"},
-{label:"Lago di Carezza",sub:"G6: Ferragosto relax",icon:"\u{1F4A7}",color:"#0984E3",url:"https://www.google.com/maps/dir/Canazei+TN/Lago+di+Carezza/Canazei+TN"},
-{label:"Canazei \u2192 Perugia",sub:"G7: A22+E45",icon:"\u{1F3DB}",color:"#D4AC0D",url:"https://www.google.com/maps/dir/Canazei+TN/Perugia"},
-{label:"Perugia \u2192 Napoli",sub:"G8: A1 diretta (o via Assisi)",icon:"\u{1F3E0}",color:"#9B59B6",url:"https://www.google.com/maps/dir/Perugia/Assisi+PG/Napoli"}];
+{label:"Sulmona \u2192 Spello",sub:"G4: transfer breve ~3h",icon:"\u{1F697}",color:"#8E44AD",url:"https://www.google.com/maps/dir/Sulmona+AQ/Spello+PG"},
+{label:"Rasiglia + Clitunno",sub:"G5: giro acqua Umbria",icon:"\u{1F4A7}",color:"#0984E3",url:"https://www.google.com/maps/dir/Spello+PG/Rasiglia+PG/Cascate+del+Menotre/Fonti+del+Clitunno/Spello+PG"},
+{label:"Marmore + Narni",sub:"G6: giornata cascate",icon:"\u{1F30A}",color:"#00B894",url:"https://www.google.com/maps/dir/Spello+PG/Cascata+delle+Marmore/Mole+di+Narni/Spello+PG"},
+{label:"Bevagna + Montefalco",sub:"G7: borghi + cantina Sagrantino",icon:"\u{1F377}",color:"#8B2635",url:"https://www.google.com/maps/dir/Spello+PG/Bevagna+PG/Montefalco+PG/Spello+PG"},
+{label:"Spello \u2192 Napoli",sub:"G8: Perugia + Orvieto in transito",icon:"\u{1F3E0}",color:"#D35400",url:"https://www.google.com/maps/dir/Spello+PG/Perugia/Orvieto+TR/Napoli"}];
 
 const CATS=[{id:"fuel",name:"Carburante",emoji:"\u26FD",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"\u{1F6E3}",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"\u{1F3E8}",color:"#2D6A4F"},{id:"food",name:"Cibo",emoji:"\u{1F37D}",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"\u{1F3AB}",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"\u{1F4E6}",color:"#8B7355"}];
 
 const PRECHECKS=[
-{text:"Prenotare hotel Canazei/Fassa 3 notti (17-20 ago) \u2014 post-Ferragosto, buona disponibilit\u00E0",cat:"critical"},
-{text:"Prenotare cena al trabocco (Dom 16 ago sera)",cat:"critical"},
+{text:"\u2705 Hotel & Spa Villa dei Mosaici Spello (17-21 ago) \u2014 PRENOTATO 673,92\u20AC",cat:"hotel"},
+{text:"\u2705 B&B La Dimora Sulmona (14-17 ago) \u2014 PRENOTATO 364\u20AC",cat:"hotel"},
+{text:"Prenotare cena al trabocco (Dom 16 ago) \u2014 Punta Torre +39 393 928 7350",cat:"critical"},
 {text:"Prenotare cena Ferragosto Sulmona (Sab 15 ago sera)",cat:"critical"},
-{text:"Prenotare hotel Sulmona 3 notti (14-17 ago)",cat:"hotel"},
-{text:"Prenotare hotel Perugia 1 notte (20-21 ago)",cat:"hotel"},
+{text:"Prenotare cantina Sagrantino Montefalco (Gio 20 ago)",cat:"critical"},
 {text:"Canoa Fiume Tirino \u2014 prenotare (Ven 14 ago pom)",cat:"attivita"},
-{text:"Funivia Alpe di Siusi da Ortisei \u2014 online giorno prima (Mar 18 ago)",cat:"attivita"},
-{text:"Verificare Guest Card Val di Fassa inclusa con hotel",cat:"attivita"},
-{text:"Controllare stazioni GPL lungo A14+A22+A1",cat:"auto"},
+{text:"Verificare orari Cascata Marmore su cascatadellemarmore.info (Mer 19 ago)",cat:"attivita"},
 {text:"Controllare pressione gomme e livelli auto",cat:"auto"},
 {text:"Fare il pieno GPL prima della partenza",cat:"auto"},
-{text:"Scaricare mappe offline Google Maps (Abruzzo + Dolomiti + Umbria)",cat:"prep"},
-{text:"Preparare valigie (leggeri estivi + giacca per la montagna)",cat:"prep"},
-{text:"Costume da bagno (Tirino canoa + Trabocchi mare)",cat:"prep"},
+{text:"Scaricare mappe offline Google Maps (Abruzzo + Umbria)",cat:"prep"},
+{text:"Preparare valigie (leggeri estivi + felpa per cascate/trabocco sera)",cat:"prep"},
+{text:"Costume da bagno (Tirino canoa + Trabocchi mare + Menotre)",cat:"prep"},
 ];
 
 // STATE
@@ -524,7 +521,7 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v4-14ago";
+const DAYS_VERSION="v5-umbria";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -566,7 +563,7 @@ function initFB(){
 if(!fbOk)return;
 if(_daysNeedFbSync&&isAdmin){db.child('days').set(DAYS);db.child('checks').set({});_daysNeedFbSync=false}
 db.child('position').on('value',s=>{const v=s.val();if(v){livePos={lat:v.lat,lng:v.lng};lastUpdate=v.ts;updateMarker();if(tab!=="map")render()}});
-db.child('days').on('value',s=>{const v=s.val();if(v&&!isAdmin){if(_daysNeedFbSync){const isNew=Array.isArray(v)&&v[0]&&v[0].date&&v[0].date.indexOf("14 ago")>=0;if(!isNew)return}DAYS=v;_daysNeedFbSync=false;render()}});
+db.child('days').on('value',s=>{const v=s.val();if(v&&!isAdmin){if(_daysNeedFbSync){const isNew=Array.isArray(v)&&v.some&&v.some(d=>d&&d.region&&d.region.indexOf("Umbria")>=0);if(!isNew)return}DAYS=v;_daysNeedFbSync=false;render()}});
 db.child('checks').on('value',s=>{const v=s.val();if(v&&!isAdmin){checks=v;render()}});
 db.child('diary').on('value',s=>{const v=s.val();if(v&&!isAdmin){diary=Array.isArray(v)?v:Object.values(v);render()}});
 db.child('photos').on('value',s=>{const v=s.val();if(v){photos=Object.values(v).sort((a,b)=>b.ts-a.ts)}else{photos=[]}if(tab==="gallery")render()});
@@ -630,7 +627,7 @@ h+='<div id="layout">';
 // HERO
 h+='<div class="hero"><div class="hero-inner">';
 h+='<div class="tag">Road Trip \u00B7 14-21 Agosto 2026</div>';
-h+='<h1>Abruzzo, Trentino & Umbria</h1>';
+h+='<h1>Abruzzo & Umbria</h1>';
 h+='<div class="names">Daniele & Angela</div>';
 h+='<div class="sub">8 giorni \u00B7 Da Napoli a Napoli</div>';
 
@@ -867,28 +864,28 @@ h+='<button class="hotel-del" onclick="delHotel('+i+')">\u2715</button></div>'})
 }
 
 if(adminSub==='budget'){
-h+='<div class="budget-grid"><div class="budget-card"><div class="budget-label">Carburante GPL</div><div class="budget-val">~180\u20AC</div><div class="budget-sub">~210L \u00B7 0,85\u20AC pompa</div></div>';
-h+='<div class="budget-card"><div class="budget-label">Pedaggi</div><div class="budget-val">~150\u20AC</div><div class="budget-sub">A1+A25+A14+A22+A1</div></div>';
-h+='<div class="budget-card"><div class="budget-label">Hotel 7 notti</div><div class="budget-val">~1.100\u20AC</div><div class="budget-sub">Sulmona+Canazei+Perugia</div></div>';
-h+='<div class="budget-card"><div class="budget-label">Vitto</div><div class="budget-val">~800\u20AC</div><div class="budget-sub">~100\u20AC/giorno x 8g</div></div>';
-h+='<div class="budget-card"><div class="budget-label">Attivit\u00E0</div><div class="budget-val">~200\u20AC</div><div class="budget-sub">Canoa, funivia, ingressi</div></div>';
-h+='<div class="budget-card"><div class="budget-label">Extra</div><div class="budget-val">~150\u20AC</div><div class="budget-sub">Cena trabocco, gelati</div></div></div>';
-h+='<div class="exp-total-card"><div class="exp-total-num">~2.580\u20AC</div><div class="exp-total-sub">Stima totale 2 persone</div><div class="exp-total-pp">~1.290\u20AC a testa</div></div>';
+h+='<div class="budget-grid"><div class="budget-card"><div class="budget-label">Carburante GPL</div><div class="budget-val">~155\u20AC</div><div class="budget-sub">~180L \u00B7 0,85\u20AC pompa</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Pedaggi</div><div class="budget-val">~120\u20AC</div><div class="budget-sub">A1+A25+A1</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Hotel (PRENOTATI)</div><div class="budget-val">1.038\u20AC</div><div class="budget-sub">Sulmona 364 + Spello 674</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Vitto</div><div class="budget-val">~950\u20AC</div><div class="budget-sub">~100\u20AC/g x 8g</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Attivit\u00E0</div><div class="budget-val">~180\u20AC</div><div class="budget-sub">Canoa, Marmore, cantina</div></div>';
+h+='<div class="budget-card"><div class="budget-label">Extra</div><div class="budget-val">~200\u20AC</div><div class="budget-sub">Aperitivi, gelati, souvenir</div></div></div>';
+h+='<div class="exp-total-card"><div class="exp-total-num">~2.640\u20AC</div><div class="exp-total-sub">Stima totale 2 persone</div><div class="exp-total-pp">~1.320\u20AC a testa</div></div>';
 }
 if(adminSub==='notes'){
 h+='<div style="font-size:11px;font-weight:700;color:#854F0B;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Note critiche</div>';
-h+='<div class="note-card note-warn"><div class="note-icon">\u{1F389}</div><div class="note-text"><strong>Ferragosto (G2 \u00B7 15 ago):</strong> in Abruzzo tra borghi interni, Scanno + laghi. Cena Ferragosto Sulmona: prenota!</div></div>';
-h+='<div class="note-card note-warn"><div class="note-icon">\u{1F37D}</div><div class="note-text"><strong>Trabocco cena (Dom 16 ago):</strong> domenica sera pi\u00F9 gestibile del sabato Ferragosto, ma prenotare</div></div>';
-h+='<div class="note-card note-warn"><div class="note-icon">\u{1F3E8}</div><div class="note-text"><strong>Canazei 17-20 ago:</strong> post-Ferragosto = prezzi 130-180\u20AC/n, no mezza pensione obbligatoria</div></div>';
-h+='<div class="note-card note-warn"><div class="note-icon">\u{1F697}</div><div class="note-text"><strong>G4 transfer (~480km, Lun 17 ago):</strong> post-Ferragosto strade libere, parti presto</div></div>';
-h+='<div class="note-card note-warn"><div class="note-icon">\u{1F697}</div><div class="note-text"><strong>G7 transfer (~500km, Gio 20 ago):</strong> A22+E45, ~5h. Cena Perugia in tarda sera</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u2705</div><div class="note-text"><strong>Alloggi prenotati:</strong> Sulmona La Dimora (364\u20AC) + Spello Villa dei Mosaici (673,92\u20AC) = 1.037,92\u20AC</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F37D}</div><div class="note-text"><strong>Cena trabocco (Dom 16 ago):</strong> Punta Torre +39 393 928 7350 \u00B7 alternative: Pesce Palombo, Turchino</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F389}</div><div class="note-text"><strong>Ferragosto Sulmona (Sab 15 sera):</strong> prenota ristorante subito!</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F377}</div><div class="note-text"><strong>Cantina Sagrantino Montefalco (Gio 20):</strong> prenota tour+degustazione</div></div>';
+h+='<div class="note-card note-warn"><div class="note-icon">\u{1F30A}</div><div class="note-text"><strong>Cascata Marmore (Mer 19):</strong> verifica orari apertura su cascatadellemarmore.info</div></div>';
 h+='<div style="font-size:11px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px">Info utili</div>';
-h+='<div class="note-card"><div class="note-icon">\u{1F4B0}</div><div class="note-text"><strong>Risparmio partenza 14 vs 10 ago:</strong> ~300-400\u20AC su Canazei post-Ferragosto</div></div>';
-h+='<div class="note-card"><div class="note-icon">\u{1F6E3}</div><div class="note-text"><strong>E45 gratuita</strong> Orte\u2194Perugia</div></div>';
-h+='<div class="note-card"><div class="note-icon">\u{1F3AB}</div><div class="note-text"><strong>Guest Card Val di Fassa:</strong> funivie+bus gratis \u2014 verifica inclusa con hotel</div></div>';
-h+='<div class="note-card"><div class="note-icon">\u26FD</div><div class="note-text"><strong>GPL:</strong> pieno prima di A14+A22, distributori densi lungo A1</div></div>';
-h+='<div class="note-card"><div class="note-icon">\u{1F321}</div><div class="note-text"><strong>Temp agosto:</strong> Abruzzo 15-30\u00B0 \u00B7 Dolomiti 10-25\u00B0 \u00B7 Umbria 20-35\u00B0</div></div>';
-h+='<div class="note-card"><div class="note-icon">\u{1F9E5}</div><div class="note-text"><strong>Cosa portare:</strong> giacca leggera per la montagna, costume, scarpe camminata</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F3E8}</div><div class="note-text"><strong>Spello parking:</strong> Villa dei Mosaici ha parcheggio, no ZTL, hai chiesto free parking</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F4B0}</div><div class="note-text"><strong>Budget totale:</strong> ~2.640\u20AC (~1.320\u20AC a testa) \u00B7 fascia media confermata</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F6E3}</div><div class="note-text"><strong>E45 gratuita</strong> Orte\u2194Perugia \u2014 G8 rientro sfrutta la tratta gratis</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u26FD</div><div class="note-text"><strong>GPL:</strong> distributori densi lungo A1+A25 \u2014 pieno tranquillo</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F321}</div><div class="note-text"><strong>Temp agosto:</strong> Abruzzo 20-32\u00B0 \u00B7 Umbria 25-35\u00B0 \u00B7 Marmore fresca</div></div>';
+h+='<div class="note-card"><div class="note-icon">\u{1F9E5}</div><div class="note-text"><strong>Cosa portare:</strong> leggeri estivi, costume (Tirino/Menotre), felpa per cascate/trabocco sera</div></div>';
 h+='<div style="font-size:11px;font-weight:700;color:#8B7355;text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px">Note personali</div>';
 h+='<div class="form-box"><textarea class="diary-textarea" id="note-text" placeholder="Nota..." style="min-height:60px"></textarea><button class="btn-primary" onclick="addNote()">Aggiungi</button></div>';
 notes.forEach((n,i)=>{h+='<div class="note-card" style="position:relative"><div class="note-icon">\u{1F4CC}</div><div class="note-text">'+n.text+'<div style="font-size:9px;color:#B0A48E;margin-top:3px">'+new Date(n.ts).toLocaleDateString('it-IT',{day:'numeric',month:'short'})+'</div></div><button class="hotel-del" onclick="delNote('+i+')">\u2715</button></div>'});
