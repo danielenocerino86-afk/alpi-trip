@@ -2299,25 +2299,65 @@ img { max-width: 100%; height: auto; display: block; }
 /* Foto tappa nel header giorno */
 .tl-day-photo {
   width: 100%;
-  height: 140px;
-  background-size: cover;
-  background-position: center;
+  height: 160px;
   border-radius: 12px;
   margin-bottom: 14px;
   position: relative;
-  background-color: var(--surface-alt);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tl-day-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  z-index: 1;
+}
+.tl-day-photo img.loaded {
+  opacity: 1;
 }
 .tl-day-photo::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(31,29,26,0) 40%, rgba(31,29,26,0.15) 100%);
-  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.35) 100%);
+  z-index: 2;
   pointer-events: none;
+}
+.tl-day-photo-emoji {
+  font-size: 60px;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.4));
+  position: relative;
+  z-index: 3;
+  opacity: 0.7;
+  transition: opacity 300ms;
+}
+.tl-day-photo img.loaded ~ .tl-day-photo-emoji {
+  opacity: 0;
+}
+.tl-day-photo-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255,255,255,0.95);
+  color: var(--text-1);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  z-index: 3;
+  backdrop-filter: blur(8px);
 }
 
 @media (min-width: 900px) {
-  .tl-day-photo { height: 180px; }
+  .tl-day-photo { height: 200px; }
+  .tl-day-photo-emoji { font-size: 72px; }
 }
 
 /* Widget "In viaggio adesso" */
@@ -2738,14 +2778,15 @@ function getAllStops(){const arr=[];DAYS.forEach((d,di)=>d.stops.forEach((s,si)=
 function getRouteLine(){const line=[[40.85,14.27]];DAYS.forEach(d=>d.stops.forEach(s=>{if(s.lat&&s.lng)line.push([s.lat,s.lng])}));line.push([40.85,14.27]);return line}
 
 const ROUTES=[
-{label:"Napoli \u2192 Sulmona",sub:"G1: A1+A25",icon:"\u{1F697}",color:"#2D6A4F",url:"https://www.google.com/maps/dir/Napoli/Sulmona+AQ"},
-{label:"Scanno + laghi",sub:"G2: giro Abruzzo interno",icon:"\u{1F48E}",color:"#1ABC9C",url:"https://www.google.com/maps/dir/Sulmona+AQ/Scanno+AQ/Villalago+AQ/Sulmona+AQ"},
-{label:"Costa dei Trabocchi",sub:"G3: giornata mare",icon:"\u{1F30A}",color:"#C0392B",url:"https://www.google.com/maps/dir/Sulmona+AQ/San+Vito+Chietino/Sulmona+AQ"},
-{label:"Sulmona \u2192 Spello",sub:"G4: transfer breve ~3h",icon:"\u{1F697}",color:"#8E44AD",url:"https://www.google.com/maps/dir/Sulmona+AQ/Spello+PG"},
-{label:"Rasiglia + Clitunno",sub:"G5: giro acqua Umbria",icon:"\u{1F4A7}",color:"#0984E3",url:"https://www.google.com/maps/dir/Spello+PG/Rasiglia+PG/Cascate+del+Menotre/Fonti+del+Clitunno/Spello+PG"},
-{label:"Marmore + Narni",sub:"G6: giornata cascate",icon:"\u{1F30A}",color:"#00B894",url:"https://www.google.com/maps/dir/Spello+PG/Cascata+delle+Marmore/Mole+di+Narni/Spello+PG"},
+{label:"Napoli \u2192 Sulmona",sub:"G1: A1+A25 \u00B7 ~2,5h",icon:"\u{1F697}",color:"#2D6A4F",url:"https://www.google.com/maps/dir/Napoli/Sulmona+AQ"},
+{label:"Scanno + laghi",sub:"G2: giro Abruzzo interno",icon:"\u{1F48E}",color:"#1ABC9C",url:"https://www.google.com/maps/dir/Sulmona+AQ/Scanno+AQ/Lago+di+Scanno/Villalago+AQ/Sulmona+AQ"},
+{label:"Costa dei Trabocchi",sub:"G3: giornata mare",icon:"\u{1F30A}",color:"#C0392B",url:"https://www.google.com/maps/dir/Sulmona+AQ/San+Vito+Chietino/Fossacesia+Marina/Sulmona+AQ"},
+{label:"Sulmona \u2192 Spello",sub:"G4: transfer ~3h",icon:"\u{1F697}",color:"#8E44AD",url:"https://www.google.com/maps/dir/Sulmona+AQ/Spello+PG"},
+{label:"Rasiglia + Menotre + Clitunno",sub:"G5: giro acqua Umbria",icon:"\u{1F4A7}",color:"#0984E3",url:"https://www.google.com/maps/dir/Spello+PG/Rasiglia+Foligno/Cascate+del+Menotre+Pale/Fonti+del+Clitunno/Spello+PG"},
+{label:"Cascata Marmore + Narni",sub:"G6: giornata cascate",icon:"\u{1F30A}",color:"#00B894",url:"https://www.google.com/maps/dir/Spello+PG/Cascata+delle+Marmore/Narni+TR/Spello+PG"},
 {label:"Bevagna + Montefalco",sub:"G7: borghi + cantina Sagrantino",icon:"\u{1F377}",color:"#8B2635",url:"https://www.google.com/maps/dir/Spello+PG/Bevagna+PG/Montefalco+PG/Spello+PG"},
-{label:"Spello \u2192 Napoli",sub:"G8: Perugia + Orvieto in transito",icon:"\u{1F3E0}",color:"#D35400",url:"https://www.google.com/maps/dir/Spello+PG/Perugia/Orvieto+TR/Napoli"}];
+{label:"Spello \u2192 Perugia \u2192 Orvieto \u2192 Napoli",sub:"G8: rientro con tappe",icon:"\u{1F3E0}",color:"#D35400",url:"https://www.google.com/maps/dir/Spello+PG/Perugia/Orvieto+TR/Napoli"}
+];
 
 const CATS=[{id:"fuel",name:"Carburante",emoji:"\u26FD",color:"#E67E22"},{id:"toll",name:"Pedaggi",emoji:"\u{1F6E3}",color:"#8E44AD"},{id:"hotel",name:"Alloggio",emoji:"\u{1F3E8}",color:"#2D6A4F"},{id:"food",name:"Cibo",emoji:"\u{1F37D}",color:"#C0392B"},{id:"ticket",name:"Biglietti",emoji:"\u{1F3AB}",color:"#1ABC9C"},{id:"other",name:"Altro",emoji:"\u{1F4E6}",color:"#8B7355"}];
 
@@ -3153,7 +3194,7 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v21-complete";
+const DAYS_VERSION="v22-photos-maps";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -3284,15 +3325,29 @@ function isDesktop(){return window.innerWidth>=768}
 // RENDER
 
 // Foto giorno da URL pubbliche (Wikimedia Commons)
+// Foto giorni - Wikimedia Special:FilePath (redirect stabile a file corrente)
+// Se una foto fallisce, il gradient colorato del giorno resta visibile
 const DAY_PHOTOS = {
-  1: "https://images.unsplash.com/photo-1583147247474-4f28f8226fdc?w=1200&auto=format&fit=crop&q=75",  // Abruzzo mountains
-  2: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Scanno_-_panoramio.jpg/1280px-Scanno_-_panoramio.jpg",  // Scanno
-  3: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Trabocco_Turchino_2.jpg/1280px-Trabocco_Turchino_2.jpg",  // Trabocchi
-  4: "https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=1200&auto=format&fit=crop&q=75",  // Italian road trip
-  5: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Rasiglia_02.jpg/1280px-Rasiglia_02.jpg",  // Rasiglia
-  6: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Cascata_delle_Marmore_-_2019.jpg/1280px-Cascata_delle_Marmore_-_2019.jpg",  // Marmore
-  7: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Montefalco_-_Panorama.jpg/1280px-Montefalco_-_Panorama.jpg",  // Montefalco
-  8: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Orvieto_-_view.jpg/1280px-Orvieto_-_view.jpg"  // Orvieto
+  1: "https://commons.wikimedia.org/wiki/Special:FilePath/Sulmona_-_Piazza_Garibaldi_-_panoramio.jpg?width=1200",
+  2: "https://commons.wikimedia.org/wiki/Special:FilePath/Scanno_dall%27alto.jpg?width=1200",
+  3: "https://commons.wikimedia.org/wiki/Special:FilePath/Trabocco_Turchino_2.jpg?width=1200",
+  4: "https://commons.wikimedia.org/wiki/Special:FilePath/Spello_panorama.jpg?width=1200",
+  5: "https://commons.wikimedia.org/wiki/Special:FilePath/Rasiglia_(Foligno).jpg?width=1200",
+  6: "https://commons.wikimedia.org/wiki/Special:FilePath/Cascate_delle_Marmore_02.jpg?width=1200",
+  7: "https://commons.wikimedia.org/wiki/Special:FilePath/Montefalco_-_panorama_dalle_mura.jpg?width=1200",
+  8: "https://commons.wikimedia.org/wiki/Special:FilePath/Orvieto_-_Duomo_-_facciata.jpg?width=1200"
+};
+
+// Fallback: se una foto non carica, uso questi URL alternativi Unsplash (topic-based)
+const DAY_PHOTOS_FALLBACK = {
+  1: "https://images.unsplash.com/photo-1543429776-2782fc8e1acd?w=1200&q=75",
+  2: "https://images.unsplash.com/photo-1596706329032-f5b7e2854e0f?w=1200&q=75",
+  3: "https://images.unsplash.com/photo-1595859703065-b0f78c8afc16?w=1200&q=75",
+  4: "https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=1200&q=75",
+  5: "https://images.unsplash.com/photo-1591793048403-c7bff23f4b4f?w=1200&q=75",
+  6: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&q=75",
+  7: "https://images.unsplash.com/photo-1516108317508-6788f6a160f8?w=1200&q=75",
+  8: "https://images.unsplash.com/photo-1548919973-5cef591cdbc9?w=1200&q=75"
 };
 
 function getDayPhoto(dayNum) {
@@ -3495,8 +3550,15 @@ h+='<div class="tl-day '+dotState+'">';
 h+='<div class="tl-dot">'+day.day+'</div>';
 h+='<div class="tl-content">';
 const dayPhoto=getDayPhoto(day.day);
+const dayFallback=DAY_PHOTOS_FALLBACK[day.day];
 h+='<div class="tl-day-head" onclick="togDay('+di+')">';
-if(dayPhoto)h+='<div class="tl-day-photo" style="background-image:url(\''+dayPhoto+'\')"></div>';
+if(dayPhoto){
+h+='<div class="tl-day-photo" style="background:linear-gradient(135deg,'+day.color+'ee 0%,'+day.color+'99 100%)">';
+h+='<img src="'+dayPhoto+'" alt="'+day.title+'" onerror="this.onerror=null;this.src=\''+(dayFallback||'')+'\'" onload="this.classList.add(\'loaded\')" loading="lazy">';
+h+='<div class="tl-day-photo-emoji">'+day.emoji+'</div>';
+h+='<div class="tl-day-photo-badge">G'+day.day+'</div>';
+h+='</div>';
+}
 h+='<div class="tl-day-tag">'+day.date+'</div>';
 h+='<div class="tl-day-title">'+day.title+'</div>';
 h+='<div class="tl-day-meta">';
@@ -3557,7 +3619,8 @@ h+='<button class="stop-review-add" onclick="event.stopPropagation();editReview(
 }
 }
 h+='</div>';
-h+='<a href="'+s.map+'" target="_blank" class="tl-stop-maps" onclick="event.stopPropagation()">Maps</a>';
+const stopMapUrl=s.map||(s.lat&&s.lng?"https://maps.google.com/?q="+s.lat+","+s.lng:"https://maps.google.com/?q="+encodeURIComponent(s.name));
+h+='<a href="'+stopMapUrl+'" target="_blank" class="tl-stop-maps" onclick="event.stopPropagation()">Maps</a>';
 h+='</div>';
 h+='</div>';
 });
@@ -3686,9 +3749,19 @@ h+='<div class="routes-section-lbl" style="margin-top:32px">Per giorno</div>';
 DAYS.forEach((day,di)=>{
 const done=day.stops.filter((_,si)=>checks[di+"-"+si]).length;
 const tot=day.stops.length;
-// Costruisco un URL Google Maps directions con tutte le tappe
-const stopsUrls=day.stops.filter(s=>s.lat&&s.lng).map(s=>s.lat+","+s.lng).join("/");
-const dirUrl=stopsUrls?"https://www.google.com/maps/dir/"+stopsUrls:day.stops[0].map;
+// Costruisco URL Google Maps directions - preferisco nomi luoghi (piu' affidabili)
+let dirUrl;
+if(day.route){
+// Se il giorno ha già una route custom (transfer days), usala
+dirUrl=day.route;
+}else{
+// Costruisco directions da tutte le tappe con nomi + fallback coords
+const stopsForUrl=day.stops.map(s=>{
+if(s.lat&&s.lng)return s.lat+","+s.lng;
+return encodeURIComponent(s.name);
+}).join("/");
+dirUrl=stopsForUrl?"https://www.google.com/maps/dir/"+stopsForUrl:(day.stops[0]&&day.stops[0].map?day.stops[0].map:"https://maps.google.com");
+}
 h+='<a href="'+dirUrl+'" target="_blank" class="route-day-card">';
 h+='<div class="route-day-num">'+day.day+'</div>';
 h+='<div class="route-day-body">';
