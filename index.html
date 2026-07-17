@@ -3516,13 +3516,71 @@ function togStop(k){openStop=openStop===k?null:k;render()}
 function togChk(d,s){if(!isAdmin)return;const k=d+"-"+s;checks[k]=!checks[k];if(!checks[k])delete checks[k];saveChk();render()}
 function updatePinDots(v){const dots=document.querySelectorAll('.pin-dot');dots.forEach((d,i)=>{if(v.length>i)d.classList.add('filled');else d.classList.remove('filled')})}
 function getCurrentPin(){try{const custom=localStorage.getItem(LS("pincode"));return custom||PIN}catch(e){return PIN}}
-function tryPin(v){if(v.length===4){if(v===getCurrentPin()){isAdmin=true;showLogin=false;pinErr="";saveAdm();if(_daysNeedFbSync&&fbOk){db.child("days").set(DAYS);db.child("checks").set({});_daysNeedFbSync=false}render();initFB()}else{pinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-input-real');if(e){e.value='';e.focus();updatePinDots('')}},100)}}}
+function tryPin(v){updatePinDots(v);if(v.length===4){if(v===getCurrentPin()){isAdmin=true;showLogin=false;pinErr="";saveAdm();if(_daysNeedFbSync&&fbOk){db.child("days").set(DAYS);db.child("checks").set({});_daysNeedFbSync=false}render();initFB()}else{pinErr="PIN errato";const e=document.getElementById('pin-input-real');const errEl=document.querySelector('.pin-modal-error');if(errEl){errEl.textContent="PIN errato";errEl.style.animation="none";void errEl.offsetWidth;errEl.style.animation=""}else{render();return}setTimeout(()=>{if(e){e.value='';e.focus();updatePinDots('')}},400)}}}
 function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-input-real');if(e)e.focus()},100)}
 function closeLogin(){showLogin=false;pinErr="";render()}
 function openChangePin(){showChangePin=true;changePinStep=1;changePinOld="";changePinNew="";changePinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-change-old');if(e)e.focus()},100)}
 function closeChangePin(){showChangePin=false;changePinStep=1;changePinOld="";changePinNew="";changePinErr="";render()}
-function checkOldPin(v){changePinOld=v;if(v.length===4){if(v===getCurrentPin()){changePinStep=2;changePinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-change-new');if(e)e.focus()},100)}else{changePinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-change-old');if(e){e.value='';changePinOld='';e.focus();render()}},400)}}else{render()}}
-function setNewPin(v){changePinNew=v;if(v.length===4){if(v==="0000"||v==="1234"){changePinErr="Scegli un PIN pi\u00F9 sicuro";render();setTimeout(()=>{const e=document.getElementById('pin-change-new');if(e){e.value='';changePinNew='';e.focus();render()}},600);return}try{localStorage.setItem(LS("pincode"),v);changePinStep=3;changePinErr="";render()}catch(e){changePinErr="Errore salvataggio";render()}}else{render()}}
+function checkOldPin(v){
+changePinOld=v;
+// Aggiorno solo i dots via DOM, senza render()
+const dots=document.querySelectorAll('.pin-modal .pin-dot');
+dots.forEach((d,i)=>{if(v.length>i)d.classList.add('filled');else d.classList.remove('filled')});
+if(v.length===4){
+if(v===getCurrentPin()){
+changePinStep=2;changePinErr="";
+render(); // step cambia, ora sì
+setTimeout(()=>{const e=document.getElementById('pin-change-new');if(e)e.focus()},50);
+}else{
+// PIN errato: mostro errore senza render completo per non chiudere la tastiera
+const errEl=document.querySelector('.pin-modal-error');
+if(errEl){
+errEl.textContent="PIN errato";
+errEl.style.animation="none";void errEl.offsetWidth;errEl.style.animation="shakeErr 400ms";
+}else{
+// se non esiste, forzo un render una tantum
+changePinErr="PIN errato";render();
+}
+setTimeout(()=>{
+const e=document.getElementById('pin-change-old');
+if(e){e.value='';changePinOld='';e.focus();
+dots.forEach(d=>d.classList.remove('filled'));
+}
+},500);
+}
+}
+// Se v.length < 4, NON chiamare render(): la tastiera resta aperta
+}
+function setNewPin(v){
+changePinNew=v;
+const dots=document.querySelectorAll('.pin-modal .pin-dot');
+dots.forEach((d,i)=>{if(v.length>i)d.classList.add('filled');else d.classList.remove('filled')});
+if(v.length===4){
+if(v==="0000"||v==="1234"){
+const errEl=document.querySelector('.pin-modal-error');
+if(errEl){
+errEl.textContent="Scegli un PIN pi\u00F9 sicuro";
+errEl.style.animation="none";void errEl.offsetWidth;errEl.style.animation="shakeErr 400ms";
+}else{
+changePinErr="Scegli un PIN pi\u00F9 sicuro";render();
+}
+setTimeout(()=>{
+const e=document.getElementById('pin-change-new');
+if(e){e.value='';changePinNew='';e.focus();
+dots.forEach(d=>d.classList.remove('filled'));
+}
+},600);
+return;
+}
+try{
+localStorage.setItem(LS("pincode"),v);
+changePinStep=3;changePinErr="";render();
+}catch(e){
+changePinErr="Errore salvataggio";render();
+}
+}
+// v.length < 4: no render, tastiera resta aperta
+}
 function logout(){isAdmin=false;showLogin=false;stopGPS();saveAdm();tab="map";render()}
 function setExpCat(c){expCat=c;render()}
 function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}
