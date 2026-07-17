@@ -2290,11 +2290,370 @@ img { max-width: 100%; height: auto; display: block; }
 /* Nasconde vecchie classi pin overlay */
 .pin-overlay, .pin-box, .pin-input, .pin-error, .pin-cancel { display: none !important; }
 
+
+
+/* =========================================================
+   V21 COMPLETIONS
+   ========================================================= */
+
+/* Foto tappa nel header giorno */
+.tl-day-photo {
+  width: 100%;
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  position: relative;
+  background-color: var(--surface-alt);
+}
+.tl-day-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(31,29,26,0) 40%, rgba(31,29,26,0.15) 100%);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+@media (min-width: 900px) {
+  .tl-day-photo { height: 180px; }
+}
+
+/* Widget "In viaggio adesso" */
+.live-widget {
+  background: linear-gradient(135deg, var(--text-1) 0%, #2A2620 100%);
+  color: var(--text-inverse);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.live-widget::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.15;
+  pointer-events: none;
+}
+.live-widget-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.live-widget-tag::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulseLive 1.5s infinite;
+}
+@keyframes pulseLive {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+.live-widget-title {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 4px;
+}
+.live-widget-main {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+  font-variation-settings: 'opsz' 48;
+  position: relative;
+}
+.live-widget-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.4;
+  margin-top: 8px;
+  position: relative;
+}
+
+/* Activity feed */
+.activity-feed {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 4px;
+  margin-bottom: 20px;
+}
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 16px;
+  position: relative;
+}
+.activity-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 22px;
+  bottom: -10px;
+  width: 1px;
+  background: var(--border);
+}
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 6px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 3px var(--surface);
+}
+.activity-body { flex: 1; min-width: 0; }
+.activity-msg {
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.4;
+}
+.activity-time {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+/* Settlement card */
+.settlement-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.settlement-status {
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.settlement-status.ok {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+}
+.settlement-status.active {
+  background: var(--warning-soft);
+  padding: 20px 16px;
+}
+.settlement-msg {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.settlement-amt {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--warning);
+  letter-spacing: -0.8px;
+  line-height: 1;
+  font-variation-settings: 'opsz' 96;
+}
+.settlement-detail {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+.settlement-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 6px 0;
+  color: var(--text-2);
+}
+.settlement-row.total {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+/* Nascondo eventuale widget playlist rimasto */
+.playlist-widget, [class*="playlist"] { display: none; }
+
+
+
+/* =========================================================
+   V21 PARTE 2 - Recensioni, Documenti, Meteo hourly
+   ========================================================= */
+
+/* Recensioni tappe */
+.stop-review {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.stop-review.has {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.stop-review-stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+.stop-review .star {
+  font-size: 14px;
+  color: var(--border-strong);
+}
+.stop-review .star.on {
+  color: var(--warning);
+}
+.stop-review-note {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text-1);
+  line-height: 1.4;
+  font-variation-settings: 'opsz' 14;
+}
+.stop-review-edit {
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-size: 11px;
+  padding: 4px 0 0 0;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.stop-review-add {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+  color: var(--text-2);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: all 120ms;
+}
+.stop-review-add:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+/* Documenti */
+.doc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 120ms;
+}
+.doc-card:hover { border-color: var(--border-strong); }
+.doc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--surface-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.doc-body { flex: 1; min-width: 0; }
+.doc-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.doc-meta {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+/* Meteo hourly strip */
+.day-weather-strip {
+  background: var(--surface-alt);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.day-weather-strip::-webkit-scrollbar { display: none; }
+.day-weather-lbl {
+  font-size: 10px;
+  color: var(--text-2);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding-right: 8px;
+  border-right: 1px solid var(--border);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.day-weather-hour {
+  text-align: center;
+  min-width: 48px;
+  flex-shrink: 0;
+}
+.day-weather-h {
+  font-size: 10px;
+  color: var(--text-2);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.day-weather-t {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1;
+}
+.day-weather-i {
+  font-size: 14px;
+  margin-top: 2px;
+}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
@@ -2486,10 +2845,307 @@ let isAdmin=false,showLogin=false,pinErr="",tab="map",adminSub="expenses",openDa
 let checks={},expenses=[],hotels=[],notes=[],diary=[],photos=[],prechecks={},contacts=[],parkings=[],packing=[],medicines=[],foods=[],kmLog=[];
 let expCat="food",expDay=0,expFilter="all",galFilter="all",lightboxIdx=-1,uploading=false;
 let expPaidBy="cassa",contactCat="attivita",savingParking=false;
-let packCat="abbigliamento",foodCat="da_provare",foodRating=0,kmMode="idle",sosOpen=false,darkMode=false,playlistId="";
+let packCat="abbigliamento",foodCat="da_provare",foodRating=0,kmMode="idle",sosOpen=false,darkMode=false;
 let foodPhotoData="",foodPhotoUploading=false;
 let editingExp=-1,editingHotel=-1,editingCt=-1,editingPk=-1,editingKm=-1,editingFd=-1,editingPack=-1,editingMed=-1,editingNote=-1;
 let showChangePin=false,changePinStep=1,changePinOld="",changePinNew="",changePinErr="";
+// Activity log - traccia le azioni recenti
+let activityLog = [];
+try { activityLog = JSON.parse(localStorage.getItem(LS("activity")) || "[]"); } catch(e) { activityLog = []; }
+
+function logActivity(msg) {
+  activityLog.unshift({ msg: msg, ts: Date.now() });
+  if (activityLog.length > 50) activityLog = activityLog.slice(0, 50);
+  try { localStorage.setItem(LS("activity"), JSON.stringify(activityLog)); } catch(e) {}
+}
+
+
+// Documenti
+let documents = [];
+try { const d = localStorage.getItem(LS("docs")); if (d) documents = JSON.parse(d); } catch(e) { documents = []; }
+function saveDocs() { save("docs", documents); }
+let docUploading = false;
+
+// Notifiche
+let notifPermission = false;
+try { notifPermission = (typeof Notification !== "undefined" && Notification.permission === "granted"); } catch(e) {}
+let notifChecked = false;
+
+
+// Recensioni tappe
+let stopReviews = {};
+try { const r = localStorage.getItem(LS("reviews")); if (r) stopReviews = JSON.parse(r); } catch(e) { stopReviews = {}; }
+function saveReviews() { save("reviews", stopReviews); }
+
+function addReview(di, si, rating, note) {
+  const key = di + "-" + si;
+  stopReviews[key] = { rating: rating, note: note || "", ts: Date.now() };
+  saveReviews();
+  logActivity("Recensione \""+ DAYS[di].stops[si].name +"\" (" + rating + "\u2605)");
+}
+
+
+
+
+
+
+function parseWeatherHourly(data){
+if(!data||!data.hourly||!data.hourly.time)return null;
+const byDay={};
+const wCodeMap={0:"\u2600\uFE0F",1:"\u{1F324}\uFE0F",2:"\u26C5",3:"\u2601\uFE0F",45:"\u{1F32B}\uFE0F",48:"\u{1F32B}\uFE0F",51:"\u{1F327}\uFE0F",53:"\u{1F327}\uFE0F",55:"\u{1F327}\uFE0F",61:"\u{1F326}\uFE0F",63:"\u{1F327}\uFE0F",65:"\u{1F327}\uFE0F",71:"\u{1F328}\uFE0F",73:"\u{1F328}\uFE0F",75:"\u{1F328}\uFE0F",95:"\u26C8\uFE0F"};
+for(let i=0;i<data.hourly.time.length;i++){
+const t=new Date(data.hourly.time[i]);
+const hour=t.getHours();
+// Solo ore chiave: 9, 12, 15, 18
+if(![9,12,15,18].includes(hour))continue;
+const dateKey=t.toISOString().split("T")[0];
+if(!byDay[dateKey])byDay[dateKey]=[];
+byDay[dateKey].push({
+hour:hour,
+temp:Math.round(data.hourly.temperature_2m[i]),
+icon:wCodeMap[data.hourly.weather_code[i]]||"\u{1F324}\uFE0F"
+});
+}
+// Mappa a index giorno viaggio
+const result={};
+DAYS.forEach((d,di)=>{
+try{
+const dayStart=new Date(TRIP_START);dayStart.setDate(dayStart.getDate()+di);
+const key=dayStart.toISOString().split("T")[0];
+if(byDay[key])result[di]=byDay[key];
+}catch(e){}
+});
+return result;
+}
+
+function exportToPDF(){
+if(typeof jspdf==="undefined"&&typeof window.jspdf==="undefined"){alert("Libreria PDF non caricata. Ricarica la pagina.");return}
+const jsPDFCtor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+if(!jsPDFCtor){alert("PDF non disponibile");return}
+try{
+const doc=new jsPDFCtor({unit:"pt",format:"a4"});
+const pageW=doc.internal.pageSize.getWidth();
+const pageH=doc.internal.pageSize.getHeight();
+const margin=50;
+let y=margin;
+// Titolo copertina
+doc.setFont("helvetica","bold");
+doc.setFontSize(32);
+doc.setTextColor(31,29,26);
+doc.text("Abruzzo & Umbria",margin,y+20);
+y+=50;
+doc.setFont("helvetica","normal");
+doc.setFontSize(12);
+doc.setTextColor(110,106,99);
+doc.text("Diario di viaggio \u2014 Daniele & Angela",margin,y);
+y+=18;
+doc.text("14 \u2014 21 agosto 2026",margin,y);
+y+=30;
+// Riga separatrice
+doc.setDrawColor(232,227,214);
+doc.line(margin,y,pageW-margin,y);
+y+=30;
+// Statistiche
+doc.setFont("helvetica","bold");
+doc.setFontSize(16);
+doc.setTextColor(31,29,26);
+doc.text("Numeri del viaggio",margin,y);
+y+=20;
+doc.setFont("helvetica","normal");
+doc.setFontSize(11);
+const totExp=expenses.reduce((a,e)=>a+e.amount,0);
+const doneStops=Object.values(checks).filter(c=>c).length;
+const totStops=DAYS.reduce((a,d)=>a+d.stops.length,0);
+const stats=[
+"Spesa totale: \u20AC "+totExp.toFixed(2),
+"Tappe fatte: "+doneStops+" su "+totStops,
+"Foto scattate: "+photos.length,
+"Note diario: "+diary.length,
+"Piatti registrati: "+foods.length
+];
+stats.forEach(s=>{doc.text(s,margin,y);y+=16});
+y+=20;
+// Diario per giorno
+if(diary.length>0){
+doc.setFont("helvetica","bold");
+doc.setFontSize(16);
+doc.text("Diario",margin,y);
+y+=20;
+diary.slice().sort((a,b)=>a.ts-b.ts).forEach(e=>{
+if(y>pageH-100){doc.addPage();y=margin}
+const dt=new Date(e.ts);
+doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(122,139,111);
+doc.text((e.day?"G"+e.day+" \u00B7 ":"")+dt.toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long"}),margin,y);
+y+=15;
+doc.setFont("helvetica","normal");doc.setFontSize(11);doc.setTextColor(31,29,26);
+const lines=doc.splitTextToSize(e.text,pageW-2*margin);
+lines.forEach(l=>{if(y>pageH-50){doc.addPage();y=margin}doc.text(l,margin,y);y+=14});
+y+=12;
+});
+}
+// Recensioni tappe
+const reviewKeys=Object.keys(stopReviews);
+if(reviewKeys.length>0){
+if(y>pageH-150){doc.addPage();y=margin}
+doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(31,29,26);
+doc.text("Le nostre recensioni",margin,y);y+=20;
+reviewKeys.forEach(k=>{
+const [di,si]=k.split("-").map(Number);
+if(!DAYS[di]||!DAYS[di].stops[si])return;
+const stop=DAYS[di].stops[si];
+const r=stopReviews[k];
+if(y>pageH-80){doc.addPage();y=margin}
+doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(31,29,26);
+doc.text(stop.name+" \u2014 "+r.rating+"/5",margin,y);
+y+=14;
+if(r.note){
+doc.setFont("helvetica","italic");doc.setFontSize(10);doc.setTextColor(110,106,99);
+const nlines=doc.splitTextToSize("\""+r.note+"\"",pageW-2*margin);
+nlines.forEach(l=>{doc.text(l,margin+10,y);y+=13});
+}
+y+=8;
+});
+}
+// Salva
+const filename="Viaggio_DA_diario_"+new Date().toISOString().split("T")[0]+".pdf";
+doc.save(filename);
+logActivity("Diario PDF esportato");
+}catch(e){
+console.error("PDF fail",e);
+alert("Errore durante l\u0027esportazione PDF: "+e.message);
+}
+}
+
+// Notifiche browser
+async function requestNotifPermission(){
+if(typeof Notification==="undefined")return false;
+if(Notification.permission==="granted"){notifPermission=true;return true}
+if(Notification.permission==="denied")return false;
+try{
+const perm=await Notification.requestPermission();
+notifPermission=(perm==="granted");
+if(notifPermission)logActivity("Notifiche attivate");
+return notifPermission;
+}catch(e){return false}
+}
+
+function checkDeadlinesForNotifs(){
+if(!notifPermission||typeof Notification==="undefined")return;
+if(notifChecked)return;
+notifChecked=true;
+const now=Date.now();
+const alerted=JSON.parse(localStorage.getItem(LS("notif_alerted"))||"[]");
+PRECHECKS.forEach((p,i)=>{
+if(!p.deadline||prechecks[i])return;
+const days=Math.ceil((new Date(p.deadline)-now)/86400000);
+if(days<0||days>3)return;
+const key=p.text+"|"+p.deadline;
+if(alerted.includes(key))return;
+try{
+new Notification("Viaggio D&A \u2014 Scadenza vicina",{
+body:p.text+" \u00B7 "+(days===0?"OGGI":"Fra "+days+" giorni"),
+icon:"data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FAF8F3'/><text x='50' y='60' font-size='40' text-anchor='middle'>\u{1F5FA}\uFE0F</text></svg>",
+tag:key
+});
+alerted.push(key);
+localStorage.setItem(LS("notif_alerted"),JSON.stringify(alerted));
+}catch(e){console.warn("Notif fail",e)}
+});
+}
+
+// Setup periodic check
+if(typeof window!=="undefined"){
+setTimeout(()=>{if(notifPermission)checkDeadlinesForNotifs()},2000);
+setInterval(()=>{notifChecked=false;checkDeadlinesForNotifs()},3600000); // ogni ora
+}
+
+async function uploadDoc(e){
+const f=e.target.files[0];
+if(!f)return;
+if(f.size>5*1024*1024){alert("File troppo grande (max 5 MB)");return}
+const titleEl=document.getElementById('doc-title');
+const title=titleEl?titleEl.value.trim():"";
+if(!title){alert("Inserisci un titolo per il documento");return}
+docUploading=true;render();
+try{
+if(f.type.startsWith('image/')){
+// Immagine: comprimo e carico su Imgur
+const compressed=await compressImage(f,1600,0.85);
+const fd=new FormData();
+fd.append('image',compressed.blob);
+const r=await fetch('https://api.imgur.com/3/image',{method:'POST',headers:{'Authorization':'Client-ID '+IMGUR_CID},body:fd});
+const j=await r.json();
+if(j&&j.data&&j.data.link){
+documents.push({title:title,url:j.data.link,type:'image/jpeg',ts:Date.now()});
+saveDocs();
+logActivity("Documento \""+title+"\" caricato");
+}else{
+// Fallback base64
+documents.push({title:title,url:compressed.dataUrl,type:'image/jpeg',ts:Date.now()});
+saveDocs();
+logActivity("Documento \""+title+"\" salvato locale");
+}
+}else{
+// PDF o altro: base64 in localStorage
+const reader=new FileReader();
+await new Promise((res,rej)=>{
+reader.onload=ev=>{
+documents.push({title:title,url:ev.target.result,type:f.type||'application/octet-stream',ts:Date.now()});
+saveDocs();
+logActivity("Documento \""+title+"\" salvato");
+res();
+};
+reader.onerror=rej;
+reader.readAsDataURL(f);
+});
+}
+docUploading=false;render();
+}catch(err){
+console.error("Upload doc fail",err);
+alert("Errore durante il caricamento");
+docUploading=false;render();
+}
+}
+
+function delDoc(i){
+if(!confirm("Eliminare questo documento?"))return;
+documents.splice(i,1);
+saveDocs();render();
+}
+
+function editReview(di, si) {
+  const key = di + "-" + si;
+  const cur = stopReviews[key];
+  const curRating = cur ? cur.rating : 0;
+  const curNote = cur ? cur.note : "";
+  const rStr = prompt("Rating da 1 a 5:", curRating || "");
+  if (rStr === null) return;
+  const r = parseInt(rStr, 10);
+  if (isNaN(r) || r < 1 || r > 5) { alert("Inserisci un numero da 1 a 5"); return; }
+  const note = prompt("Nota (opzionale):", curNote);
+  if (note === null) return;
+  addReview(di, si, r, note.trim());
+  render();
+}
+
+function delReview(di, si) {
+  const key = di + "-" + si;
+  delete stopReviews[key];
+  saveReviews();
+}
+
+// Weather hourly
+let weatherHourly = null;
+
+function formatActivityTime(ts) {
+  const diff = (Date.now() - ts) / 1000;
+  if (diff < 60) return "adesso";
+  if (diff < 3600) return Math.floor(diff/60) + " min fa";
+  if (diff < 86400) return Math.floor(diff/3600) + "h fa";
+  if (diff < 604800) return Math.floor(diff/86400) + "g fa";
+  return new Date(ts).toLocaleDateString("it-IT", {day:"numeric", month:"short"});
+}
+
 let privateSection="home";
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
 let livePos=null,lastUpdate=null,gpsWatchId=null,isTracking=false;
@@ -2497,7 +3153,7 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v20-polish";
+const DAYS_VERSION="v21-complete";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -2530,7 +3186,7 @@ try{medicines=JSON.parse(localStorage.getItem(LS("med")))||[]}catch(e){medicines
 try{foods=JSON.parse(localStorage.getItem(LS("food")))||[]}catch(e){foods=[]}
 try{kmLog=JSON.parse(localStorage.getItem(LS("km")))||[]}catch(e){kmLog=[]}
 try{darkMode=localStorage.getItem(LS("thm"))==="1"}catch(e){darkMode=false}
-try{playlistId=localStorage.getItem(LS("pll"))||""}catch(e){playlistId=""}
+
 try{const pcl=localStorage.getItem(LS("prclist"));if(pcl){PRECHECKS=JSON.parse(pcl)}}catch(e){}
 try{if(localStorage.getItem(LS("adm"))==="1")isAdmin=true}catch(e){}
 // Se appena fatto migration a nuova versione, popolo default se vuoti
@@ -2558,7 +3214,7 @@ function saveMed(){save("med",medicines)}
 function saveFood(){save("food",foods);if(fbOk)db.child('foods').set(foods)}
 function saveKm(){save("km",kmLog);if(fbOk)db.child('kmlog').set(kmLog)}
 function saveTheme(){localStorage.setItem(LS("thm"),darkMode?"1":"0")}
-function savePlaylist(){localStorage.setItem(LS("pll"),playlistId)}
+
 function saveAdm(){try{localStorage.setItem(LS("adm"),isAdmin?"1":"0")}catch(e){}}
 
 // FIREBASE
@@ -2626,6 +3282,23 @@ function tripFinished(){return new Date()>TRIP_END}
 function isDesktop(){return window.innerWidth>=768}
 
 // RENDER
+
+// Foto giorno da URL pubbliche (Wikimedia Commons)
+const DAY_PHOTOS = {
+  1: "https://images.unsplash.com/photo-1583147247474-4f28f8226fdc?w=1200&auto=format&fit=crop&q=75",  // Abruzzo mountains
+  2: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Scanno_-_panoramio.jpg/1280px-Scanno_-_panoramio.jpg",  // Scanno
+  3: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Trabocco_Turchino_2.jpg/1280px-Trabocco_Turchino_2.jpg",  // Trabocchi
+  4: "https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=1200&auto=format&fit=crop&q=75",  // Italian road trip
+  5: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Rasiglia_02.jpg/1280px-Rasiglia_02.jpg",  // Rasiglia
+  6: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Cascata_delle_Marmore_-_2019.jpg/1280px-Cascata_delle_Marmore_-_2019.jpg",  // Marmore
+  7: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Montefalco_-_Panorama.jpg/1280px-Montefalco_-_Panorama.jpg",  // Montefalco
+  8: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Orvieto_-_view.jpg/1280px-Orvieto_-_view.jpg"  // Orvieto
+};
+
+function getDayPhoto(dayNum) {
+  return DAY_PHOTOS[dayNum] || null;
+}
+
 function getTripPhase(){
 const now=new Date();
 const start=TRIP_START;
@@ -2639,9 +3312,29 @@ return{phase:"pre-trip",tag:"Fra "+diffToStart+" giorni",title:"Abruzzo & Umbria
 if(now>=start&&now<=end){
 const dayIdx=Math.floor((now-start)/86400000);
 const currentDay=DAYS[Math.min(dayIdx,DAYS.length-1)];
-return{phase:"in-trip",tag:"Giorno "+currentDay.day+" \u00B7 "+currentDay.region,title:currentDay.title,sub:currentDay.date+" \u00B7 "+now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})};
+return{phase:"in-trip",tag:"Giorno "+currentDay.day+" \u00B7 "+currentDay.region,title:currentDay.title,sub:currentDay.date+" \u00B7 "+now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}),dayIdx:dayIdx,currentDay:currentDay};
 }
 return{phase:"post-trip",tag:"Il viaggio \u00E8 finito",title:"Otto giorni indimenticabili",sub:"14 \u2014 21 agosto 2026"};
+}
+
+// Trova il prossimo evento non completato per il widget "in viaggio adesso"
+function getNextEvent(){
+const now=new Date();
+if(now<TRIP_START||now>new Date(TRIP_END.getFullYear(),TRIP_END.getMonth(),TRIP_END.getDate()+1))return null;
+const dayIdx=Math.floor((now-TRIP_START)/86400000);
+if(dayIdx>=DAYS.length)return null;
+const currentDay=DAYS[dayIdx];
+// Cerca la prossima tappa non spuntata
+for(let si=0;si<currentDay.stops.length;si++){
+if(!checks[dayIdx+"-"+si]){
+return {type:"stop",name:currentDay.stops[si].name,day:currentDay.day,desc:currentDay.stops[si].desc};
+}
+}
+// Se tutte le tappe fatte, mostra hotel della sera
+if(currentDay.sleep){
+return {type:"sleep",name:currentDay.sleep,day:currentDay.day};
+}
+return null;
 }
 
 function render(){
@@ -2765,12 +3458,6 @@ h+='</div>';
 });
 h+='</div></div>';
 }
-// Playlist widget
-if(playlistId){
-h+='<div class="playlist-widget"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px">\u{1F3B5} Playlist viaggio</div><button style="background:none;border:none;color:#B0A48E;cursor:pointer;font-size:11px" onclick="clearPlaylist()">Rimuovi</button></div><iframe src="https://open.spotify.com/embed/playlist/'+playlistId+'?utm_source=generator&theme=0" height="152" allow="encrypted-media"></iframe></div>';
-}else if(isAdmin){
-h+='<div class="playlist-widget" style="text-align:center"><div style="font-size:11px;color:#8B7355;margin-bottom:8px">\u{1F3B5} Aggiungi una playlist Spotify per il viaggio</div><button class="btn-secondary" style="font-size:12px" onclick="setPlaylist()">+ Imposta playlist</button></div>';
-}
 }
 h+='</div>'}
 
@@ -2807,7 +3494,9 @@ if(nowT>=dayStart.getTime()&&nowT<dayEnd.getTime())dotState="current";
 h+='<div class="tl-day '+dotState+'">';
 h+='<div class="tl-dot">'+day.day+'</div>';
 h+='<div class="tl-content">';
+const dayPhoto=getDayPhoto(day.day);
 h+='<div class="tl-day-head" onclick="togDay('+di+')">';
+if(dayPhoto)h+='<div class="tl-day-photo" style="background-image:url(\''+dayPhoto+'\')"></div>';
 h+='<div class="tl-day-tag">'+day.date+'</div>';
 h+='<div class="tl-day-title">'+day.title+'</div>';
 h+='<div class="tl-day-meta">';
@@ -2823,6 +3512,16 @@ h+='<div class="tl-arrow '+(isO?'open':'')+'">\u25BE</div>';
 h+='</div>';
 if(isO){
 h+='<div class="tl-day-body">';
+// Meteo del giorno se disponibile
+if(typeof weatherHourly!=="undefined"&&weatherHourly&&weatherHourly[di]){
+const wd=weatherHourly[di];
+h+='<div class="day-weather-strip">';
+h+='<div class="day-weather-lbl">Meteo</div>';
+wd.slice(0,4).forEach(w=>{
+h+='<div class="day-weather-hour"><div class="day-weather-h">'+w.hour+':00</div><div class="day-weather-t">'+w.temp+'\u00B0</div><div class="day-weather-i">'+w.icon+'</div></div>';
+});
+h+='</div>';
+}
 h+='<div class="tl-stops">';
 day.stops.forEach((s,si)=>{
 const ck=!!checks[di+"-"+si];
@@ -2839,6 +3538,22 @@ else h+='<div class="tl-stop-desc-full">'+s.desc+'</div>';
 if(ex&&s.tip){
 if(s.warn)h+='<div class="tl-stop-tip warn">'+s.tip+'</div>';
 else h+='<div class="tl-stop-tip">'+s.tip+'</div>';
+}
+}
+// Sezione recensione: solo se tappa completata
+if(ck){
+const revKey=di+"-"+si;
+const rev=stopReviews[revKey];
+if(rev){
+h+='<div class="stop-review has">';
+h+='<div class="stop-review-stars">';
+for(let ri=0;ri<5;ri++)h+='<span class="'+(ri<rev.rating?"star on":"star")+'">\u2605</span>';
+h+='</div>';
+if(rev.note)h+='<div class="stop-review-note">"'+rev.note+'"</div>';
+if(isAdmin)h+='<button class="stop-review-edit" onclick="event.stopPropagation();editReview('+di+','+si+')">Modifica</button>';
+h+='</div>';
+}else if(isAdmin){
+h+='<button class="stop-review-add" onclick="event.stopPropagation();editReview('+di+','+si+')">+ Recensisci</button>';
 }
 }
 h+='</div>';
@@ -2990,7 +3705,7 @@ h+='</div>'}
 if(tab==="private"&&isAdmin){
 h+='<div class="content private-content">';
 // Nuovo raggruppamento per macro-sezioni
-const macroGroups={money:['expenses','budget'],travel:['stops','hotels','contacts','parking','kmtrack'],prep:['packing','precheck','medicine'],memories:['timeline','food','notes']};
+const macroGroups={money:['expenses','budget'],travel:['stops','hotels','contacts','parking','kmtrack'],prep:['packing','precheck','medicine','documents'],memories:['timeline','food','notes']};
 const macroLabels={money:{name:'Soldi',icon:'\u{1F4B0}'},travel:{name:'In viaggio',icon:'\u{1F4CD}'},prep:{name:'Prima di partire',icon:'\u{1F392}'},memories:{name:'Ricordi',icon:'\u{1F4D6}'}};
 // Determino la macro-sezione dell'adminSub corrente
 let currentMacro=null;
@@ -3023,6 +3738,24 @@ h+='<div class="dash-stat"><div class="dash-stat-num">'+donePack+'/'+totPack+'</
 h+='<div class="dash-stat"><div class="dash-stat-num">'+hotelsCount+'</div><div class="dash-stat-lbl">Hotel</div></div>';
 h+='<div class="dash-stat"><div class="dash-stat-num">'+doneStops+'/'+totalStops+'</div><div class="dash-stat-lbl">Tappe</div></div>';
 h+='</div>';
+// Widget "In viaggio adesso"
+const nextEv=getNextEvent();
+if(nextEv){
+h+='<div class="live-widget"><div class="live-widget-tag">Adesso \u00B7 Giorno '+nextEv.day+'</div>';
+if(nextEv.type==="stop"){h+='<div class="live-widget-title">Prossima tappa</div><div class="live-widget-main">'+nextEv.name+'</div>';
+if(nextEv.desc)h+='<div class="live-widget-desc">'+nextEv.desc.slice(0,120)+(nextEv.desc.length>120?'\u2026':'')+'</div>';
+}else if(nextEv.type==="sleep"){h+='<div class="live-widget-title">Stanotte dormite qui</div><div class="live-widget-main">'+nextEv.name+'</div>';}
+h+='</div>';
+}
+// Activity feed
+if(activityLog.length>0){
+h+='<div class="dash-section-title" style="margin-top:24px">Attivit\u00E0 recenti</div>';
+h+='<div class="activity-feed">';
+activityLog.slice(0,5).forEach(a=>{
+h+='<div class="activity-item"><div class="activity-dot"></div><div class="activity-body"><div class="activity-msg">'+a.msg+'</div><div class="activity-time">'+formatActivityTime(a.ts)+'</div></div></div>';
+});
+h+='</div>';
+}
 // Macro-cards 2x2
 h+='<div class="dash-section-title">\u{1F4C2} Aree</div>';
 h+='<div class="macro-grid">';
@@ -3043,8 +3776,14 @@ h+='</div>';
 // Export button
 h+='<div class="dash-section-title">Backup e sicurezza</div>';
 h+='<button class="export-mega" onclick="exportAllToXlsx()">Esporta tutto in Excel</button>';
+h+='<button class="export-mega" style="margin-top:8px;background:var(--accent-strong);color:var(--text-inverse)" onclick="exportToPDF()">Esporta diario PDF</button>';
+if(!notifPermission){
+h+='<button class="export-mega" style="margin-top:8px;background:var(--surface);color:var(--text-1);border:1px solid var(--border-strong)" onclick="requestNotifPermission().then(()=>render())">Attiva notifiche scadenze</button>';
+}else{
+h+='<div style="text-align:center;font-size:11px;color:var(--accent-strong);font-weight:600;margin-top:8px">\u2713 Notifiche attive</div>';
+}
 h+='<button class="export-mega" style="margin-top:8px;background:var(--surface);color:var(--text-1);border:1px solid var(--border-strong)" onclick="openChangePin()">Cambia PIN</button>';
-h+='<div style="font-size:11px;color:var(--text-2);text-align:center;margin-top:12px">File .xlsx con tutte le info \u00B7 Cambia il PIN quando vuoi</div>';
+h+='<div style="font-size:11px;color:var(--text-2);text-align:center;margin-top:12px">Backup, notifiche, sicurezza</div>';
 h+='</div>';
 // Nasconde il resto (sub-tab rendering)
 h+='<div style="display:none">';
@@ -3053,7 +3792,7 @@ h+='<div style="display:none">';
 h+='<div class="sec-nav"><button class="sec-back" onclick="privateSection=\'home\';render()">\u2190 Torna</button><div class="sec-title-txt">'+macroLabels[privateSection].icon+' '+macroLabels[privateSection].name+'</div><div style="width:52px"></div></div>';
 h+='<div class="sub-pills">';
 macroGroups[privateSection].forEach(s=>{
-const labels={expenses:'Spese',budget:'Budget',stops:'Tappe',hotels:'Hotel',contacts:'Contatti',parking:'Parcheggi',kmtrack:'Km',food:'Food',packing:'Valigia',medicine:'Farmaci',timeline:'Timeline',notes:'Note',precheck:'Pre-partenza'};
+const labels={expenses:'Spese',budget:'Budget',stops:'Tappe',hotels:'Hotel',contacts:'Contatti',parking:'Parcheggi',kmtrack:'Km',food:'Food',packing:'Valigia',medicine:'Farmaci',timeline:'Timeline',notes:'Note',precheck:'Pre-partenza',documents:'Documenti'};
 h+='<button class="sub-pill '+(adminSub===s?'active':'')+'" onclick="adminSub=\''+s+'\';render()">'+labels[s]+'</button>';
 });
 h+='</div>';
@@ -3139,12 +3878,6 @@ h+='</div>';
 h+='<button style="width:32px;height:32px;border-radius:8px;border:.5px solid #E8E2D4;background:#fff;cursor:pointer;font-size:13px;flex-shrink:0" onclick="editStop('+di+','+si+')" title="Modifica">\u270F\uFE0F</button>';
 h+='<button class="exp-item-del" onclick="delStop('+di+','+si+')" title="Elimina">\u2715</button>';
 h+='</div></div>';
-}
-// Playlist widget
-if(playlistId){
-h+='<div class="playlist-widget"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:10px;font-weight:700;color:#2D6A4F;text-transform:uppercase;letter-spacing:1.5px">\u{1F3B5} Playlist viaggio</div><button style="background:none;border:none;color:#B0A48E;cursor:pointer;font-size:11px" onclick="clearPlaylist()">Rimuovi</button></div><iframe src="https://open.spotify.com/embed/playlist/'+playlistId+'?utm_source=generator&theme=0" height="152" allow="encrypted-media"></iframe></div>';
-}else if(isAdmin){
-h+='<div class="playlist-widget" style="text-align:center"><div style="font-size:11px;color:#8B7355;margin-bottom:8px">\u{1F3B5} Aggiungi una playlist Spotify per il viaggio</div><button class="btn-secondary" style="font-size:12px" onclick="setPlaylist()">+ Imposta playlist</button></div>';
 }
 });
 const isAdding=editingStop==='new-'+di;
@@ -3276,7 +4009,28 @@ h+='<div class="budget-bar"><div class="budget-bar-fill '+status+'" style="width
 if(perc>100)h+='<div style="font-size:10px;color:#ff3b30;font-weight:600;margin-top:4px">\u26A0\uFE0F Oltre budget di \u20AC'+(r-s).toFixed(0)+'</div>';
 h+='</div>';
 });
-h+='<div style="background:#fff;border-radius:14px;padding:14px;margin-top:14px;box-shadow:0 1px 3px rgba(0,0,0,.04);font-size:12px;color:#86868b;line-height:1.5"><b style="color:#1d1d1f">Nota:</b> le stime si aggiornano automaticamente al variare delle spese registrate. Le prenotazioni fatte (Hotel Sulmona + Spello \u20AC1.038) sono gia\u0300 incluse.</div>';
+// Settlement
+const s=calcSettlement();
+h+='<div class="dash-section-title" style="margin-top:32px;margin-bottom:12px">Chi deve a chi</div>';
+h+='<div class="settlement-card">';
+if(s.owed<0.5){
+h+='<div class="settlement-status ok">\u2713 Conti in pari</div>';
+h+='<div class="settlement-desc">Non ci sono saldi in sospeso</div>';
+}else{
+h+='<div class="settlement-status active">';
+h+='<div class="settlement-msg">'+s.msg+'</div>';
+h+='<div class="settlement-amt">\u20AC '+s.owed.toFixed(2)+'</div>';
+h+='</div>';
+h+='<button class="btn-primary" style="margin-top:14px" onclick="markSettled()">Ho saldato</button>';
+}
+h+='<div class="settlement-detail">';
+h+='<div class="settlement-row"><span>Daniele ha pagato</span><span>\u20AC '+s.paidD.toFixed(2)+'</span></div>';
+h+='<div class="settlement-row"><span>Angela ha pagato</span><span>\u20AC '+s.paidA.toFixed(2)+'</span></div>';
+h+='<div class="settlement-row"><span>Cassa comune</span><span>\u20AC '+s.paidC.toFixed(2)+'</span></div>';
+h+='<div class="settlement-row total"><span>Ciascuno dovrebbe</span><span>\u20AC '+s.half.toFixed(2)+'</span></div>';
+h+='</div>';
+h+='</div>';
+h+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:14px;font-size:12px;color:var(--text-2);line-height:1.5"><b style="color:var(--text-1)">Nota:</b> le stime si aggiornano automaticamente al variare delle spese registrate. Le prenotazioni fatte (Hotel Sulmona + Spello \u20AC1.038) sono gia\u0300 incluse.</div>';
 }
 if(adminSub==='kmtrack'){
 const totKm=kmLog.reduce((a,l)=>a+(l.km||0),0);
@@ -3375,6 +4129,37 @@ h+='<div class="precheck-item" style="border-left:3px solid '+cat.color+'30"><di
 });
 });
 h+='<button class="btn-secondary" style="width:100%;margin-top:14px" onclick="resetPacking()">\u21BA Reset tutti (per prossimo viaggio)</button>';
+}
+
+
+if(adminSub==='documents'){
+h+='<div class="form-box">';
+h+='<div class="form-label">+ Carica documento</div>';
+h+='<div style="font-size:12px;color:var(--text-2);margin-bottom:10px">Prenotazioni, tessere, assicurazioni, biglietti. Max 5 MB per file.</div>';
+if(docUploading){
+h+='<div style="padding:20px;text-align:center;color:var(--text-2)">Caricamento in corso...</div>';
+}else{
+h+='<label class="food-photo-btn" style="cursor:pointer"><input type="file" style="display:none" accept="image/*,.pdf" onchange="uploadDoc(event)">Scegli file (immagine o PDF)</label>';
+h+='<input class="form-input" id="doc-title" placeholder="Titolo (es. Conferma hotel Sulmona)" style="margin-top:10px">';
+}
+h+='</div>';
+if(documents.length===0){
+h+='<div class="empty">Nessun documento caricato</div>';
+}else{
+documents.slice().sort((a,b)=>b.ts-a.ts).forEach((d,i)=>{
+const realI=documents.indexOf(d);
+const isImg=d.type&&d.type.startsWith('image');
+h+='<div class="doc-card">';
+h+='<div class="doc-icon">'+(isImg?'\u{1F5BC}\uFE0F':'\u{1F4C4}')+'</div>';
+h+='<div class="doc-body">';
+h+='<div class="doc-title">'+(d.title||'Documento senza titolo')+'</div>';
+h+='<div class="doc-meta">'+new Date(d.ts).toLocaleDateString('it-IT',{day:'numeric',month:'short'})+' \u00B7 '+(d.type||'file')+'</div>';
+h+='</div>';
+h+='<a href="'+d.url+'" target="_blank" download="'+((d.title||'documento').replace(/[^a-z0-9]/gi,'_'))+'" class="tl-stop-maps">Apri</a>';
+h+='<button class="exp-item-del" onclick="delDoc('+realI+')" style="margin-left:6px">\u2715</button>';
+h+='</div>';
+});
+}
 }
 
 if(adminSub==='medicine'){
@@ -3757,7 +4542,7 @@ Object.assign(f,{name:n,place:p,rating:foodRating,price:pr,day:expDay,note:nt,ph
 f.tags=foodRating?['provato'].concat(foodRating>=4?['top']:[]):['da_provare'];
 editingFd=-1;
 }else{
-foods.push({name:n,place:p,rating:foodRating,price:pr,day:expDay,tags:foodRating?['provato']:['da_provare'],note:nt,photo:photoUrl,ts:Date.now()});
+foods.push({name:n,place:p,rating:foodRating,price:pr,day:expDay,tags:foodRating?['provato']:['da_provare'],note:nt,photo:photoUrl,ts:Date.now()});logActivity("Piatto \""+n+"\" registrato");
 }
 foodPhotoData="";
 saveFood();foodRating=0;expDay=0;render();
@@ -3809,6 +4594,47 @@ reader.readAsDataURL(file);
 });
 }
 function clearFoodPhoto(){foodPhotoData="";render()}
+
+
+// Calcola chi deve a chi
+
+function markSettled(){
+if(!confirm("Segna i conti come saldati? Le spese passate resteranno registrate ma il bilancio partir\u00E0 da zero."))return;
+// Aggiungo una transazione di pareggio (registro il saldo effettuato)
+const s=calcSettlement();
+if(s.owed<0.5)return;
+expenses.push({
+day:0,
+cat:"altro",
+desc:"Saldo tra Daniele e Angela (auto)",
+amount:s.owed,
+paidBy:s.debtor.toLowerCase(),
+ts:Date.now(),
+_settlement:true
+});
+save("exp",expenses);
+logActivity("Conti saldati: "+s.debtor+" \u2192 "+s.creditor+" \u20AC"+s.owed.toFixed(2));
+render();
+}
+
+function calcSettlement(){
+const totExp=expenses.reduce((a,e)=>a+e.amount,0);
+const half=totExp/2;
+const paidD=expenses.filter(e=>e.paidBy==="daniele").reduce((a,e)=>a+e.amount,0);
+const paidA=expenses.filter(e=>e.paidBy==="angela").reduce((a,e)=>a+e.amount,0);
+const paidC=expenses.filter(e=>!e.paidBy||e.paidBy==="cassa").reduce((a,e)=>a+e.amount,0);
+// La cassa comune contribuisce a entrambi (metà per uno)
+const dOwedByShared=paidD+(paidC/2);
+const aOwedByShared=paidA+(paidC/2);
+// Chi ha anticipato di più deve ricevere
+const dDelta=dOwedByShared-half;
+const aDelta=aOwedByShared-half;
+let msg,owed=0,creditor="",debtor="";
+if(Math.abs(dDelta)<0.5){msg="Siete pari";}
+else if(dDelta>0){creditor="Daniele";debtor="Angela";owed=dDelta;msg="Angela deve dare a Daniele";}
+else{creditor="Angela";debtor="Daniele";owed=-dDelta;msg="Daniele deve dare ad Angela";}
+return {totExp,half,paidD,paidA,paidC,dDelta,aDelta,msg,owed,creditor,debtor};
+}
 
 // PACKING LIST
 function addPack(){
@@ -3913,7 +4739,7 @@ if(editingPrc>=0){
 PRECHECKS[editingPrc]=item;
 editingPrc=-1;
 }else{
-PRECHECKS.push(item);
+PRECHECKS.push(item);logActivity("Voce pre-partenza aggiunta");
 }
 prcCat="critical";
 savePrclist();render();
@@ -3958,14 +4784,8 @@ save("nts",notes);render();
 }
 
 // PLAYLIST
-function setPlaylist(){
-const url=prompt('Incolla URL playlist Spotify (o solo ID):');
-if(!url)return;
-const match=url.match(/playlist\/([a-zA-Z0-9]+)/);
-playlistId=match?match[1]:url.trim();
-savePlaylist();render();
-}
-function clearPlaylist(){playlistId="";savePlaylist();render()}
+
+
 
 // ============ EXPORT ALL DATA TO XLSX ============
 function exportAllToXlsx(){
@@ -4125,8 +4945,45 @@ XLSX.writeFile(wb,filename);
 setTimeout(()=>alert('\u2705 File esportato: '+filename+'\n\nControlla la cartella Download del tuo dispositivo.'),100);
 }
 
-function prepPhoto(f){if(!f)return;pendingFile=f;pendingCaption="";pendingDay=1;for(let i=DAYS.length-1;i>=0;i--)for(let j=DAYS[i].stops.length-1;j>=0;j--)if(checks[i+"-"+j]){pendingDay=DAYS[i].day;i=-1;break}
-const r=new FileReader();r.onload=e=>{pendingPreview=e.target.result;render()};r.readAsDataURL(f)}
+function compressImage(file,maxSize,quality){return new Promise((res,rej)=>{
+const img=new Image();
+img.onload=()=>{
+let w=img.width,h=img.height;
+if(w>maxSize||h>maxSize){
+const ratio=maxSize/Math.max(w,h);
+w=Math.round(w*ratio);h=Math.round(h*ratio);
+}
+const canvas=document.createElement('canvas');
+canvas.width=w;canvas.height=h;
+canvas.getContext('2d').drawImage(img,0,0,w,h);
+canvas.toBlob(blob=>{
+if(!blob){rej(new Error('Blob failed'));return}
+const reader=new FileReader();
+reader.onload=e=>res({dataUrl:e.target.result,blob:blob});
+reader.onerror=rej;
+reader.readAsDataURL(blob);
+},'image/jpeg',quality);
+};
+img.onerror=rej;
+img.src=URL.createObjectURL(file);
+})}
+
+async function prepPhoto(f){
+if(!f)return;
+try{
+// Comprime prima di preview
+const compressed=await compressImage(f,1600,0.85);
+pendingFile=compressed.blob;
+pendingPreview=compressed.dataUrl;
+pendingCaption="";pendingDay=1;
+render();
+}catch(e){
+// Fallback senza compressione
+const r=new FileReader();
+r.onload=ev=>{pendingFile=f;pendingPreview=ev.target.result;pendingCaption="";pendingDay=1;render()};
+r.readAsDataURL(f);
+}
+}
 function cancelPhoto(){pendingFile=null;pendingPreview=null;render()}
 async function confirmPhoto(){if(!pendingFile||uploading)return;const c=document.getElementById('photo-caption');if(c)pendingCaption=c.value;uploading=true;render();
 try{const rs=await resizeImg(pendingFile,1200);const fd=new FormData();fd.append('image',rs);
