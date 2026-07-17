@@ -1519,15 +1519,16 @@ img { max-width: 100%; height: auto; display: block; }
   .tl-days-wrap { padding: 8px 32px 48px 32px; }
 }
 
-/* Rail verticale */
+/* Rail verticale - sotto il dot, allineato con il centro dot */
 .tl-rail {
   position: absolute;
-  left: 32px;
-  top: 24px;
+  left: 33px;
+  top: 40px;
   bottom: 60px;
   width: 2px;
   background: var(--border);
   border-radius: 1px;
+  z-index: 1;
 }
 .tl-rail::after {
   content: "";
@@ -1541,35 +1542,36 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (min-width: 900px) {
-  .tl-rail { left: 44px; }
+  .tl-rail { left: 45px; }
 }
 
-/* Riga giorno */
+/* Riga giorno - padding lasciato per il dot + gap */
 .tl-day {
   position: relative;
-  padding-left: 40px;
-  margin-bottom: 24px;
+  padding-left: 60px;
+  margin-bottom: 32px;
+  min-height: 32px;
 }
 .tl-day:last-child { margin-bottom: 0; }
 
 @media (min-width: 900px) {
-  .tl-day { padding-left: 52px; }
+  .tl-day { padding-left: 72px; margin-bottom: 36px; }
 }
 
-/* Dot numerato sulla timeline */
+/* Dot numerato - allineato con il titolo (non con la data) */
 .tl-dot {
   position: absolute;
-  left: 22px;
-  top: 4px;
-  width: 22px;
-  height: 22px;
+  left: 20px;
+  top: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--bg);
   border: 2px solid var(--border-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-2);
   z-index: 2;
@@ -1577,7 +1579,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 @media (min-width: 900px) {
-  .tl-dot { left: 34px; width: 24px; height: 24px; font-size: 11px; }
+  .tl-dot { left: 32px; width: 30px; height: 30px; font-size: 13px; top: 24px; }
 }
 
 .tl-day.progress .tl-dot {
@@ -1834,6 +1836,460 @@ img { max-width: 100%; height: auto; display: block; }
   /* mantenuto per compatibilità legacy */
 }
 
+
+
+/* =========================================================
+   DIARIO REDESIGN v20
+   ========================================================= */
+
+.diary-wrap {
+  padding: 0 20px 48px;
+}
+@media (min-width: 900px) { .diary-wrap { padding: 0 32px 64px; } }
+
+.diary-composer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 32px;
+  transition: border-color 200ms;
+}
+.diary-composer:focus-within { border-color: var(--text-1); }
+
+.diary-textarea-new {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  padding: 8px 4px 12px;
+  min-height: 96px;
+  box-sizing: border-box;
+}
+.diary-textarea-new::placeholder {
+  color: var(--text-3);
+  font-style: italic;
+}
+
+.diary-composer-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.diary-day-sel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.diary-day-lbl {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-right: 4px;
+}
+
+.diary-day-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 120ms;
+}
+.diary-day-btn:hover { border-color: var(--border-strong); }
+.diary-day-btn.act {
+  background: var(--text-1);
+  color: var(--text-inverse);
+  border-color: var(--text-1);
+}
+
+.diary-publish {
+  background: var(--text-1);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 120ms;
+}
+.diary-publish:hover { background: var(--accent-strong); }
+
+/* Entries */
+.diary-entry-new {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: border-color 120ms;
+  position: relative;
+}
+.diary-entry-new:hover { border-color: var(--border-strong); }
+
+.diary-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.diary-entry-date {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--surface-alt);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.diary-entry-day {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1;
+  font-variation-settings: 'opsz' 24;
+}
+
+.diary-entry-mo {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.diary-entry-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.diary-entry-weekday {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-1);
+  text-transform: capitalize;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.diary-entry-time {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+.diary-entry-del {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 120ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.diary-entry-del:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.diary-entry-text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-1);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* =========================================================
+   ROUTES / MAPS REDESIGN v20
+   ========================================================= */
+
+.routes-wrap {
+  padding: 0 20px 48px;
+}
+@media (min-width: 900px) { .routes-wrap { padding: 0 32px 64px; } }
+
+.routes-section-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.route-card-new {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: var(--text-1);
+  transition: all 120ms;
+  cursor: pointer;
+}
+.route-card-new:hover {
+  border-color: var(--text-1);
+  transform: translateY(-1px);
+}
+
+.route-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.route-card-body { flex: 1; min-width: 0; }
+
+.route-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 2px;
+  letter-spacing: -0.1px;
+}
+
+.route-card-sub {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+.route-card-arrow {
+  color: var(--text-3);
+  font-size: 18px;
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+/* Route day card - compatta */
+.route-day-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  text-decoration: none;
+  color: var(--text-1);
+  transition: all 120ms;
+}
+.route-day-card:hover {
+  border-color: var(--text-1);
+  background: var(--surface-alt);
+}
+
+.route-day-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  flex-shrink: 0;
+}
+
+.route-day-body { flex: 1; min-width: 0; }
+
+.route-day-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.route-day-meta {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-top: 2px;
+}
+
+.route-day-arrow {
+  color: var(--text-3);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   PIN MODAL REDESIGN v20
+   ========================================================= */
+
+.pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31,29,26,0.55);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 200ms ease;
+}
+
+.pin-modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  text-align: center;
+  animation: pinModalIn 250ms cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes pinModalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pin-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface-alt);
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms;
+}
+.pin-modal-close:hover { background: var(--border-strong); color: var(--text-1); }
+
+.pin-modal-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.pin-modal-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text-1);
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+  font-variation-settings: 'opsz' 48;
+}
+
+.pin-modal-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 24px;
+}
+
+.pin-dots-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: transparent;
+  transition: all 150ms;
+}
+.pin-dot.filled {
+  background: var(--text-1);
+  border-color: var(--text-1);
+  transform: scale(1.1);
+}
+
+.pin-input-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* Rendo il modal cliccabile per riattivare focus */
+.pin-modal { cursor: text; }
+
+.pin-modal-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 12px;
+  font-weight: 500;
+  animation: shakeErr 400ms;
+}
+@keyframes shakeErr {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* Nasconde vecchie classi pin overlay */
+.pin-overlay, .pin-box, .pin-input, .pin-error, .pin-cancel { display: none !important; }
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2033,6 +2489,7 @@ let expPaidBy="cassa",contactCat="attivita",savingParking=false;
 let packCat="abbigliamento",foodCat="da_provare",foodRating=0,kmMode="idle",sosOpen=false,darkMode=false,playlistId="";
 let foodPhotoData="",foodPhotoUploading=false;
 let editingExp=-1,editingHotel=-1,editingCt=-1,editingPk=-1,editingKm=-1,editingFd=-1,editingPack=-1,editingMed=-1,editingNote=-1;
+let showChangePin=false,changePinStep=1,changePinOld="",changePinNew="",changePinErr="";
 let privateSection="home";
 let pendingFile=null,pendingPreview=null,pendingCaption="",pendingDay=0;
 let livePos=null,lastUpdate=null,gpsWatchId=null,isTracking=false;
@@ -2040,7 +2497,7 @@ let leafletMap=null,posMarker=null,weather=null;
 
 // STORAGE
 const LS=(k)=>"dea-"+k;
-const DAYS_VERSION="v19-timeline";
+const DAYS_VERSION="v20-polish";
 let _daysNeedFbSync=false;
 function loadDays(){
 try{
@@ -2194,7 +2651,51 @@ const desk=isDesktop();
 let h="";
 
 // Login popup
-if(showLogin){h+='<div class="pin-overlay" onclick="closeLogin()"><div class="pin-box" onclick="event.stopPropagation()"><h2>Area riservata</h2><p>Inserisci il PIN</p><input class="pin-input" id="pin-input" type="tel" maxlength="4" placeholder="\u2022 \u2022 \u2022 \u2022" oninput="tryPin(this.value)" autocomplete="off"><div class="pin-error">'+pinErr+'</div><button class="pin-cancel" onclick="closeLogin()">Annulla</button></div></div>'}
+if(showChangePin){
+h+='<div class="pin-modal-overlay" onclick="closeChangePin()">';
+h+='<div class="pin-modal" onclick="event.stopPropagation();const el=this.querySelector(\'.pin-input-hidden\');if(el)el.focus()">';
+h+='<button class="pin-modal-close" onclick="closeChangePin()">\u2715</button>';
+h+='<div class="pin-modal-icon">\u{1F511}</div>';
+if(changePinStep===1){
+h+='<h2 class="pin-modal-title">Cambia PIN</h2>';
+h+='<p class="pin-modal-desc">Inserisci il PIN attuale</p>';
+h+='<div class="pin-dots-wrap">';
+for(let i=0;i<4;i++){h+='<div class="pin-dot '+(changePinOld.length>i?"filled":"")+'"></div>';}
+h+='</div>';
+h+='<input class="pin-input-hidden" id="pin-change-old" type="tel" inputmode="numeric" maxlength="4" oninput="checkOldPin(this.value)" autocomplete="off" autofocus>';
+if(changePinErr)h+='<div class="pin-modal-error">'+changePinErr+'</div>';
+}else if(changePinStep===2){
+h+='<h2 class="pin-modal-title">Nuovo PIN</h2>';
+h+='<p class="pin-modal-desc">Scegli un nuovo codice a 4 cifre</p>';
+h+='<div class="pin-dots-wrap">';
+for(let i=0;i<4;i++){h+='<div class="pin-dot '+(changePinNew.length>i?"filled":"")+'"></div>';}
+h+='</div>';
+h+='<input class="pin-input-hidden" id="pin-change-new" type="tel" inputmode="numeric" maxlength="4" oninput="setNewPin(this.value)" autocomplete="off" autofocus>';
+if(changePinErr)h+='<div class="pin-modal-error">'+changePinErr+'</div>';
+}else if(changePinStep===3){
+h+='<h2 class="pin-modal-title">Fatto!</h2>';
+h+='<p class="pin-modal-desc">Il tuo nuovo PIN \u00E8 attivo</p>';
+h+='<div class="pin-dots-wrap"><div class="pin-dot filled"></div><div class="pin-dot filled"></div><div class="pin-dot filled"></div><div class="pin-dot filled"></div></div>';
+h+='<button class="btn-primary" style="margin-top:20px" onclick="closeChangePin()">Chiudi</button>';
+}
+h+='</div></div>';
+}
+
+if(showLogin){
+h+='<div class="pin-modal-overlay" onclick="closeLogin()">';
+h+='<div class="pin-modal" onclick="event.stopPropagation();const el=this.querySelector(\'.pin-input-hidden\');if(el)el.focus()">';
+h+='<button class="pin-modal-close" onclick="closeLogin()">\u2715</button>';
+h+='<div class="pin-modal-icon">\u{1F510}</div>';
+h+='<h2 class="pin-modal-title">Area riservata</h2>';
+h+='<p class="pin-modal-desc">Inserisci il PIN a 4 cifre</p>';
+h+='<div class="pin-dots-wrap">';
+const pinVal=(document.getElementById("pin-input-real")&&document.getElementById("pin-input-real").value)||"";
+for(let i=0;i<4;i++){h+='<div class="pin-dot '+(pinVal.length>i?"filled":"")+'"></div>';}
+h+='</div>';
+h+='<input class="pin-input-hidden" id="pin-input-real" type="tel" inputmode="numeric" maxlength="4" oninput="tryPin(this.value);updatePinDots(this.value)" autocomplete="off" autofocus>';
+if(pinErr)h+='<div class="pin-modal-error">'+pinErr+'</div>';
+h+='</div></div>';
+}
 
 // Wrapper desktop grid
 h+='<div id="layout">';
@@ -2376,12 +2877,47 @@ h+='</div>'}
 // DIARY TAB
 if(tab==="diary"){
 h+='<div class="content">';
-if(isAdmin){h+='<div class="diary-add"><div class="form-label">Scrivi nel diario</div><textarea class="diary-textarea" id="diary-text" placeholder="Come sta andando il viaggio?"></textarea><div class="form-days" style="margin-top:10px">'+DAYS.map((d,i)=>'<button class="form-day '+(expDay===i+1?'act':'')+'" onclick="expDay='+(i+1)+';render()">G'+d.day+'</button>').join('')+'</div><button class="btn-primary" onclick="addDiary()">Pubblica</button></div>'}
-if(diary.length===0)h+='<div class="empty">'+(isAdmin?'Scrivi la prima nota del viaggio!':'Il diario del viaggio apparir\u00E0 qui...')+'</div>';
-else{diary.sort((a,b)=>b.ts-a.ts).forEach((e,i)=>{
-h+='<div class="diary-entry"><div class="diary-date">G'+(e.day||'?')+' \u00B7 '+new Date(e.ts).toLocaleDateString('it-IT',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div><div class="diary-text">'+e.text+'</div>';
-if(isAdmin)h+='<button style="margin-top:8px;background:none;border:none;color:#C0392B;font-size:11px;cursor:pointer" onclick="delDiary('+i+')">Elimina</button>';
-h+='</div>'})}
+h+='<h1 class="tl-page-title">Diario di viaggio</h1>';
+h+='<div class="tl-page-sub">Le tue parole giorno dopo giorno</div>';
+h+='<div class="diary-wrap">';
+if(isAdmin){
+h+='<div class="diary-composer">';
+h+='<textarea class="diary-textarea-new" id="diary-text" placeholder="Cosa ti \u00E8 rimasto di oggi? Un profumo, un incontro, una risata\u2026" rows="4"></textarea>';
+h+='<div class="diary-composer-foot">';
+h+='<div class="diary-day-sel">';
+h+='<span class="diary-day-lbl">Giorno:</span>';
+h+=DAYS.map((d,i)=>'<button class="diary-day-btn '+(expDay===i+1?"act":"")+'" onclick="expDay='+(i+1)+';render()">'+d.day+'</button>').join("");
+h+='</div>';
+h+='<button class="diary-publish" onclick="addDiary()">Salva</button>';
+h+='</div>';
+h+='</div>';
+}
+if(diary.length===0){
+h+='<div class="empty">'+(isAdmin?"Scrivi la prima riga del viaggio":"Il diario apparir\u00E0 qui, giorno dopo giorno")+'</div>';
+}else{
+diary.sort((a,b)=>b.ts-a.ts).forEach((e,i)=>{
+const dt=new Date(e.ts);
+const dayName=dt.toLocaleDateString("it-IT",{weekday:"long"});
+const dayNum=dt.getDate();
+const monthName=dt.toLocaleDateString("it-IT",{month:"long"});
+const time=dt.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+h+='<article class="diary-entry-new">';
+h+='<header class="diary-entry-head">';
+h+='<div class="diary-entry-date">';
+h+='<div class="diary-entry-day">'+dayNum+'</div>';
+h+='<div class="diary-entry-mo">'+monthName.slice(0,3)+'</div>';
+h+='</div>';
+h+='<div class="diary-entry-meta">';
+h+='<div class="diary-entry-weekday">'+dayName+'</div>';
+h+='<div class="diary-entry-time">'+(e.day?"Giorno "+e.day+" \u00B7 ":"")+time+'</div>';
+h+='</div>';
+if(isAdmin)h+='<button class="diary-entry-del" onclick="delDiary('+i+')" title="Elimina">\u2715</button>';
+h+='</header>';
+h+='<div class="diary-entry-text">'+e.text+'</div>';
+h+='</article>';
+});
+}
+h+='</div>';
 h+='</div>'}
 
 // GALLERY TAB
@@ -2417,10 +2953,37 @@ h+='<img src="'+p.url+'" onclick="event.stopPropagation()"><div class="lightbox-
 // ROUTES TAB
 if(tab==="routes"){
 h+='<div class="content">';
-ROUTES.forEach(r=>{h+='<a href="'+r.url+'" target="_blank" class="route-card"><div class="route-icon" style="background:'+r.color+'12">'+r.icon+'</div><div style="flex:1"><div class="route-label">'+r.label+'</div><div class="route-sub">'+r.sub+'</div></div><div style="color:'+r.color+';">\u2192</div></a>'});
-h+='<div style="font-size:11px;color:#B0A48E;text-transform:uppercase;letter-spacing:2px;margin:18px 0 12px">Tutti i luoghi</div>';
-DAYS.forEach((day,di)=>{h+='<div style="font-size:11px;font-weight:700;color:'+day.color+';margin:12px 0 7px">G'+day.day+' \u2014 '+day.region+'</div><div class="pins-wrap">';
-day.stops.forEach((s,si)=>{const ck=!!checks[di+"-"+si];h+='<a href="'+s.map+'" target="_blank" class="pin-chip" style="'+(ck?'border-color:'+day.color+';color:'+day.color:'')+'">'+s.name+(ck?' \u2713':'')+'</a>'});h+='</div>'});
+h+='<h1 class="tl-page-title">Percorsi</h1>';
+h+='<div class="tl-page-sub">Apri il navigatore per ogni tappa del viaggio</div>';
+h+='<div class="routes-wrap">';
+h+='<div class="routes-section-lbl">Route principali</div>';
+ROUTES.forEach(r=>{
+h+='<a href="'+r.url+'" target="_blank" class="route-card-new">';
+h+='<div class="route-card-icon">'+r.icon+'</div>';
+h+='<div class="route-card-body">';
+h+='<div class="route-card-title">'+r.label+'</div>';
+h+='<div class="route-card-sub">'+r.sub+'</div>';
+h+='</div>';
+h+='<div class="route-card-arrow">\u2197</div>';
+h+='</a>';
+});
+h+='<div class="routes-section-lbl" style="margin-top:32px">Per giorno</div>';
+DAYS.forEach((day,di)=>{
+const done=day.stops.filter((_,si)=>checks[di+"-"+si]).length;
+const tot=day.stops.length;
+// Costruisco un URL Google Maps directions con tutte le tappe
+const stopsUrls=day.stops.filter(s=>s.lat&&s.lng).map(s=>s.lat+","+s.lng).join("/");
+const dirUrl=stopsUrls?"https://www.google.com/maps/dir/"+stopsUrls:day.stops[0].map;
+h+='<a href="'+dirUrl+'" target="_blank" class="route-day-card">';
+h+='<div class="route-day-num">'+day.day+'</div>';
+h+='<div class="route-day-body">';
+h+='<div class="route-day-title">'+day.title+'</div>';
+h+='<div class="route-day-meta">'+day.date+' \u00B7 '+tot+' tapp'+(tot===1?"a":"e")+(done>0?" \u00B7 "+done+"/"+tot+" fatte":"")+'</div>';
+h+='</div>';
+h+='<div class="route-day-arrow">\u2197</div>';
+h+='</a>';
+});
+h+='</div>';
 h+='</div>'}
 
 // PRIVATE TAB
@@ -2478,9 +3041,10 @@ h+='<button class="quick-card" onclick="privateSection=\'memories\';adminSub=\'f
 h+='<button class="quick-card" onclick="privateSection=\'travel\';adminSub=\'contacts\';render()"><span class="quick-icon">\u{1F4DE}</span><span class="quick-lbl">Contatti</span></button>';
 h+='</div>';
 // Export button
-h+='<div class="dash-section-title">\u{1F4BE} Backup dati</div>';
-h+='<button class="export-mega" onclick="exportAllToXlsx()">\u{1F4E5} Esporta tutto in Excel</button>';
-h+='<div style="font-size:10px;color:#8b7355;text-align:center;margin-top:8px;font-style:italic">File .xlsx con tutte le info del viaggio</div>';
+h+='<div class="dash-section-title">Backup e sicurezza</div>';
+h+='<button class="export-mega" onclick="exportAllToXlsx()">Esporta tutto in Excel</button>';
+h+='<button class="export-mega" style="margin-top:8px;background:var(--surface);color:var(--text-1);border:1px solid var(--border-strong)" onclick="openChangePin()">Cambia PIN</button>';
+h+='<div style="font-size:11px;color:var(--text-2);text-align:center;margin-top:12px">File .xlsx con tutte le info \u00B7 Cambia il PIN quando vuoi</div>';
 h+='</div>';
 // Nasconde il resto (sub-tab rendering)
 h+='<div style="display:none">';
@@ -2950,9 +3514,15 @@ function sw(t){tab=t;openDay=null;openStop=null;render();window.scrollTo(0,0)}
 function togDay(i){openDay=openDay===i?null:i;openStop=null;render()}
 function togStop(k){openStop=openStop===k?null:k;render()}
 function togChk(d,s){if(!isAdmin)return;const k=d+"-"+s;checks[k]=!checks[k];if(!checks[k])delete checks[k];saveChk();render()}
-function tryPin(v){if(v.length===4){if(v===PIN){isAdmin=true;showLogin=false;pinErr="";saveAdm();if(_daysNeedFbSync&&fbOk){db.child("days").set(DAYS);db.child("checks").set({});_daysNeedFbSync=false}render();initFB()}else{pinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-input');if(e){e.value='';e.focus()}},100)}}}
-function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-input');if(e)e.focus()},100)}
+function updatePinDots(v){const dots=document.querySelectorAll('.pin-dot');dots.forEach((d,i)=>{if(v.length>i)d.classList.add('filled');else d.classList.remove('filled')})}
+function getCurrentPin(){try{const custom=localStorage.getItem(LS("pincode"));return custom||PIN}catch(e){return PIN}}
+function tryPin(v){if(v.length===4){if(v===getCurrentPin()){isAdmin=true;showLogin=false;pinErr="";saveAdm();if(_daysNeedFbSync&&fbOk){db.child("days").set(DAYS);db.child("checks").set({});_daysNeedFbSync=false}render();initFB()}else{pinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-input-real');if(e){e.value='';e.focus();updatePinDots('')}},100)}}}
+function openLogin(){showLogin=true;pinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-input-real');if(e)e.focus()},100)}
 function closeLogin(){showLogin=false;pinErr="";render()}
+function openChangePin(){showChangePin=true;changePinStep=1;changePinOld="";changePinNew="";changePinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-change-old');if(e)e.focus()},100)}
+function closeChangePin(){showChangePin=false;changePinStep=1;changePinOld="";changePinNew="";changePinErr="";render()}
+function checkOldPin(v){changePinOld=v;if(v.length===4){if(v===getCurrentPin()){changePinStep=2;changePinErr="";render();setTimeout(()=>{const e=document.getElementById('pin-change-new');if(e)e.focus()},100)}else{changePinErr="PIN errato";render();setTimeout(()=>{const e=document.getElementById('pin-change-old');if(e){e.value='';changePinOld='';e.focus();render()}},400)}}else{render()}}
+function setNewPin(v){changePinNew=v;if(v.length===4){if(v==="0000"||v==="1234"){changePinErr="Scegli un PIN pi\u00F9 sicuro";render();setTimeout(()=>{const e=document.getElementById('pin-change-new');if(e){e.value='';changePinNew='';e.focus();render()}},600);return}try{localStorage.setItem(LS("pincode"),v);changePinStep=3;changePinErr="";render()}catch(e){changePinErr="Errore salvataggio";render()}}else{render()}}
 function logout(){isAdmin=false;showLogin=false;stopGPS();saveAdm();tab="map";render()}
 function setExpCat(c){expCat=c;render()}
 function addExp(){const d=document.getElementById('exp-desc'),a=document.getElementById('exp-amt'),v=parseFloat(a.value);if(!v||v<=0){a.focus();return}
